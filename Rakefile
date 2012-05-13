@@ -1,4 +1,5 @@
 require 'rake/testtask'
+require 'yard'
 
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
@@ -15,6 +16,8 @@ namespace :test do
 
   task :all => [:unit, :end_to_end]
 end
+
+YARD::Rake::YardocTask.new
 
 task :test => 'test:all'
 
