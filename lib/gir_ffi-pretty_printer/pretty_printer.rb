@@ -1,4 +1,6 @@
-class PrettyPrinter
+require 'gir_ffi'
+
+class GirFFI::PrettyPrinter
   def pretty_print_class klass
     arr = []
     arr << "class #{klass.name} < #{klass.superclass.name}"
