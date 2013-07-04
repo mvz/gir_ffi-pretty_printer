@@ -22,8 +22,8 @@ class GirFFI::PrettyPrinter
 
       begin
         arr << meth.to_ruby
-      rescue
-        warn "Printing #{klass.name}##{mname} failed"
+      rescue => e
+        warn "Printing #{klass.name}##{mname} failed: #{e.message}"
       end
     end
     arr.join "\n"
@@ -41,8 +41,8 @@ class GirFFI::PrettyPrinter
 
       begin
         arr << meth.to_ruby
-      rescue
-        warn "Printing #{klass.name}.#{mname} failed"
+      rescue => e
+        warn "Printing #{klass.name}.#{mname} failed: #{e.message}"
       end
     end
     arr.join "\n"
@@ -55,8 +55,8 @@ class GirFFI::PrettyPrinter
 
       meth = modul.method mname
       str << meth.to_ruby
-    rescue
-      warn "Printing #{modul.name}.#{mname} failed"
+    rescue => e
+      warn "Printing #{modul.name}.#{mname} failed: #{e.message}"
     end
     str
   end
