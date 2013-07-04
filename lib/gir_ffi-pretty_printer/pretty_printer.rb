@@ -16,7 +16,7 @@ class GirFFI::PrettyPrinter
       meth = klass.instance_method mname
 
       if meth.arity == -1
-        klass._setup_instance_method mname.to_s
+        klass.setup_instance_method mname.to_s
         meth = klass.instance_method mname
       end
 
@@ -35,7 +35,7 @@ class GirFFI::PrettyPrinter
       meth = klass.method mname
 
       if meth.arity == -1
-        klass._setup_method mname.to_s
+        klass.setup_method mname.to_s
         meth = klass.method mname
       end
 
@@ -51,7 +51,7 @@ class GirFFI::PrettyPrinter
   def pretty_print_function modul, mname
     str = ""
     begin
-      modul._setup_method mname.to_s unless modul.respond_to? mname
+      modul.setup_method mname.to_s unless modul.respond_to? mname
 
       meth = modul.method mname
       str << meth.to_ruby

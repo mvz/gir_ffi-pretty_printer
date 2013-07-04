@@ -5,4 +5,11 @@ describe GirFFI::PrettyPrinter do
       GirFFI::PrettyPrinter.new
     end
   end
+
+  describe "#pretty_print" do
+    let(:instance) { GirFFI::PrettyPrinter.new }
+    it "pretty-prints a module without type specification" do
+      instance.pretty_print 'GObject'
+    end
+  end
 end
