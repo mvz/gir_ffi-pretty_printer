@@ -85,8 +85,12 @@ class GirFFI::PrettyPrinter
         if info.name == "IConv"
           warn "Skipping #{module_name}::#{info.name}"
         else
-          klass = GirFFI::Builder.build_class info
-          arr << pretty_print_class(klass).indent
+          begin
+            klass = GirFFI::Builder.build_class info
+            arr << pretty_print_class(klass).indent
+          rescue SyntaxError
+            warn "Skipping #{module_name}::#{info.name}: build failed"
+          end
         end
       when :constant
         arr << pretty_print_constant(modul, info.name).indent
