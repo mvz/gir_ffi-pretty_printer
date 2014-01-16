@@ -1815,6 +1815,352 @@ module GLib
   # XXX: Don't know how to print callback
   IEEE754_DOUBLE_BIAS = 1023
   IEEE754_FLOAT_BIAS = 127
+  class GLib::IOChannel < GirFFI::StructBase
+    def self.new_file(filename, mode)
+      _v1 = GirFFI::InPointer.from(:utf8, filename)
+      _v2 = GirFFI::InPointer.from(:utf8, mode)
+      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v4 = GLib::Lib.g_io_channel_new_file(_v1, _v2, _v3)
+      GirFFI::ArgHelper.check_error(_v3)
+      _v5 = GLib::IOChannel.wrap(_v4)
+      return _v5
+    end
+    def self.unix_new(fd)
+      _v1 = fd
+      _v2 = GLib::Lib.g_io_channel_unix_new(_v1)
+      _v3 = GLib::IOChannel.wrap(_v2)
+      return _v3
+    end
+    def self.error_from_errno(en)
+      _v1 = en
+      _v2 = GLib::Lib.g_io_channel_error_from_errno(_v1)
+      return _v2
+    end
+    def self.error_quark
+      _v1 = GLib::Lib.g_io_channel_error_quark
+      return _v1
+    end
+    def self.get_gtype
+      59128912
+    end
+    def close
+      GLib::Lib.g_io_channel_close(self)
+    end
+    def flush
+      _v1 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v2 = GLib::Lib.g_io_channel_flush(self, _v1)
+      GirFFI::ArgHelper.check_error(_v1)
+      return _v2
+    end
+    def get_buffer_condition
+      _v1 = GLib::Lib.g_io_channel_get_buffer_condition(self)
+      return _v1
+    end
+    def get_buffer_size
+      _v1 = GLib::Lib.g_io_channel_get_buffer_size(self)
+      return _v1
+    end
+    def get_buffered
+      _v1 = GLib::Lib.g_io_channel_get_buffered(self)
+      return _v1
+    end
+    def get_close_on_unref
+      _v1 = GLib::Lib.g_io_channel_get_close_on_unref(self)
+      return _v1
+    end
+    def get_encoding
+      _v1 = GLib::Lib.g_io_channel_get_encoding(self)
+      _v2 = _v1.to_utf8
+      return _v2
+    end
+    def get_flags
+      _v1 = GLib::Lib.g_io_channel_get_flags(self)
+      return _v1
+    end
+    def get_line_term(length)
+      _v1 = length
+      _v2 = GLib::Lib.g_io_channel_get_line_term(self, _v1)
+      _v3 = _v2.to_utf8
+      return _v3
+    end
+    def init
+      GLib::Lib.g_io_channel_init(self)
+    end
+    def read(buf, count, bytes_read)
+      _v1 = GirFFI::InPointer.from(:utf8, buf)
+      _v2 = count
+      _v3 = bytes_read
+      _v4 = GLib::Lib.g_io_channel_read(self, _v1, _v2, _v3)
+      return _v4
+    end
+    def read_chars
+      _v1 = GirFFI::InOutPointer.for([:pointer, :c])
+      count = buf.nil? ? (0) : (buf.length)
+      _v2 = count
+      _v3 = GirFFI::InOutPointer.for(:guint64)
+      _v4 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v5 = GLib::Lib.g_io_channel_read_chars(self, _v1, _v2, _v3, _v4)
+      GirFFI::ArgHelper.check_error(_v4)
+      _v6 = _v3.to_value
+      _v7 = GirFFI::SizedArray.wrap(:guint8, _v2, _v1.to_value)
+      return [_v5, _v7, _v6]
+    end
+    def read_line
+      _v1 = GirFFI::InOutPointer.for(:utf8)
+      _v2 = GirFFI::InOutPointer.for(:guint64)
+      _v3 = GirFFI::InOutPointer.for(:guint64)
+      _v4 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v5 = GLib::Lib.g_io_channel_read_line(self, _v1, _v2, _v3, _v4)
+      GirFFI::ArgHelper.check_error(_v4)
+      _v6 = _v1.to_value.to_utf8
+      _v7 = _v2.to_value
+      _v8 = _v3.to_value
+      return [_v5, _v6, _v7, _v8]
+    end
+    def read_line_string(buffer, terminator_pos)
+      _v1 = GLib::String.from(buffer)
+      _v2 = terminator_pos
+      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v4 = GLib::Lib.g_io_channel_read_line_string(self, _v1, _v2, _v3)
+      GirFFI::ArgHelper.check_error(_v3)
+      return _v4
+    end
+    def read_to_end
+      _v1 = GirFFI::InOutPointer.for([:pointer, :c])
+      _v2 = GirFFI::InOutPointer.for(:guint64)
+      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v4 = GLib::Lib.g_io_channel_read_to_end(self, _v1, _v2, _v3)
+      GirFFI::ArgHelper.check_error(_v3)
+      _v5 = _v2.to_value
+      _v6 = GirFFI::SizedArray.wrap(:guint8, _v5, _v1.to_value)
+      return [_v4, _v6]
+    end
+    def read_unichar
+      _v1 = GirFFI::InOutPointer.for(:gunichar)
+      _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v3 = GLib::Lib.g_io_channel_read_unichar(self, _v1, _v2)
+      GirFFI::ArgHelper.check_error(_v2)
+      _v4 = _v1.to_value
+      return [_v3, _v4]
+    end
+    def ref
+      _v1 = GLib::Lib.g_io_channel_ref(self)
+      _v2 = GLib::IOChannel.wrap(_v1)
+      return _v2
+    end
+    def seek(offset, type)
+      _v1 = offset
+      _v2 = type
+      _v3 = GLib::Lib.g_io_channel_seek(self, _v1, _v2)
+      return _v3
+    end
+    def seek_position(offset, type)
+      _v1 = offset
+      _v2 = type
+      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v4 = GLib::Lib.g_io_channel_seek_position(self, _v1, _v2, _v3)
+      GirFFI::ArgHelper.check_error(_v3)
+      return _v4
+    end
+    def set_buffer_size(size)
+      _v1 = size
+      GLib::Lib.g_io_channel_set_buffer_size(self, _v1)
+    end
+    def set_buffered(buffered)
+      _v1 = buffered
+      GLib::Lib.g_io_channel_set_buffered(self, _v1)
+    end
+    def set_close_on_unref(do_close)
+      _v1 = do_close
+      GLib::Lib.g_io_channel_set_close_on_unref(self, _v1)
+    end
+    def set_encoding(encoding)
+      _v1 = GirFFI::InPointer.from(:utf8, encoding)
+      _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v3 = GLib::Lib.g_io_channel_set_encoding(self, _v1, _v2)
+      GirFFI::ArgHelper.check_error(_v2)
+      return _v3
+    end
+    def set_flags(flags)
+      _v1 = flags
+      _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v3 = GLib::Lib.g_io_channel_set_flags(self, _v1, _v2)
+      GirFFI::ArgHelper.check_error(_v2)
+      return _v3
+    end
+    def set_line_term(line_term, length)
+      _v1 = GirFFI::InPointer.from(:utf8, line_term)
+      _v2 = length
+      GLib::Lib.g_io_channel_set_line_term(self, _v1, _v2)
+    end
+    def shutdown(flush)
+      _v1 = flush
+      _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v3 = GLib::Lib.g_io_channel_shutdown(self, _v1, _v2)
+      GirFFI::ArgHelper.check_error(_v2)
+      return _v3
+    end
+    def unix_get_fd
+      _v1 = GLib::Lib.g_io_channel_unix_get_fd(self)
+      return _v1
+    end
+    def unref
+      GLib::Lib.g_io_channel_unref(self)
+    end
+    def write(buf, count, bytes_written)
+      _v1 = GirFFI::InPointer.from(:utf8, buf)
+      _v2 = count
+      _v3 = bytes_written
+      _v4 = GLib::Lib.g_io_channel_write(self, _v1, _v2, _v3)
+      return _v4
+    end
+    def write_chars(buf, count)
+      _v1 = GirFFI::SizedArray.from(:guint8, -1, buf)
+      _v2 = count
+      _v3 = GirFFI::InOutPointer.for(:guint64)
+      _v4 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v5 = GLib::Lib.g_io_channel_write_chars(self, _v1, _v2, _v3, _v4)
+      GirFFI::ArgHelper.check_error(_v4)
+      _v6 = _v3.to_value
+      return [_v5, _v6]
+    end
+    def write_unichar(thechar)
+      _v1 = thechar
+      _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v3 = GLib::Lib.g_io_channel_write_unichar(self, _v1, _v2)
+      GirFFI::ArgHelper.check_error(_v2)
+      return _v3
+    end
+    def ref_count
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def funcs
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IOFuncs], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IOFuncs.wrap(_v3)
+      _v4
+    end
+    def encoding
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def read_cd
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IConv.wrap(_v3)
+      _v4
+    end
+    def write_cd
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IConv.wrap(_v3)
+      _v4
+    end
+    def line_term
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def line_term_len
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def buf_size
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def read_buf
+      _v1 = (@struct.to_ptr + 64)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def encoded_read_buf
+      _v1 = (@struct.to_ptr + 72)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def write_buf
+      _v1 = (@struct.to_ptr + 80)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def partial_write_buf
+      _v1 = (@struct.to_ptr + 88)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap(:gint8, 6, _v3)
+      _v4
+    end
+    def use_buffer
+      _v1 = (@struct.to_ptr + 96)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def do_encode
+      _v1 = (@struct.to_ptr + 100)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def close_on_unref
+      _v1 = (@struct.to_ptr + 104)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def is_readable
+      _v1 = (@struct.to_ptr + 108)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def is_writeable
+      _v1 = (@struct.to_ptr + 112)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def is_seekable
+      _v1 = (@struct.to_ptr + 116)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def reserved1
+      _v1 = (@struct.to_ptr + 120)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def reserved2
+      _v1 = (@struct.to_ptr + 128)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+  end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print enum

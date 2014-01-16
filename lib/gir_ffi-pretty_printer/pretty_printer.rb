@@ -81,16 +81,11 @@ class GirFFI::PrettyPrinter
     infos.each do |info|
       case info.info_type
       when :struct, :object
-        # FIXME: We skip IConv for now since building it fails.
-        if info.name == "IConv"
-          warn "Skipping #{module_name}::#{info.name}"
-        else
-          begin
-            klass = GirFFI::Builder.build_class info
-            arr << pretty_print_class(klass).indent
-          rescue SyntaxError
-            warn "Skipping #{module_name}::#{info.name}: build failed"
-          end
+        begin
+          klass = GirFFI::Builder.build_class info
+          arr << pretty_print_class(klass).indent
+        rescue SyntaxError
+          warn "Skipping #{module_name}::#{info.name}: build failed"
         end
       when :constant
         arr << pretty_print_constant(modul, info.name).indent
