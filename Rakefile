@@ -9,14 +9,14 @@ namespace :test do
     t.warning = true
   end
 
-  Rake::TestTask.new(:end_to_end) do |t|
+  Rake::TestTask.new(:integration) do |t|
     t.libs = ['lib']
     t.ruby_opts += ["-w -Itest"]
-    t.test_files = FileList['test/end_to_end/*_test.rb']
+    t.test_files = FileList['test/integration/*_test.rb']
     t.warning = true
   end
 
-  task :all => [:unit, :end_to_end]
+  task :all => [:unit, :integration]
 end
 
 YARD::Rake::YardocTask.new
