@@ -1823,8 +1823,13 @@ module GLib
       result_ptr = Lib.g_iconv_open(to_ptr, from_ptr)
       wrap(result_ptr)
     end
-    def _(*args, &block)
-      setup_and_call(:"", *args, &block)
+    def _(inbuf, inbytes_left, outbuf, outbytes_left)
+      _v1 = GirFFI::InPointer.from(:utf8, inbuf)
+      _v2 = inbytes_left
+      _v3 = GirFFI::InPointer.from(:utf8, outbuf)
+      _v4 = outbytes_left
+      _v5 = GLib::Lib.g_iconv(self, _v1, _v2, _v3, _v4)
+      return _v5
     end
     def close
       _v1 = GLib::Lib.g_iconv_close(self)

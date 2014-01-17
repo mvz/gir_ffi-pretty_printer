@@ -19,7 +19,10 @@ class GirFFI::PrettyPrinter
       meth = klass.instance_method mname
 
       if meth.arity == -1
-        klass.setup_instance_method mname.to_s
+        unless klass.setup_instance_method mname.to_s
+          klass.setup_instance_method ""
+        end
+
         meth = klass.instance_method mname
       end
 
