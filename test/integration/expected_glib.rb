@@ -1813,6 +1813,24 @@ module GLib
     end
   end
   # XXX: Don't know how to print callback
+  class GLib::IConv < GirFFI::StructBase
+    def self.get_gtype
+      4
+    end
+    def self.open(to_codeset, from_codeset)
+      to_ptr = GirFFI::InPointer.from(:utf8, to_codeset)
+      from_ptr = GirFFI::InPointer.from(:utf8, from_codeset)
+      result_ptr = Lib.g_iconv_open(to_ptr, from_ptr)
+      wrap(result_ptr)
+    end
+    def _(*args, &block)
+      setup_and_call(:"", *args, &block)
+    end
+    def close
+      _v1 = GLib::Lib.g_iconv_close(self)
+      return _v1
+    end
+  end
   IEEE754_DOUBLE_BIAS = 1023
   IEEE754_FLOAT_BIAS = 127
   class GLib::IOChannel < GirFFI::StructBase
