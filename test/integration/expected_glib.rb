@@ -2,9 +2,6 @@ module GLib
   ANALYZER_ANALYZING = 1
   ASCII_DTOSTR_BUF_SIZE = 39
   class GLib::Array < GirFFI::StructBase
-    def self.get_gtype
-      32739504
-    end
     def new(type)
       ptr = Lib.g_array_new(0, 0, calculated_element_size(type))
       wrap(type, ptr)
@@ -69,9 +66,6 @@ module GLib
   end
   # XXX: Don't know how to print flags
   class GLib::AsyncQueue < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
     def _allocate
       obj = _real_new
       obj.instance_variable_set(:@struct, self::Struct.new)
@@ -114,9 +108,6 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_bookmark_file_error_quark
       return _v1
-    end
-    def self.get_gtype
-      4
     end
     def add_application(uri, name, exec)
       _v1 = GirFFI::InPointer.from(:utf8, uri)
@@ -419,9 +410,6 @@ module GLib
       _v1 = array
       GLib::Lib.g_byte_array_unref(_v1)
     end
-    def self.get_gtype
-      39399456
-    end
     def data
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :guint8], _v1)
@@ -471,9 +459,6 @@ module GLib
       _v3 = GLib::Lib.g_bytes_new_take(_v1, _v2)
       _v4 = GLib::Bytes.wrap(_v3)
       return _v4
-    end
-    def self.get_gtype
-      37945936
     end
     def compare(bytes2)
       _v1 = GLib::Bytes.from(bytes2)
@@ -542,9 +527,6 @@ module GLib
       _v2 = GLib::Lib.g_checksum_type_get_length(_v1)
       return _v2
     end
-    def self.get_gtype
-      45541760
-    end
     def copy
       _v1 = GLib::Lib.g_checksum_copy(self)
       _v2 = GLib::Checksum.wrap(_v1)
@@ -573,9 +555,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Cond < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def broadcast
       GLib::Lib.g_cond_broadcast(self)
     end
@@ -620,9 +600,7 @@ module GLib
   DIR_SEPARATOR = 92
   DIR_SEPARATOR_S = "\\"
   class GLib::Data < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
   
   end
   # XXX: Don't know how to print callback
@@ -706,9 +684,6 @@ module GLib
       _v1 = year
       _v2 = GLib::Lib.g_date_valid_year(_v1)
       return _v2
-    end
-    def self.get_gtype
-      36889152
     end
     def add_days(n_days)
       _v1 = n_days
@@ -1017,9 +992,6 @@ module GLib
       _v2 = GLib::Lib.g_date_time_hash(_v1)
       return _v2
     end
-    def self.get_gtype
-      43388080
-    end
     def add(timespan)
       _v1 = timespan
       _v2 = GLib::Lib.g_date_time_add(self, _v1)
@@ -1197,9 +1169,7 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::DebugKey < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def key
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -1236,9 +1206,6 @@ module GLib
       _v4 = _v3.to_utf8
       return _v4
     end
-    def self.get_gtype
-      4
-    end
     def close
       GLib::Lib.g_dir_close(self)
     end
@@ -1262,9 +1229,6 @@ module GLib
       _v4 = GLib::Lib.g_error_new_literal(_v1, _v2, _v3)
       _v5 = GLib::Error.wrap(_v4)
       return _v5
-    end
-    def self.get_gtype
-      39891728
     end
     def copy
       _v1 = GLib::Lib.g_error_copy(self)
@@ -1420,9 +1384,6 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_unref(_v1)
     end
-    def self.get_gtype
-      41085616
-    end
     def self.new(keytype, valtype)
       wrap([keytype, valtype], Lib.g_hash_table_new(hash_function_for(keytype), equality_function_for(keytype)))
     end
@@ -1474,9 +1435,7 @@ module GLib
     end
   end
   class GLib::HashTableIter < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def init(hash_table)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_iter_init(self, _v1)
@@ -1535,9 +1494,7 @@ module GLib
     end
   end
   class GLib::Hmac < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def get_digest(buffer, digest_len)
       _v1 = buffer
       _v2 = digest_len
@@ -1590,9 +1547,6 @@ module GLib
       _v1 = GLib::HookList.from(hook_list)
       _v2 = GLib::Hook.from(hook)
       GLib::Lib.g_hook_unref(_v1, _v2)
-    end
-    def self.get_gtype
-      4
     end
     def compare_ids(sibling)
       _v1 = GLib::Hook.from(sibling)
@@ -1706,9 +1660,7 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::HookList < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def clear
       GLib::Lib.g_hook_list_clear(self)
     end
@@ -1814,9 +1766,6 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::IConv < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
     def self.open(to_codeset, from_codeset)
       to_ptr = GirFFI::InPointer.from(:utf8, to_codeset)
       from_ptr = GirFFI::InPointer.from(:utf8, from_codeset)
@@ -1862,9 +1811,6 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_io_channel_error_quark
       return _v1
-    end
-    def self.get_gtype
-      59128912
     end
     def close
       GLib::Lib.g_io_channel_close(self)
@@ -2190,9 +2136,7 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::IOFuncs < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def io_read
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Io_read, _v1)
@@ -2280,9 +2224,6 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_key_file_error_quark
       return _v1
-    end
-    def self.get_gtype
-      46813744
     end
     def get_boolean(group_name, key)
       _v1 = GirFFI::InPointer.from(:utf8, group_name)
@@ -2629,9 +2570,6 @@ module GLib
   LOG_FATAL_MASK = 0
   LOG_LEVEL_USER_SHIFT = 8
   class GLib::List < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
     def self.from_enumerable(type, arr)
       arr.inject(self.new(type)) { |lst, val| lst.append(val) }
     end
@@ -2708,9 +2646,6 @@ module GLib
       _v1 = GLib::Lib.g_main_context_ref_thread_default
       _v2 = GLib::MainContext.wrap(_v1)
       return _v2
-    end
-    def self.get_gtype
-      43324016
     end
     def acquire
       _v1 = GLib::Lib.g_main_context_acquire(self)
@@ -2826,9 +2761,6 @@ module GLib
       _v4 = GLib::MainLoop.wrap(_v3)
       return _v4
     end
-    def self.get_gtype
-      41240320
-    end
     def get_context
       _v1 = GLib::Lib.g_main_loop_get_context(self)
       _v2 = GLib::MainContext.wrap(_v1)
@@ -2854,9 +2786,7 @@ module GLib
     end
   end
   class GLib::MappedFile < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def free
       GLib::Lib.g_mapped_file_free(self)
     end
@@ -2889,9 +2819,6 @@ module GLib
       _v5 = GLib::Lib.g_markup_parse_context_new(_v1, _v2, _v3, _v4)
       _v6 = GLib::MarkupParseContext.wrap(_v5)
       return _v6
-    end
-    def self.get_gtype
-      47706880
     end
     def end_parse
       _v1 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
@@ -2936,9 +2863,7 @@ module GLib
   end
   # XXX: Don't know how to print flags
   class GLib::MarkupParser < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def start_element
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Start_element, _v1)
@@ -2971,9 +2896,7 @@ module GLib
     end
   end
   class GLib::MatchInfo < GirFFI::StructBase
-    def self.get_gtype
-      41980224
-    end
+  
     def expand_references(string_to_expand)
       _v1 = GirFFI::InPointer.from(:utf8, string_to_expand)
       _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
@@ -3058,9 +2981,7 @@ module GLib
     end
   end
   class GLib::MemVTable < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def malloc
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -3100,9 +3021,7 @@ module GLib
   end
   # XXX: Don't know how to print union
   class GLib::Node < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def child_index(data)
       _v1 = GirFFI::InPointer.from(:void, data)
       _v2 = GLib::Lib.g_node_child_index(self, _v1)
@@ -3224,9 +3143,6 @@ module GLib
       _v2 = result
       GLib::Lib.g_once_init_leave(_v1, _v2)
     end
-    def self.get_gtype
-      4
-    end
     def status
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
@@ -3256,9 +3172,7 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print callback
   class GLib::OptionContext < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def add_group(group)
       _v1 = GLib::OptionGroup.from(group)
       GLib::Lib.g_option_context_add_group(self, _v1)
@@ -3341,9 +3255,7 @@ module GLib
     end
   end
   class GLib::OptionEntry < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def long_name
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -3436,9 +3348,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
   class GLib::OptionGroup < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def add_entries(entries)
       _v1 = GLib::OptionEntry.from(entries)
       GLib::Lib.g_option_group_add_entries(self, _v1)
@@ -3469,9 +3379,7 @@ module GLib
   PRIORITY_HIGH_IDLE = 100
   PRIORITY_LOW = 300
   class GLib::PatternSpec < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def equal(pspec2)
       _v1 = GLib::PatternSpec.from(pspec2)
       _v2 = GLib::Lib.g_pattern_spec_equal(self, _v1)
@@ -3482,9 +3390,7 @@ module GLib
     end
   end
   class GLib::PollFD < GirFFI::StructBase
-    def self.get_gtype
-      40614352
-    end
+  
     def fd
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
@@ -3525,9 +3431,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Private < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def replace(value)
       _v1 = GirFFI::InPointer.from(:void, value)
       GLib::Lib.g_private_replace(self, _v1)
@@ -3557,9 +3461,6 @@ module GLib
     end
   end
   class GLib::PtrArray < GirFFI::StructBase
-    def self.get_gtype
-      41502128
-    end
     def self.new(type)
       wrap(type, Lib.g_ptr_array_new)
     end
@@ -3621,9 +3522,7 @@ module GLib
     end
   end
   class GLib::Queue < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def clear
       GLib::Lib.g_queue_clear(self)
     end
@@ -3716,9 +3615,7 @@ module GLib
     end
   end
   class GLib::RWLock < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def clear
       GLib::Lib.g_rw_lock_clear(self)
     end
@@ -3760,9 +3657,7 @@ module GLib
     end
   end
   class GLib::Rand < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def double
       _v1 = GLib::Lib.g_rand_double(self)
       return _v1
@@ -3797,9 +3692,7 @@ module GLib
     end
   end
   class GLib::RecMutex < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def clear
       GLib::Lib.g_rec_mutex_clear(self)
     end
@@ -3885,9 +3778,6 @@ module GLib
       _v5 = GLib::Lib.g_regex_split_simple(_v1, _v2, _v3, _v4)
       _v6 = GLib::Strv.wrap(_v5)
       return _v6
-    end
-    def self.get_gtype
-      43567984
     end
     def get_capture_count
       _v1 = GLib::Lib.g_regex_get_capture_count(self)
@@ -4031,9 +3921,6 @@ module GLib
   SIZEOF_SSIZE_T = 8
   SIZEOF_VOID_P = 8
   class GLib::SList < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
     def self.from_enumerable(type, arr)
       arr.reverse.inject(self.new(type)) { |lst, val| lst.prepend(val) }
     end
@@ -4062,9 +3949,7 @@ module GLib
   SYSDEF_MSG_OOB = 1
   SYSDEF_MSG_PEEK = 2
   class GLib::Scanner < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def cur_line
       _v1 = GLib::Lib.g_scanner_cur_line(self)
       return _v1
@@ -4356,9 +4241,7 @@ module GLib
     end
   end
   class GLib::ScannerConfig < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def cset_skip_characters
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -4715,9 +4598,6 @@ module GLib
       _v2 = GLib::SequenceIter.from(b)
       GLib::Lib.g_sequence_swap(_v1, _v2)
     end
-    def self.get_gtype
-      4
-    end
     def free
       GLib::Lib.g_sequence_free(self)
     end
@@ -4727,9 +4607,7 @@ module GLib
     end
   end
   class GLib::SequenceIter < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def compare(b)
       _v1 = GLib::SequenceIter.from(b)
       _v2 = GLib::Lib.g_sequence_iter_compare(self, _v1)
@@ -4779,9 +4657,6 @@ module GLib
       _v1 = tag
       _v2 = GirFFI::InPointer.from(:utf8, name)
       GLib::Lib.g_source_set_name_by_id(_v1, _v2)
-    end
-    def self.get_gtype
-      48054048
     end
     def add_child_source(child_source)
       _v1 = GLib::Source.from(child_source)
@@ -4986,9 +4861,7 @@ module GLib
     end
   end
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def ref
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Ref, _v1)
@@ -5011,9 +4884,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::SourceFuncs < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def prepare
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Prepare, _v1)
@@ -5052,24 +4923,18 @@ module GLib
     end
   end
   class GLib::SourcePrivate < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
   
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::StatBuf < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
   
   end
   class GLib::String < GirFFI::StructBase
-    def self.get_gtype
-      41246224
-    end
+  
     def append(val)
       _v1 = GirFFI::InPointer.from(:utf8, val)
       _v2 = GLib::Lib.g_string_append(self, _v1)
@@ -5276,9 +5141,7 @@ module GLib
     end
   end
   class GLib::StringChunk < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def clear
       GLib::Lib.g_string_chunk_clear(self)
     end
@@ -5311,15 +5174,11 @@ module GLib
   TIME_SPAN_MINUTE = 60000000
   TIME_SPAN_SECOND = 1000000
   class GLib::TestCase < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
   
   end
   class GLib::TestConfig < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def test_initialized
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
@@ -5398,9 +5257,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::TestLogBuffer < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def free
       GLib::Lib.g_test_log_buffer_free(self)
     end
@@ -5426,9 +5283,7 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::TestLogMsg < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def free
       GLib::Lib.g_test_log_msg_free(self)
     end
@@ -5497,9 +5352,7 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::TestSuite < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def add(test_case)
       _v1 = GLib::TestCase.from(test_case)
       GLib::Lib.g_test_suite_add(self, _v1)
@@ -5526,9 +5379,6 @@ module GLib
     end
     def self.yield
       GLib::Lib.g_thread_yield
-    end
-    def self.get_gtype
-      44590928
     end
     def ref
       _v1 = GLib::Lib.g_thread_ref(self)
@@ -5563,9 +5413,6 @@ module GLib
     end
     def self.stop_unused_threads
       GLib::Lib.g_thread_pool_stop_unused_threads
-    end
-    def self.get_gtype
-      4
     end
     def free(immediate, wait_)
       _v1 = immediate
@@ -5643,9 +5490,6 @@ module GLib
       _v3 = GLib::Lib.g_time_val_from_iso8601(_v1, _v2)
       return [_v3, _v2]
     end
-    def self.get_gtype
-      4
-    end
     def add(microseconds)
       _v1 = microseconds
       GLib::Lib.g_time_val_add(self, _v1)
@@ -5697,9 +5541,6 @@ module GLib
       _v2 = GLib::TimeZone.wrap(_v1)
       return _v2
     end
-    def self.get_gtype
-      43208928
-    end
     def adjust_time(type, time_)
       _v1 = type
       _v2 = time_
@@ -5738,9 +5579,7 @@ module GLib
     end
   end
   class GLib::Timer < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def continue
       GLib::Lib.g_timer_continue(self)
     end
@@ -5776,9 +5615,6 @@ module GLib
       _v2 = GirFFI::InPointer.from(:void, data_p)
       GLib::Lib.g_trash_stack_push(_v1, _v2)
     end
-    def self.get_gtype
-      4
-    end
     def next
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::TrashStack], _v1)
@@ -5797,9 +5633,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   class GLib::Tree < GirFFI::StructBase
-    def self.get_gtype
-      4
-    end
+  
     def destroy
       GLib::Lib.g_tree_destroy(self)
     end
@@ -6053,9 +5887,6 @@ module GLib
       _v1 = GLib::Lib.g_variant_parser_get_error_quark
       return _v1
     end
-    def self.get_gtype
-      84
-    end
     def byteswap
       _v1 = GLib::Lib.g_variant_byteswap(self)
       _v2 = GLib::Variant.wrap(_v1)
@@ -6300,9 +6131,6 @@ module GLib
       _v3 = GLib::VariantBuilder.wrap(_v2)
       return _v3
     end
-    def self.get_gtype
-      40437120
-    end
     def add_value(value)
       _v1 = GLib::Variant.from(value)
       GLib::Lib.g_variant_builder_add_value(self, _v1)
@@ -6389,9 +6217,6 @@ module GLib
       _v4 = GLib::Lib.g_variant_type_string_scan(_v1, _v2, _v3)
       _v5 = _v3.to_value.to_utf8
       return [_v4, _v5]
-    end
-    def self.get_gtype
-      49178368
     end
     def copy
       _v1 = GLib::Lib.g_variant_type_copy(self)
