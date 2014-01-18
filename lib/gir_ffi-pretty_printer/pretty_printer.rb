@@ -99,7 +99,7 @@ class GirFFI::PrettyPrinter
       end
     end
 
-    arr << "end"
+    arr << "end\n"
     arr.join "\n"
   end
 end
