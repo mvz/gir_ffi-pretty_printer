@@ -2,7 +2,8 @@ language: ruby
 rvm:
   - 1.9.3
   - 2.0.0
-  - 2.1.0
+  - 2.1
+  - rbx-2
 before_install:
   - sudo apt-get update
   - sudo apt-get install libgirepository1.0-dev gobject-introspection
