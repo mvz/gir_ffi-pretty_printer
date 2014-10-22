@@ -7,3 +7,4 @@ rvm:
 before_install:
   - sudo apt-get update
   - sudo apt-get install libgirepository1.0-dev gobject-introspection
+script: "bundle exec rake test:unit"
