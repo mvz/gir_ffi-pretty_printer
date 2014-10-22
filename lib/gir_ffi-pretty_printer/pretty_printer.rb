@@ -70,6 +70,9 @@ class GirFFI::PrettyPrinter
   def pretty_print_constant modul, const_name
     value = modul.const_get(const_name)
     "#{const_name} = #{value.inspect}"
+  rescue => e
+    warn "Printing #{modul.name}.#{const_name} failed: #{e.message}"
+    ""
   end
 
   def pretty_print module_name, version = nil
