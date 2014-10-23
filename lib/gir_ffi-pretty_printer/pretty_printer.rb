@@ -2,56 +2,11 @@ require 'live_ast/full'
 require 'live_ast/to_ruby'
 require 'gir_ffi'
 require 'indentation'
+require 'gir_ffi-pretty_printer/class_pretty_printer'
 
 class GirFFI::PrettyPrinter
   def pretty_print_class klass
-    arr = []
-    arr << "class #{klass.name} < #{klass.superclass.name}"
-    arr << pretty_print_singleton_methods(klass).indent
-    arr << pretty_print_instance_methods(klass).indent
-    arr << "end"
-    arr.join "\n"
-  end
-
-  def pretty_print_instance_methods klass
-    arr = []
-    klass.instance_methods(false).each do |mname|
-      meth = klass.instance_method mname
-
-      if meth.arity == -1
-        unless klass.setup_instance_method mname.to_s
-          klass.setup_instance_method ""
-        end
-
-        meth = klass.instance_method mname
-      end
-
-      begin
-        arr << meth.to_ruby
-      rescue => e
-        warn "Printing #{klass.name}##{mname} failed: #{e.message}"
-      end
-    end
-    arr.join "\n"
-  end
-
-  def pretty_print_singleton_methods klass
-    arr = []
-    klass.methods(false).each do |mname|
-      meth = klass.method mname
-
-      if meth.arity == -1
-        klass.setup_method mname.to_s
-        meth = klass.method mname
-      end
-
-      begin
-        arr << meth.to_ruby
-      rescue => e
-        warn "Printing #{klass.name}.#{mname} failed: #{e.message}"
-      end
-    end
-    arr.join "\n"
+    GirFFI::ClassPrettyPrinter.new(klass).pretty_print
   end
 
   def pretty_print_function modul, mname
