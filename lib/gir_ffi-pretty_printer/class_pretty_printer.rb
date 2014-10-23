@@ -13,8 +13,12 @@ class GirFFI::ClassPrettyPrinter
   end
 
   def pretty_print_instance_methods
-    arr = @klass.instance_methods(false).map { |mname| pretty_print_method(mname) }
+    arr = instance_method_list.map { |mname| pretty_print_method(mname) }
     arr.compact.join "\n"
+  end
+
+  def instance_method_list
+    @klass.instance_methods(false)
   end
 
   def pretty_print_method mname
