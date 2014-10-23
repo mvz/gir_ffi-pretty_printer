@@ -1,23 +1,39 @@
 require 'test_helper'
 
+class Foo
+  def bar
+    'hello'
+  end
+
+  alias foo bar
+end
+
 describe GirFFI::ClassPrettyPrinter do
-  let(:instance) { GirFFI::ClassPrettyPrinter.new GObject::Object }
+  let(:instance) { GirFFI::ClassPrettyPrinter.new Foo }
 
   describe "#pretty_print" do
     it "pretty-prints the class" do
       result = instance.pretty_print
-      result.must_match(/^class GObject::Object/)
+      result.must_match(/^class Foo/)
     end
   end
 
   describe "#pretty_print_method" do
-    it "pretty-prints the method" do
+    it "pretty-prints a method" do
       expected = <<-END.reset_indentation.chomp
-      def type_class
-        GObject::ObjectClass.wrap(to_ptr.get_pointer(0))
+      def bar
+        "hello"
       end
       END
-      result = instance.pretty_print_method 'type_class'
+      result = instance.pretty_print_method 'bar'
+      result.must_equal expected
+    end
+
+    it "pretty-prints an alias" do
+      expected = <<-END.reset_indentation.chomp
+      alias_method 'foo', 'bar'
+      END
+      result = instance.pretty_print_method 'foo'
       result.must_equal expected
     end
   end

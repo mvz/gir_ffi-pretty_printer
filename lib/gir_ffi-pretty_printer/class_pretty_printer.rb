@@ -24,6 +24,10 @@ class GirFFI::ClassPrettyPrinter
   def pretty_print_method mname
     meth = @klass.instance_method mname
 
+    if meth.name != meth.original_name
+      return "alias_method '#{meth.name}', '#{meth.original_name}'"
+    end
+
     if meth.arity == -1
       unless @klass.setup_instance_method mname.to_s
         @klass.setup_instance_method ""
