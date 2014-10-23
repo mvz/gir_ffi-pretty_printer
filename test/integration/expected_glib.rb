@@ -55,6 +55,9 @@ module GLib
     def get_element_size
       Lib.g_array_get_element_size(self)
     end
+    def get_element_size
+      Lib.g_array_get_element_size(self)
+    end
     def ==(other)
       (to_a == other.to_a)
     end
@@ -112,6 +115,11 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_bookmark_file_error_quark
       return _v1
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def add_application(uri, name, exec)
       _v1 = GirFFI::InPointer.from(:utf8, uri)
@@ -569,7 +577,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Cond < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def broadcast
       GLib::Lib.g_cond_broadcast(self)
     end
@@ -614,7 +626,11 @@ module GLib
   DIR_SEPARATOR = 92
   DIR_SEPARATOR_S = "\\"
   class GLib::Data < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
   
   end
   # XXX: Don't know how to print callback
@@ -1183,7 +1199,11 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::DebugKey < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def key
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -1220,6 +1240,11 @@ module GLib
       _v4 = _v3.to_utf8
       return _v4
     end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def close
       GLib::Lib.g_dir_close(self)
     end
@@ -1243,6 +1268,11 @@ module GLib
       _v4 = GLib::Lib.g_error_new_literal(_v1, _v2, _v3)
       _v5 = self.constructor_wrap(_v4)
       return _v5
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     # TODO: Auto-convert strings and symbols to quarks
     def self.from_exception(ex)
@@ -1459,7 +1489,11 @@ module GLib
     end
   end
   class GLib::HashTableIter < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def init(hash_table)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_iter_init(self, _v1)
@@ -1518,7 +1552,11 @@ module GLib
     end
   end
   class GLib::Hmac < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def get_digest(buffer, digest_len)
       _v1 = buffer
       _v2 = digest_len
@@ -1571,6 +1609,11 @@ module GLib
       _v1 = GLib::HookList.from(hook_list)
       _v2 = GLib::Hook.from(hook)
       GLib::Lib.g_hook_unref(_v1, _v2)
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def compare_ids(sibling)
       _v1 = GLib::Hook.from(sibling)
@@ -1684,7 +1727,11 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::HookList < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def clear
       GLib::Lib.g_hook_list_clear(self)
     end
@@ -1790,6 +1837,11 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::IConv < GirFFI::StructBase
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def self.open(to_codeset, from_codeset)
       to_ptr = GirFFI::InPointer.from(:utf8, to_codeset)
       from_ptr = GirFFI::InPointer.from(:utf8, from_codeset)
@@ -1835,6 +1887,11 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_io_channel_error_quark
       return _v1
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def close
       GLib::Lib.g_io_channel_close(self)
@@ -2160,7 +2217,11 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::IOFuncs < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def io_read
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Io_read, _v1)
@@ -2823,6 +2884,17 @@ module GLib
     def unref
       GLib::Lib.g_main_loop_unref(self)
     end
+    def run_with_thread_enabler
+      case RUBY_ENGINE
+      when "jruby" then
+        # do nothing
+      when "rbx" then
+        # do nothing
+      else
+        ThreadEnabler.instance.setup_idle_handler
+      end
+      run_without_thread_enabler
+    end
     def run(*args, &block)
       setup_and_call("run", args, &block)
     end
@@ -2927,7 +2999,11 @@ module GLib
   end
   # XXX: Don't know how to print flags
   class GLib::MarkupParser < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def start_element
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Start_element, _v1)
@@ -2960,7 +3036,11 @@ module GLib
     end
   end
   class GLib::MatchInfo < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def expand_references(string_to_expand)
       _v1 = GirFFI::InPointer.from(:utf8, string_to_expand)
       _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
@@ -3045,7 +3125,11 @@ module GLib
     end
   end
   class GLib::MemVTable < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def malloc
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -3085,7 +3169,11 @@ module GLib
   end
   # XXX: Don't know how to print union
   class GLib::Node < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def child_index(data)
       _v1 = GirFFI::InPointer.from(:void, data)
       _v2 = GLib::Lib.g_node_child_index(self, _v1)
@@ -3207,6 +3295,11 @@ module GLib
       _v2 = result
       GLib::Lib.g_once_init_leave(_v1, _v2)
     end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def status
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
@@ -3236,7 +3329,11 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print callback
   class GLib::OptionContext < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def add_group(group)
       _v1 = GLib::OptionGroup.from(group)
       GLib::Lib.g_option_context_add_group(self, _v1)
@@ -3328,7 +3425,11 @@ module GLib
     end
   end
   class GLib::OptionEntry < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def long_name
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -3421,7 +3522,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
   class GLib::OptionGroup < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def add_entries(entries)
       _v1 = GLib::OptionEntry.from(entries)
       GLib::Lib.g_option_group_add_entries(self, _v1)
@@ -3452,7 +3557,11 @@ module GLib
   PRIORITY_HIGH_IDLE = 100
   PRIORITY_LOW = 300
   class GLib::PatternSpec < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def equal(pspec2)
       _v1 = GLib::PatternSpec.from(pspec2)
       _v2 = GLib::Lib.g_pattern_spec_equal(self, _v1)
@@ -3463,7 +3572,11 @@ module GLib
     end
   end
   class GLib::PollFD < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def fd
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
@@ -3504,7 +3617,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Private < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def replace(value)
       _v1 = GirFFI::InPointer.from(:void, value)
       GLib::Lib.g_private_replace(self, _v1)
@@ -3595,7 +3712,11 @@ module GLib
     end
   end
   class GLib::Queue < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def clear
       GLib::Lib.g_queue_clear(self)
     end
@@ -3688,7 +3809,11 @@ module GLib
     end
   end
   class GLib::RWLock < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def clear
       GLib::Lib.g_rw_lock_clear(self)
     end
@@ -3730,7 +3855,11 @@ module GLib
     end
   end
   class GLib::Rand < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def double
       _v1 = GLib::Lib.g_rand_double(self)
       return _v1
@@ -3765,7 +3894,11 @@ module GLib
     end
   end
   class GLib::RecMutex < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def clear
       GLib::Lib.g_rec_mutex_clear(self)
     end
@@ -4009,6 +4142,12 @@ module GLib
       _v3 = GLib::SList.from([:pointer, :void], value)
       _v2.set_value(_v3)
     end
+    def tail
+      self.class.wrap(element_type, @struct[:next])
+    end
+    def head
+      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
+    end
     def prepend(data)
       self.class.wrap(element_type, Lib.g_slist_prepend(self, element_ptr_for(data)))
     end
@@ -4024,7 +4163,11 @@ module GLib
   SYSDEF_MSG_OOB = 1
   SYSDEF_MSG_PEEK = 2
   class GLib::Scanner < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def cur_line
       _v1 = GLib::Lib.g_scanner_cur_line(self)
       return _v1
@@ -4316,7 +4459,11 @@ module GLib
     end
   end
   class GLib::ScannerConfig < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def cset_skip_characters
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -4673,6 +4820,11 @@ module GLib
       _v2 = GLib::SequenceIter.from(b)
       GLib::Lib.g_sequence_swap(_v1, _v2)
     end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def free
       GLib::Lib.g_sequence_free(self)
     end
@@ -4682,7 +4834,11 @@ module GLib
     end
   end
   class GLib::SequenceIter < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def compare(b)
       _v1 = GLib::SequenceIter.from(b)
       _v2 = GLib::Lib.g_sequence_iter_compare(self, _v1)
@@ -4936,7 +5092,11 @@ module GLib
     end
   end
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def ref
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Ref, _v1)
@@ -4959,7 +5119,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::SourceFuncs < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def prepare
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Prepare, _v1)
@@ -4998,18 +5162,30 @@ module GLib
     end
   end
   class GLib::SourcePrivate < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
   
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::StatBuf < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
   
   end
   class GLib::String < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def append(val)
       _v1 = GirFFI::InPointer.from(:utf8, val)
       _v2 = GLib::Lib.g_string_append(self, _v1)
@@ -5216,7 +5392,11 @@ module GLib
     end
   end
   class GLib::StringChunk < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def clear
       GLib::Lib.g_string_chunk_clear(self)
     end
@@ -5249,11 +5429,19 @@ module GLib
   TIME_SPAN_MINUTE = 60000000
   TIME_SPAN_SECOND = 1000000
   class GLib::TestCase < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
   
   end
   class GLib::TestConfig < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def test_initialized
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
@@ -5332,7 +5520,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::TestLogBuffer < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def free
       GLib::Lib.g_test_log_buffer_free(self)
     end
@@ -5358,7 +5550,11 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::TestLogMsg < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def free
       GLib::Lib.g_test_log_msg_free(self)
     end
@@ -5427,7 +5623,11 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::TestSuite < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def add(test_case)
       _v1 = GLib::TestCase.from(test_case)
       GLib::Lib.g_test_suite_add(self, _v1)
@@ -5454,6 +5654,11 @@ module GLib
     end
     def self.yield
       GLib::Lib.g_thread_yield
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def ref
       _v1 = GLib::Lib.g_thread_ref(self)
@@ -5488,6 +5693,11 @@ module GLib
     end
     def self.stop_unused_threads
       GLib::Lib.g_thread_pool_stop_unused_threads
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def free(immediate, wait_)
       _v1 = immediate
@@ -5564,6 +5774,11 @@ module GLib
       _v2 = GLib::TimeVal.new
       _v3 = GLib::Lib.g_time_val_from_iso8601(_v1, _v2)
       return [_v3, _v2]
+    end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
     end
     def add(microseconds)
       _v1 = microseconds
@@ -5654,7 +5869,11 @@ module GLib
     end
   end
   class GLib::Timer < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def continue
       GLib::Lib.g_timer_continue(self)
     end
@@ -5690,6 +5909,11 @@ module GLib
       _v2 = GirFFI::InPointer.from(:void, data_p)
       GLib::Lib.g_trash_stack_push(_v1, _v2)
     end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def next
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::TrashStack], _v1)
@@ -5708,7 +5932,11 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   class GLib::Tree < GirFFI::StructBase
-  
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def destroy
       GLib::Lib.g_tree_destroy(self)
     end
@@ -5973,6 +6201,11 @@ module GLib
       _v1 = GLib::Lib.g_variant_parser_get_error_quark
       return _v1
     end
+    def _allocate
+      obj = _real_new
+      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj
+    end
     def self.constructor_wrap(ptr)
       super.tap(&:ref)
     end
@@ -6201,6 +6434,9 @@ module GLib
     end
     def unref
       GLib::Lib.g_variant_unref(self)
+    end
+    def get_string_with_override
+      get_string_without_override.first
     end
     def get_string_with_override
       get_string_without_override.first
