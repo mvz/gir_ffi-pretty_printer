@@ -13,17 +13,27 @@ describe GirFFI::ClassPrettyPrinter do
 
   describe "#pretty_print" do
     it "pretty-prints the class" do
+      expected = <<-END.reset_indentation.chomp
+        class Foo < Object
+
+          def bar
+            "hello"
+          end
+          alias_method 'foo', 'bar'
+        end
+      END
+
       result = instance.pretty_print
-      result.must_match(/^class Foo/)
+      result.must_equal expected
     end
   end
 
   describe "#pretty_print_method" do
     it "pretty-prints a method" do
       expected = <<-END.reset_indentation.chomp
-      def bar
-        "hello"
-      end
+        def bar
+          "hello"
+        end
       END
       result = instance.pretty_print_method 'bar'
       result.must_equal expected
