@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.test_files = Dir['test/**/*.rb']
 
   s.add_runtime_dependency('gir_ffi', ["~> 0.7.7"])
-  s.add_runtime_dependency('mvz-live_ast', ["~> 1.1.0"])
+  s.add_runtime_dependency('mvz-live_ast', ["~> 1.1.3"])
   s.add_runtime_dependency('binding_of_caller', ["~> 0.7.2"])
   s.add_development_dependency('minitest', ["~> 5.0"])
   s.add_development_dependency('rake', ["~> 10.1"])
