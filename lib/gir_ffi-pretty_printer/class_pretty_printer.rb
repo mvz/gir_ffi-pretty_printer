@@ -31,30 +31,30 @@ class GirFFI::ClassPrettyPrinter
       bits = []
       unless instance_method_printed? meth.original_name
         @printed_instance_methods << meth.original_name
-        bits << method_source(mname, meth)
+        bits << method_source(meth)
       end
       bits << "alias_method '#{meth.name}', '#{meth.original_name}'"
       bits.join("\n")
     else
       return if instance_method_printed? meth.original_name
       @printed_instance_methods << meth.original_name
-      method_source(mname, meth)
+      method_source meth
     end
   end
 
-  def method_source(mname, meth)
+  def method_source meth
     if meth.arity == -1
-      unless @klass.setup_instance_method mname.to_s
+      unless @klass.setup_instance_method meth.name.to_s
         @klass.setup_instance_method ""
       end
 
-      meth = @klass.instance_method mname
+      meth = @klass.instance_method meth.name
     end
 
     begin
       meth.to_ruby
     rescue => e
-      warn "Printing #{@klass.name}##{mname} failed: #{e.message}"
+      warn "Printing #{@klass.name}##{meth.name} failed: #{e.message}"
     end
   end
 
