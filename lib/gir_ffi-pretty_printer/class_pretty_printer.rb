@@ -13,6 +13,8 @@ class GirFFI::ClassPrettyPrinter
     arr.join "\n"
   end
 
+  private
+
   def pretty_print_instance_methods
     arr = instance_method_list.map { |mname| pretty_print_method(mname) }
     arr.compact.join "\n"
