@@ -1,6 +1,7 @@
 class GirFFI::ClassPrettyPrinter
   def initialize klass
     @klass = klass
+    @printed_instance_methods = []
   end
 
   def pretty_print
@@ -25,9 +26,21 @@ class GirFFI::ClassPrettyPrinter
     meth = @klass.instance_method mname
 
     if meth.name != meth.original_name
-      return "alias_method '#{meth.name}', '#{meth.original_name}'"
+      bits = []
+      unless instance_method_printed? meth.original_name
+        @printed_instance_methods << meth.original_name
+        bits << method_source(mname, meth)
+      end
+      bits << "alias_method '#{meth.name}', '#{meth.original_name}'"
+      bits.join("\n")
+    else
+      return if instance_method_printed? meth.original_name
+      @printed_instance_methods << meth.original_name
+      method_source(mname, meth)
     end
+  end
 
+  def method_source(mname, meth)
     if meth.arity == -1
       unless @klass.setup_instance_method mname.to_s
         @klass.setup_instance_method ""
@@ -41,6 +54,10 @@ class GirFFI::ClassPrettyPrinter
     rescue => e
       warn "Printing #{@klass.name}##{mname} failed: #{e.message}"
     end
+  end
+
+  def instance_method_printed? mname
+    @printed_instance_methods.include? mname
   end
 
   def pretty_print_singleton_methods

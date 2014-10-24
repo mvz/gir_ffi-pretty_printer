@@ -6,6 +6,18 @@ class Foo
   end
 
   alias foo bar
+
+  def baz
+    'original'
+  end
+
+  alias baz_without_qux baz
+
+  def baz_with_qux
+    baz_without_qux + '-more'
+  end
+
+  alias baz baz_with_qux
 end
 
 describe GirFFI::ClassPrettyPrinter do
@@ -20,6 +32,14 @@ describe GirFFI::ClassPrettyPrinter do
             "hello"
           end
           alias_method 'foo', 'bar'
+          def baz_with_qux
+            (baz_without_qux + "-more")
+          end
+          alias_method 'baz', 'baz_with_qux'
+          def baz
+            "original"
+          end
+          alias_method 'baz_without_qux', 'baz'
         end
       END
 
@@ -41,7 +61,10 @@ describe GirFFI::ClassPrettyPrinter do
 
     it "pretty-prints an alias" do
       expected = <<-END.reset_indentation.chomp
-      alias_method 'foo', 'bar'
+        def bar
+          "hello"
+        end
+        alias_method 'foo', 'bar'
       END
       result = instance.pretty_print_method 'foo'
       result.must_equal expected
