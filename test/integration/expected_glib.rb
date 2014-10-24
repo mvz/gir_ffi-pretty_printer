@@ -55,9 +55,6 @@ module GLib
     def get_element_size
       Lib.g_array_get_element_size(self)
     end
-    def get_element_size
-      Lib.g_array_get_element_size(self)
-    end
     def ==(other)
       (to_a == other.to_a)
     end
@@ -70,6 +67,7 @@ module GLib
       end
       self
     end
+    alias_method 'element_size', 'get_element_size'
   end
   # XXX: Don't know how to print flags
   class GLib::AsyncQueue < GirFFI::StructBase
@@ -2699,6 +2697,8 @@ module GLib
     def append(data)
       self.class.wrap(element_type, Lib.g_list_append(self, element_ptr_for(data)))
     end
+    alias_method 'next', 'tail'
+    alias_method 'data', 'head'
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
@@ -2884,20 +2884,11 @@ module GLib
     def unref
       GLib::Lib.g_main_loop_unref(self)
     end
-    def run_with_thread_enabler
-      case RUBY_ENGINE
-      when "jruby" then
-        # do nothing
-      when "rbx" then
-        # do nothing
-      else
-        ThreadEnabler.instance.setup_idle_handler
-      end
-      run_without_thread_enabler
-    end
     def run(*args, &block)
       setup_and_call("run", args, &block)
     end
+    alias_method 'run', 'run_with_thread_enabler'
+    alias_method 'run_without_thread_enabler', 'run'
   end
   class GLib::MappedFile < GirFFI::StructBase
     def self.new(filename, writable)
@@ -4151,6 +4142,8 @@ module GLib
     def prepend(data)
       self.class.wrap(element_type, Lib.g_slist_prepend(self, element_ptr_for(data)))
     end
+    alias_method 'next', 'tail'
+    alias_method 'data', 'head'
   end
   SOURCE_CONTINUE = true
 
@@ -6438,9 +6431,6 @@ module GLib
     def get_string_with_override
       get_string_without_override.first
     end
-    def get_string_with_override
-      get_string_without_override.first
-    end
     def get_string
       _v1 = GirFFI::InOutPointer.for(:guint64)
       _v2 = GLib::Lib.g_variant_get_string(self, _v1)
@@ -6448,6 +6438,8 @@ module GLib
       _v4 = _v2.to_utf8
       return [_v4, _v3]
     end
+    alias_method 'get_string', 'get_string_with_override'
+    alias_method 'get_string_without_override', 'get_string'
   end
   class GLib::VariantBuilder < GirFFI::StructBase
     def self.new(type)
