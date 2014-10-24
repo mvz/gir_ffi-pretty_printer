@@ -76,10 +76,10 @@ describe GirFFI::ClassPrettyPrinter do
             def baz_with_qux
               (baz_without_qux + "-more")
             end
-            alias_method 'baz', 'baz_with_qux'
             def baz
               "original"
             end
+            alias_method 'baz', 'baz_with_qux'
             alias_method 'baz_without_qux', 'baz'
           end
         END

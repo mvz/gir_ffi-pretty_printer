@@ -17,6 +17,7 @@ class GirFFI::ClassPrettyPrinter
 
   def pretty_print_instance_methods
     arr = instance_method_list.map { |mname| pretty_print_method(mname) }
+    arr += instance_method_list.map { |mname| pretty_print_alias(mname) }
     arr.compact.join "\n"
   end
 
@@ -24,22 +25,20 @@ class GirFFI::ClassPrettyPrinter
     @klass.instance_methods(false)
   end
 
-  def pretty_print_method mname
+  def pretty_print_alias mname
     meth = @klass.instance_method mname
 
     if meth.name != meth.original_name
-      bits = []
-      unless instance_method_printed? meth.original_name
-        @printed_instance_methods << meth.original_name
-        bits << method_source(meth)
-      end
-      bits << "alias_method '#{meth.name}', '#{meth.original_name}'"
-      bits.join("\n")
-    else
-      return if instance_method_printed? meth.original_name
-      @printed_instance_methods << meth.original_name
-      method_source meth
+      "alias_method '#{meth.name}', '#{meth.original_name}'"
     end
+  end
+
+  def pretty_print_method mname
+    meth = @klass.instance_method mname
+
+    return if instance_method_printed? meth.original_name
+    @printed_instance_methods << meth.original_name
+    method_source meth
   end
 
   def method_source meth
