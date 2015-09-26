@@ -1,5 +1,5 @@
 class GirFFI::ClassPrettyPrinter
-  def initialize klass
+  def initialize(klass)
     @klass = klass
     @printed_instance_methods = []
   end
@@ -9,7 +9,7 @@ class GirFFI::ClassPrettyPrinter
     arr << "class #{@klass.name} < #{@klass.superclass.name}"
     arr << pretty_print_singleton_methods.indent
     arr << pretty_print_instance_methods.indent
-    arr << "end"
+    arr << 'end'
     arr.join "\n"
   end
 
@@ -31,22 +31,22 @@ class GirFFI::ClassPrettyPrinter
       instance_method_name_list.map { |name| @klass.instance_method name }
   end
 
-  def pretty_print_alias meth
+  def pretty_print_alias(meth)
     if meth.name != meth.original_name
       "alias_method '#{meth.name}', '#{meth.original_name}'"
     end
   end
 
-  def pretty_print_method meth
+  def pretty_print_method(meth)
     return if instance_method_printed? meth.original_name
     @printed_instance_methods << meth.original_name
     method_source meth
   end
 
-  def method_source meth
+  def method_source(meth)
     if meth.arity == -1
       unless @klass.setup_instance_method meth.name.to_s
-        @klass.setup_instance_method ""
+        @klass.setup_instance_method ''
       end
 
       meth = @klass.instance_method meth.name
@@ -59,7 +59,7 @@ class GirFFI::ClassPrettyPrinter
     end
   end
 
-  def instance_method_printed? mname
+  def instance_method_printed?(mname)
     @printed_instance_methods.include? mname
   end
 

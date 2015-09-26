@@ -5,12 +5,12 @@ require 'indentation'
 require 'gir_ffi-pretty_printer/class_pretty_printer'
 
 class GirFFI::PrettyPrinter
-  def pretty_print_class klass
+  def pretty_print_class(klass)
     GirFFI::ClassPrettyPrinter.new(klass).pretty_print
   end
 
-  def pretty_print_function modul, mname
-    str = ""
+  def pretty_print_function(modul, mname)
+    str = ''
     begin
       modul.setup_method mname.to_s unless modul.respond_to? mname
 
@@ -22,15 +22,15 @@ class GirFFI::PrettyPrinter
     str
   end
 
-  def pretty_print_constant modul, const_name
+  def pretty_print_constant(modul, const_name)
     value = modul.const_get(const_name)
     "#{const_name} = #{value.inspect}"
   rescue => e
     warn "Printing #{modul.name}.#{const_name} failed: #{e.message}"
-    ""
+    ''
   end
 
-  def pretty_print module_name, version = nil
+  def pretty_print(module_name, version = nil)
     GirFFI.setup module_name, version
     arr = []
     gir = GObjectIntrospection::IRepository.default

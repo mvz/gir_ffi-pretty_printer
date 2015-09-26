@@ -1,8 +1,8 @@
-source "http://rubygems.org"
+source 'http://rubygems.org'
 
 gemspec
 
-unless ENV["CI"]
+unless ENV['CI']
   gem 'pry'
   gem 'simplecov'
 end

@@ -11,7 +11,7 @@ class SimpleAlias
     'hello'
   end
 
-  alias foo bar
+  alias_method :foo, :bar
 end
 
 class ComplexAlias
@@ -19,22 +19,22 @@ class ComplexAlias
     'original'
   end
 
-  alias baz_without_qux baz
+  alias_method :baz_without_qux, :baz
 
   def baz_with_qux
     baz_without_qux + '-more'
   end
 
-  alias baz baz_with_qux
+  alias_method :baz, :baz_with_qux
 end
 
 describe GirFFI::ClassPrettyPrinter do
   let(:instance) { GirFFI::ClassPrettyPrinter.new klass }
 
-  describe "#pretty_print" do
-    describe "for a class with a simple method definition" do
+  describe '#pretty_print' do
+    describe 'for a class with a simple method definition' do
       let(:klass) { SimpleClass }
-      it "pretty-prints the class" do
+      it 'pretty-prints the class' do
         expected = <<-END.reset_indentation.chomp
           class SimpleClass < Object
 
@@ -49,9 +49,9 @@ describe GirFFI::ClassPrettyPrinter do
       end
     end
 
-    describe "for a class with a simple aliased method" do
+    describe 'for a class with a simple aliased method' do
       let(:klass) { SimpleAlias }
-      it "pretty-prints the class" do
+      it 'pretty-prints the class' do
         expected = <<-END.reset_indentation.chomp
           class SimpleAlias < Object
 
@@ -67,9 +67,9 @@ describe GirFFI::ClassPrettyPrinter do
       end
     end
 
-    describe "for a class with an alias chain" do
+    describe 'for a class with an alias chain' do
       let(:klass) { ComplexAlias }
-      it "pretty-prints the class" do
+      it 'pretty-prints the class' do
         expected = <<-END.reset_indentation.chomp
           class ComplexAlias < Object
 
