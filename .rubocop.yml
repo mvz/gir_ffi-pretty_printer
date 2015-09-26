@@ -1,0 +1,8 @@
+AllCops:
+  Exclude:
+    - 'test/integration/actual_glib.rb'
+    - 'test/integration/expected_glib.rb'
+
+# GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
+Style/FileName:
+  Enabled: false
