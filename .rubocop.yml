@@ -6,3 +6,5 @@ AllCops:
 # GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
 Style/FileName:
   Enabled: false
+
+inherit_from: .rubocop_todo.yml
