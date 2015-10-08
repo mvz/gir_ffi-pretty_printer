@@ -4,3 +4,4 @@ doc/
 Gemfile.lock
 coverage/
 test/integration/actual_glib.rb
+test/integration/actual_gobject.rb
