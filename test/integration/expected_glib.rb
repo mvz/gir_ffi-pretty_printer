@@ -93,12 +93,30 @@ module GLib
       _v1 = GirFFI::InPointer.from(:void, data)
       GLib::Lib.g_async_queue_push(self, _v1)
     end
+    def push_front(item)
+      _v1 = GirFFI::InPointer.from(:void, item)
+      GLib::Lib.g_async_queue_push_front(self, _v1)
+    end
+    def push_front_unlocked(item)
+      _v1 = GirFFI::InPointer.from(:void, item)
+      GLib::Lib.g_async_queue_push_front_unlocked(self, _v1)
+    end
     def push_unlocked(data)
       _v1 = GirFFI::InPointer.from(:void, data)
       GLib::Lib.g_async_queue_push_unlocked(self, _v1)
     end
     def ref_unlocked
       GLib::Lib.g_async_queue_ref_unlocked(self)
+    end
+    def remove(item)
+      _v1 = GirFFI::InPointer.from(:void, item)
+      _v2 = GLib::Lib.g_async_queue_remove(self, _v1)
+      return _v2
+    end
+    def remove_unlocked(item)
+      _v1 = GirFFI::InPointer.from(:void, item)
+      _v2 = GLib::Lib.g_async_queue_remove_unlocked(self, _v1)
+      return _v2
     end
     def unlock
       GLib::Lib.g_async_queue_unlock(self)
@@ -2782,12 +2800,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 1
+  MICRO_VERSION = 0
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 44
+  MINOR_VERSION = 46
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::StructBase
     def self.new(*args)
@@ -5349,7 +5367,7 @@ module GLib
     end
     def free(free_segment)
       _v1 = free_segment
-      _v2 = GLib::Lib.g_string_free(self, _v1)
+      _v2 = GLib::Lib.g_string_free(self.ref, _v1)
       _v3 = _v2.to_utf8
       return _v3
     end
@@ -5814,6 +5832,11 @@ module GLib
     def get_num_threads
       _v1 = GLib::Lib.g_thread_pool_get_num_threads(self)
       return _v1
+    end
+    def move_to_front(data)
+      _v1 = GirFFI::InPointer.from(:void, data)
+      _v2 = GLib::Lib.g_thread_pool_move_to_front(self, _v1)
+      return _v2
     end
     def push(data)
       _v1 = GirFFI::InPointer.from(:void, data)
@@ -8204,6 +8227,15 @@ module GLib
     _v2 = fatal_mask
     _v3 = GLib::Lib.g_log_set_fatal_mask(_v1, _v2)
     return _v3
+  end
+  def self.log_set_handler(log_domain, log_levels, log_func, user_data, destroy)
+    _v1 = GirFFI::InPointer.from(:utf8, log_domain)
+    _v2 = log_levels
+    _v3 = GLib::LogFunc.from(log_func)
+    _v4 = GirFFI::InPointer.from_closure_data(user_data)
+    _v5 = GLib::DestroyNotify.from(destroy)
+    _v6 = GLib::Lib.g_log_set_handler_full(_v1, _v2, _v3, _v4, _v5)
+    return _v6
   end
   def self.main_context_default
     _v1 = GLib::Lib.g_main_context_default
