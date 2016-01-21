@@ -31,34 +31,19 @@ module GObject
       GObject::Lib.g_binding_unbind(self)
     end
     def flags
-      get_property("flags").get_value
-    end
-    def flags=(value)
-      set_property("flags", value)
+      get_property("flags")
     end
     def source
-      get_property("source").get_value
-    end
-    def source=(value)
-      set_property("source", value)
+      get_property("source")
     end
     def source_property
-      get_property("source-property").get_value
-    end
-    def source_property=(value)
-      set_property("source-property", value)
+      get_property("source-property")
     end
     def target
-      get_property("target").get_value
-    end
-    def target=(value)
-      set_property("target", value)
+      get_property("target")
     end
     def target_property
-      get_property("target-property").get_value
-    end
-    def target_property=(value)
-      set_property("target-property", value)
+      get_property("target-property")
     end
   end
   # XXX: Don't know how to print flags
@@ -272,12 +257,6 @@ module GObject
       _v6 = GirFFI::InPointer.from(:void, marshal_data)
       GObject::Lib.g_cclosure_marshal_generic(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def closure
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::Closure, _v1)
@@ -308,20 +287,16 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::Closure < GirFFI::StructBase
-    def self.new_object(*args)
+    def self.new_object(*args, &block)
+      raise(NoMethodError) unless (self == GObject::Closure)
       obj = allocate
-      obj.__send__(:initialize_object, *args)
+      obj.__send__(:initialize_object, *args, &block)
       obj
     end
-    def self.new_simple(*args)
+    def self.new_simple(*args, &block)
+      raise(NoMethodError) unless (self == GObject::Closure)
       obj = allocate
-      obj.__send__(:initialize_simple, *args)
-      obj
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj.__send__(:initialize_simple, *args, &block)
       obj
     end
     def invalidate
@@ -437,6 +412,12 @@ module GObject
       _v4 = GObject::ClosureNotifyData.wrap(_v3)
       _v4
     end
+    def initialize_simple(sizeof_closure, data)
+      _v1 = sizeof_closure
+      _v2 = GirFFI::InPointer.from(:void, data)
+      _v3 = GObject::Lib.g_closure_new_simple(_v1, _v2)
+      store_pointer(_v3)
+    end
     # @override
     #
     # @param [Proc] marshal The marshaller to use for this closure object
@@ -450,22 +431,11 @@ module GObject
       _v3 = GObject::Lib.g_closure_new_object(_v1, _v2)
       store_pointer(_v3)
     end
-    def initialize_simple(sizeof_closure, data)
-      _v1 = sizeof_closure
-      _v2 = GirFFI::InPointer.from(:void, data)
-      _v3 = GObject::Lib.g_closure_new_simple(_v1, _v2)
-      store_pointer(_v3)
-    end
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::ClosureNotifyData < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def data
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -493,12 +463,7 @@ module GObject
   end
   # XXX: Don't know how to print flags
   class GObject::EnumClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def g_type_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeClass, _v1)
@@ -563,12 +528,7 @@ module GObject
     end
   end
   class GObject::EnumValue < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def value
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
@@ -609,12 +569,7 @@ module GObject
     end
   end
   class GObject::FlagsClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def g_type_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeClass, _v1)
@@ -667,12 +622,7 @@ module GObject
     end
   end
   class GObject::FlagsValue < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def value
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -721,13 +671,8 @@ module GObject
       ::GObject::Lib.g_object_ref_sink(ptr)
     end
   end
-  class GObject::InitiallyUnownedClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  class GObject::InitiallyUnownedClass < GObject::ObjectClass
+  
     def g_type_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeClass, _v1)
@@ -807,12 +752,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::InterfaceInfo < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def interface_init
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::InterfaceInitFunc, _v1)
@@ -878,9 +818,9 @@ module GObject
       _v5 = GirFFI::SizedArray.wrap([:pointer, GObject::ParamSpec], _v4, _v3)
       return _v5
     end
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.make_finalizer(ptr, name)
@@ -947,7 +887,7 @@ module GObject
       _v2 = GObject::Object.wrap(_v1)
       return _v2
     end
-    def replace_data(key, oldval, newval, destroy, old_destroy)
+    def replace_data(key, oldval, newval, old_destroy, &destroy)
       _v1 = GirFFI::InPointer.from(:utf8, key)
       _v2 = GirFFI::InPointer.from(:void, oldval)
       _v3 = GirFFI::InPointer.from(:void, newval)
@@ -956,7 +896,7 @@ module GObject
       _v6 = GObject::Lib.g_object_replace_data(self, _v1, _v2, _v3, _v4, _v5)
       return _v6
     end
-    def replace_qdata(quark, oldval, newval, destroy, old_destroy)
+    def replace_qdata(quark, oldval, newval, old_destroy, &destroy)
       _v1 = quark
       _v2 = GirFFI::InPointer.from(:void, oldval)
       _v3 = GirFFI::InPointer.from(:void, newval)
@@ -993,6 +933,19 @@ module GObject
       _v1 = GObject::Closure.from(closure)
       GObject::Lib.g_object_watch_closure(self, _v1)
     end
+    def initialize_with_automatic_gtype(properties = {})
+      gparameters = properties.map do |name, value|
+        name = name.to_s
+        unless property_param_spec(name) then
+          raise(ArgumentError, "Property '#{name}' not found in class #{self.class}")
+        end
+        GObject::Parameter.new.tap do |gparam|
+          gparam.name = name
+          gparam.value = value
+        end
+      end
+      initialize_without_automatic_gtype(self.class.gtype, gparameters)
+    end
     def store_pointer(ptr)
       super
       klass = self.class
@@ -1015,34 +968,29 @@ module GObject
       GObject.signal_connect_after(self, event, data, &block)
     end
     def get_property_with_override(property_name)
-      pspec = type_class.find_property(property_name)
-      gvalue = GObject::Value.for_gtype(pspec.value_type)
+      gvalue = gvalue_for_property(property_name)
       get_property_without_override(property_name, gvalue)
-      gvalue
+      gvalue.get_value
     end
     def set_property_with_override(property_name, value)
-      pspec = type_class.find_property(property_name)
-      gvalue = GObject::Value.for_gtype(pspec.value_type)
+      gvalue = gvalue_for_property(property_name)
       gvalue.set_value(value)
       set_property_without_override(property_name, gvalue)
     end
     def get_property_extended(property_name)
-      gvalue = get_property(property_name)
+      value = get_property(property_name)
       type_info = get_property_type(property_name)
       case type_info.tag
       when :ghash, :glist then
-        adjust_value_to_type(gvalue.get_value_plain, type_info)
+        adjust_value_to_type(value, type_info)
       else
-        gvalue.get_value
+        value
       end
     end
     def set_property_extended(property_name, value)
       type_info = get_property_type(property_name)
       adjusted_value = adjust_value_to_type(value, type_info)
       set_property(property_name, adjusted_value)
-    end
-    def type_class
-      GObject::ObjectClass.wrap(to_ptr.get_pointer(0))
     end
     def get_property(property_name, value)
       _v1 = GirFFI::InPointer.from(:utf8, property_name)
@@ -1064,13 +1012,8 @@ module GObject
     alias_method 'set_property_without_override', 'set_property'
     alias_method 'floating?', 'is_floating'
   end
-  class GObject::ObjectClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  class GObject::ObjectClass < GObject::TypeClass
+  
     def find_property(property_name)
       _v1 = GirFFI::InPointer.from(:utf8, property_name)
       _v2 = GObject::Lib.g_object_class_find_property(self, _v1)
@@ -1181,14 +1124,12 @@ module GObject
     def get_property=(callback)
       @struct[:get_property] = GObject::ObjectGetPropertyFunc.from(callback)
     end
+    def gtype
+      GirFFI::InOutPointer.new(:GType, to_ptr).to_value
+    end
   end
   class GObject::ObjectConstructParam < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def pspec
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GObject::ParamSpec], _v1)
@@ -1232,7 +1173,7 @@ module GObject
     end
     def get_default_value
       _v1 = GObject::Lib.g_param_spec_get_default_value(self)
-      _v2 = GObject::Value.wrap(_v1)
+      _v2 = GObject::Value.wrap(_v1).get_value
       return _v2
     end
     def get_name
@@ -1392,13 +1333,8 @@ module GObject
       _v3
     end
   end
-  class GObject::ParamSpecClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  class GObject::ParamSpecClass < GObject::TypeClass
+  
     def g_type_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeClass, _v1)
@@ -1794,12 +1730,7 @@ module GObject
     end
   end
   class GObject::ParamSpecTypeInfo < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def instance_size
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:guint16, _v1)
@@ -2050,12 +1981,7 @@ module GObject
     end
   end
   class GObject::Parameter < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def name
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -2089,12 +2015,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
   class GObject::SignalInvocationHint < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def signal_id
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -2134,12 +2055,7 @@ module GObject
   end
   # XXX: Don't know how to print flags
   class GObject::SignalQuery < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def signal_id
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -2269,12 +2185,6 @@ module GObject
       _v3 = GObject::TypeClass.wrap(_v2)
       return _v3
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def peek_parent
       _v1 = GObject::Lib.g_type_class_peek_parent(self)
       _v2 = GObject::TypeClass.wrap(_v1)
@@ -2295,12 +2205,7 @@ module GObject
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print flags
   class GObject::TypeFundamentalInfo < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def type_flags
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeFundamentalFlags, _v1)
@@ -2315,12 +2220,7 @@ module GObject
     end
   end
   class GObject::TypeInfo < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def class_size
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:guint16, _v1)
@@ -2444,12 +2344,7 @@ module GObject
     end
   end
   class GObject::TypeInstance < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def g_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GObject::TypeClass], _v1)
@@ -2485,12 +2380,6 @@ module GObject
       _v4 = _v2.to_value
       _v5 = GirFFI::SizedArray.wrap(:GType, _v4, _v3)
       return _v5
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def peek_parent
       _v1 = GObject::Lib.g_type_interface_peek_parent(self)
@@ -2551,13 +2440,8 @@ module GObject
       return _v1
     end
   end
-  class GObject::TypeModuleClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  class GObject::TypeModuleClass < GObject::ObjectClass
+  
     def parent_class
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::ObjectClass, _v1)
@@ -2604,12 +2488,7 @@ module GObject
   end
   # XXX: Don't know how to print interface
   class GObject::TypePluginClass < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def base_iface
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::TypeInterface, _v1)
@@ -2671,12 +2550,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::TypeQuery < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def type
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:GType, _v1)
@@ -2728,12 +2602,7 @@ module GObject
     end
   end
   class GObject::TypeValueTable < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def value_init
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GObject::Value_init, _v1)
@@ -2812,31 +2681,22 @@ module GObject
       _v3 = GObject::Lib.g_value_type_transformable(_v1, _v2)
       return _v3
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def self.make_finalizer(ptr)
       proc { GObject::Lib.g_value_unset(ptr) }
     end
     # TODO: Give more generic name
     def self.wrap_ruby_value(val)
-      new.tap { |gv| gv.set_ruby_value(val) }
+      new.tap { |gv| gv.__send__(:set_ruby_value, val) }
     end
     def self.from(val)
       case val
       when self then
         val
-      when nil then
-        nil
       else
         wrap_ruby_value(val)
       end
     end
     def self.for_gtype(gtype)
-      return nil if (gtype == TYPE_NONE)
       new.tap { |it| it.init(gtype) }
     end
     # TODO: Combine with wrap_ruby_value
@@ -2967,7 +2827,7 @@ module GObject
     end
     def reset
       _v1 = GObject::Lib.g_value_reset(self)
-      _v2 = GObject::Value.wrap(_v1)
+      _v2 = GObject::Value.wrap(_v1).get_value
       return _v2
     end
     def set_boolean(v_boolean)
@@ -3115,32 +2975,20 @@ module GObject
       _v2.set_value(_v3)
     end
     def init_with_finalizer(type)
-      init_without_finalizer(type).tap do
-        ObjectSpace.define_finalizer(self, self.class.make_finalizer(to_ptr))
-      end
+      return self if [TYPE_NONE, TYPE_INVALID].include?(type)
+      init_without_finalizer(type)
+      ObjectSpace.define_finalizer(self, self.class.make_finalizer(to_ptr))
+      self
     end
     def init(g_type)
       _v1 = g_type
       _v2 = GObject::Lib.g_value_init(self, _v1)
-      _v3 = GObject::Value.wrap(_v2)
+      _v3 = GObject::Value.wrap(_v2).get_value
       return _v3
     end
-    # TODO: Give more generic name
-    def set_ruby_value(val)
-      init_for_ruby_value(val) if (current_gtype == 0)
-      set_value(val)
-    end
+    # TYPE_NONE is skipped
     def set_value(val)
       send(set_method, val)
-    end
-    def init_for_ruby_value(val)
-      CLASS_TO_GTYPE_MAP.each do |klass, type|
-        if val.is_a?(klass) then
-          init(type)
-          return self
-        end
-      end
-      raise("Can't handle #{val.class}")
     end
     def current_gtype
       @struct[:g_type]
@@ -3163,9 +3011,9 @@ module GObject
     alias_method 'value=', 'set_value'
   end
   class GObject::ValueArray < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def append(value)
@@ -3185,7 +3033,7 @@ module GObject
     def get_nth(index_)
       _v1 = index_
       _v2 = GObject::Lib.g_value_array_get_nth(self, _v1)
-      _v3 = GObject::Value.wrap(_v2)
+      _v3 = GObject::Value.wrap(_v2).get_value
       return _v3
     end
     def insert(index_, value)
@@ -3207,9 +3055,9 @@ module GObject
       _v3 = GObject::ValueArray.wrap(_v2)
       return _v3
     end
-    def sort(compare_func, user_data)
+    def sort(&compare_func)
       _v1 = GLib::CompareDataFunc.from(compare_func)
-      _v2 = GirFFI::InPointer.from_closure_data(user_data)
+      _v2 = GirFFI::InPointer.from_closure_data(_v1.object_id)
       _v3 = GObject::Lib.g_value_array_sort_with_data(self, _v1, _v2)
       _v4 = GObject::ValueArray.wrap(_v3)
       return _v4
@@ -3249,12 +3097,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::WeakRef < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
   
   end
   # XXX: Don't know how to print union
@@ -3841,12 +3684,12 @@ module GObject
     _v5 = GObject::Lib.g_signal_accumulator_true_handled(_v1, _v2, _v3, _v4)
     return _v5
   end
-  def self.signal_add_emission_hook(signal_id, detail, hook_func, hook_data, data_destroy)
+  def self.signal_add_emission_hook(signal_id, detail, &hook_func)
     _v1 = signal_id
     _v2 = detail
     _v3 = GObject::SignalEmissionHook.from(hook_func)
-    _v4 = GirFFI::InPointer.from_closure_data(hook_data)
-    _v5 = GLib::DestroyNotify.from(data_destroy)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GObject::Lib.g_signal_add_emission_hook(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
@@ -3879,7 +3722,7 @@ module GObject
     _v4 = GirFFI::InOutPointer.for(GObject::Value)
     _v4.set_value(GObject::Value.from(return_value))
     GObject::Lib.g_signal_emitv(_v1, _v2, _v3, _v4)
-    _v5 = GObject::Value.wrap(_v4.to_value)
+    _v5 = GObject::Value.wrap(_v4.to_value).get_value
     return _v5
   end
   def self.signal_get_invocation_hint(instance)

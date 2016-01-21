@@ -2,10 +2,6 @@ module GLib
   ANALYZER_ANALYZING = 1
   ASCII_DTOSTR_BUF_SIZE = 39
   class GLib::Array < GirFFI::StructBase
-    def self.new(type)
-      ptr = Lib.g_array_new(0, 0, calculated_element_size(type))
-      wrap(type, ptr)
-    end
     # @api private
     def self.from_enumerable(elmtype, it)
       new(elmtype).tap { |arr| arr.append_vals(it) }
@@ -72,12 +68,7 @@ module GLib
   end
   # XXX: Don't know how to print flags
   class GLib::AsyncQueue < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def length
       _v1 = GLib::Lib.g_async_queue_length(self)
       return _v1
@@ -133,12 +124,6 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_bookmark_file_error_quark
       return _v1
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def add_application(uri, name, exec)
       _v1 = GirFFI::InPointer.from(:utf8, uri)
@@ -427,7 +412,9 @@ module GLib
       return _v3
     end
     def self.new
-      wrap(Lib.g_byte_array_new)
+      _v1 = GLib::Lib.g_byte_array_new
+      _v2 = GLib::ByteArray.wrap(_v1)
+      return _v2
     end
     def self.new_take(data)
       len = data.nil? ? (0) : (data.length)
@@ -475,13 +462,15 @@ module GLib
     end
   end
   class GLib::Bytes < GirFFI::StructBase
-    def self.new(arr)
-      data = GirFFI::SizedArray.from(:guint8, arr.size, arr)
-      wrap(Lib.g_bytes_new(data.to_ptr, data.size))
-    end
-    def self.new_take(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize_take, *args)
+      obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def self.new_take(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Bytes)
+      obj = allocate
+      obj.__send__(:initialize_take, *args, &block)
       obj
     end
     def self.from(it)
@@ -560,9 +549,9 @@ module GLib
   CSET_DIGITS = "0123456789"
   CSET_a_2_z = "abcdefghijklmnopqrstuvwxyz"
   class GLib::Checksum < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.type_get_length(checksum_type)
@@ -598,12 +587,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Cond < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def broadcast
       GLib::Lib.g_cond_broadcast(self)
     end
@@ -648,29 +632,26 @@ module GLib
   DIR_SEPARATOR = 92
   DIR_SEPARATOR_S = "\\"
   class GLib::Data < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
   
   end
   # XXX: Don't know how to print callback
   class GLib::Date < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
-    def self.new_dmy(*args)
+    def self.new_dmy(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Date)
       obj = allocate
-      obj.__send__(:initialize_dmy, *args)
+      obj.__send__(:initialize_dmy, *args, &block)
       obj
     end
-    def self.new_julian(*args)
+    def self.new_julian(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Date)
       obj = allocate
-      obj.__send__(:initialize_julian, *args)
+      obj.__send__(:initialize_julian, *args, &block)
       obj
     end
     def self.get_days_in_month(month, year)
@@ -962,54 +943,63 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
   class GLib::DateTime < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
-    def self.new_from_timeval_local(*args)
+    def self.new_from_timeval_local(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_from_timeval_local, *args)
+      obj.__send__(:initialize_from_timeval_local, *args, &block)
       obj
     end
-    def self.new_from_timeval_utc(*args)
+    def self.new_from_timeval_utc(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_from_timeval_utc, *args)
+      obj.__send__(:initialize_from_timeval_utc, *args, &block)
       obj
     end
-    def self.new_from_unix_local(*args)
+    def self.new_from_unix_local(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_from_unix_local, *args)
+      obj.__send__(:initialize_from_unix_local, *args, &block)
       obj
     end
-    def self.new_from_unix_utc(*args)
+    def self.new_from_unix_utc(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_from_unix_utc, *args)
+      obj.__send__(:initialize_from_unix_utc, *args, &block)
       obj
     end
-    def self.new_local(*args)
+    def self.new_local(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_local, *args)
+      obj.__send__(:initialize_local, *args, &block)
       obj
     end
-    def self.new_now(*args)
+    def self.new_now(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_now, *args)
+      obj.__send__(:initialize_now, *args, &block)
       obj
     end
-    def self.new_now_local(*args)
+    def self.new_now_local(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_now_local, *args)
+      obj.__send__(:initialize_now_local, *args, &block)
       obj
     end
-    def self.new_now_utc(*args)
+    def self.new_now_utc(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_now_utc, *args)
+      obj.__send__(:initialize_now_utc, *args, &block)
       obj
     end
-    def self.new_utc(*args)
+    def self.new_utc(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
-      obj.__send__(:initialize_utc, *args)
+      obj.__send__(:initialize_utc, *args, &block)
       obj
     end
     def self.compare(dt1, dt2)
@@ -1259,12 +1249,7 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::DebugKey < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def key
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -1301,12 +1286,6 @@ module GLib
       _v4 = _v3.to_utf8
       return _v4
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def close
       GLib::Lib.g_dir_close(self)
     end
@@ -1323,15 +1302,10 @@ module GLib
   E = 2.718282
   # XXX: Don't know how to print callback
   class GLib::Error < GirFFI::StructBase
-    def self.new_literal(*args)
+    def self.new_literal(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Error)
       obj = allocate
-      obj.__send__(:initialize_literal, *args)
-      obj
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
+      obj.__send__(:initialize_literal, *args, &block)
       obj
     end
     def self.from_exception(ex)
@@ -1504,37 +1478,11 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_unref(_v1)
     end
-    def self.new(keytype, valtype)
-      wrap([keytype, valtype], Lib.g_hash_table_new(hash_function_for(keytype), equality_function_for(keytype)))
-    end
     # @api private
     def self.from_enumerable(typespec, hash)
       ghash = new(*typespec)
       hash.each { |key, val| ghash.insert(key, val) }
       ghash
-    end
-    # @api private
-    def self.hash_function_for(keytype)
-      case keytype
-      when :utf8 then
-        FFI::Function.new(:uint, [:pointer], find_support_function("g_str_hash"))
-      else
-        # do nothing
-      end
-    end
-    # @api private
-    def self.equality_function_for(keytype)
-      case keytype
-      when :utf8 then
-        FFI::Function.new(:int, [:pointer, :pointer], find_support_function("g_str_equal"))
-      else
-        # do nothing
-      end
-    end
-    # @api private
-    def self.find_support_function(name)
-      lib = ::GLib::Lib.ffi_libraries.first
-      lib.find_function(name)
     end
     def each
       prc = proc do |keyptr, valptr, _userdata|
@@ -1561,12 +1509,7 @@ module GLib
     end
   end
   class GLib::HashTableIter < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def init(hash_table)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_iter_init(self, _v1)
@@ -1625,12 +1568,7 @@ module GLib
     end
   end
   class GLib::Hmac < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def get_digest(buffer, digest_len)
       _v1 = buffer
       _v2 = digest_len
@@ -1683,12 +1621,6 @@ module GLib
       _v1 = GLib::HookList.from(hook_list)
       _v2 = GLib::Hook.from(hook)
       GLib::Lib.g_hook_unref(_v1, _v2)
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def compare_ids(sibling)
       _v1 = GLib::Hook.from(sibling)
@@ -1802,12 +1734,7 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::HookList < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def clear
       GLib::Lib.g_hook_list_clear(self)
     end
@@ -1913,12 +1840,6 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::IConv < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def self.open(to_codeset, from_codeset)
       to_ptr = GirFFI::InPointer.from(:utf8, to_codeset)
       from_ptr = GirFFI::InPointer.from(:utf8, from_codeset)
@@ -1941,14 +1862,16 @@ module GLib
   IEEE754_DOUBLE_BIAS = 1023
   IEEE754_FLOAT_BIAS = 127
   class GLib::IOChannel < GirFFI::StructBase
-    def self.new_file(*args)
+    def self.new_file(*args, &block)
+      raise(NoMethodError) unless (self == GLib::IOChannel)
       obj = allocate
-      obj.__send__(:initialize_file, *args)
+      obj.__send__(:initialize_file, *args, &block)
       obj
     end
-    def self.unix_new(*args)
+    def self.unix_new(*args, &block)
+      raise(NoMethodError) unless (self == GLib::IOChannel)
       obj = allocate
-      obj.__send__(:unix_new, *args)
+      obj.__send__(:unix_new, *args, &block)
       obj
     end
     def self.error_from_errno(en)
@@ -1959,12 +1882,6 @@ module GLib
     def self.error_quark
       _v1 = GLib::Lib.g_io_channel_error_quark
       return _v1
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def close
       GLib::Lib.g_io_channel_close(self)
@@ -2303,12 +2220,7 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   class GLib::IOFuncs < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def io_read
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Io_read, _v1)
@@ -2388,9 +2300,9 @@ module GLib
   KEY_FILE_DESKTOP_TYPE_DIRECTORY = "Directory"
   KEY_FILE_DESKTOP_TYPE_LINK = "Link"
   class GLib::KeyFile < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.error_quark
@@ -2800,7 +2712,7 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 0
+  MICRO_VERSION = 2
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
@@ -2808,9 +2720,9 @@ module GLib
   MINOR_VERSION = 46
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.default
@@ -2867,11 +2779,11 @@ module GLib
       _v3 = GLib::Source.wrap(_v2)
       return _v3
     end
-    def invoke_full(priority, function, data, notify)
+    def invoke_full(priority, &function)
       _v1 = priority
       _v2 = GLib::SourceFunc.from(function)
-      _v3 = GirFFI::InPointer.from_closure_data(data)
-      _v4 = GLib::DestroyNotify.from(notify)
+      _v3 = GirFFI::InPointer.from_closure_data(_v2.object_id)
+      _v4 = GLib::DestroyNotify.default
       GLib::Lib.g_main_context_invoke_full(self, _v1, _v2, _v3, _v4)
     end
     def is_owner
@@ -2935,10 +2847,19 @@ module GLib
     end
   end
   class GLib::MainLoop < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
+    end
+    def self.handle_exception(ex)
+      current_loop = RUNNING_LOOPS.last
+      if current_loop then
+        (EXCEPTIONS << ex)
+        current_loop.quit
+      else
+        raise(ex)
+      end
     end
     def get_context
       _v1 = GLib::Lib.g_main_loop_get_context(self)
@@ -2957,6 +2878,9 @@ module GLib
       _v2 = GLib::MainLoop.wrap(_v1)
       return _v2
     end
+    def unref
+      GLib::Lib.g_main_loop_unref(self)
+    end
     def run_with_thread_enabler
       case RUBY_ENGINE
       when "jruby" then
@@ -2966,26 +2890,29 @@ module GLib
       else
         ThreadEnabler.instance.setup_idle_handler
       end
-      run_without_thread_enabler
+      (RUNNING_LOOPS << self)
+      result = run_without_thread_enabler
+      ex = EXCEPTIONS.shift
+      RUNNING_LOOPS.pop
+      raise(ex) if ex
+      result
     end
-    def unref
-      GLib::Lib.g_main_loop_unref(self)
-    end
-    def run(*args, &block)
-      setup_and_call("run", args, &block)
+    def run
+      GLib::Lib.g_main_loop_run(self)
     end
     alias_method 'run', 'run_with_thread_enabler'
     alias_method 'run_without_thread_enabler', 'run'
   end
   class GLib::MappedFile < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
-    def self.new_from_fd(*args)
+    def self.new_from_fd(*args, &block)
+      raise(NoMethodError) unless (self == GLib::MappedFile)
       obj = allocate
-      obj.__send__(:initialize_from_fd, *args)
+      obj.__send__(:initialize_from_fd, *args, &block)
       obj
     end
     def free
@@ -3025,9 +2952,9 @@ module GLib
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print enum
   class GLib::MarkupParseContext < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def end_parse
@@ -3073,12 +3000,7 @@ module GLib
   end
   # XXX: Don't know how to print flags
   class GLib::MarkupParser < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def start_element
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Start_element, _v1)
@@ -3111,12 +3033,7 @@ module GLib
     end
   end
   class GLib::MatchInfo < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def expand_references(string_to_expand)
       _v1 = GirFFI::InPointer.from(:utf8, string_to_expand)
       _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
@@ -3201,12 +3118,7 @@ module GLib
     end
   end
   class GLib::MemVTable < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def malloc
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -3246,12 +3158,7 @@ module GLib
   end
   # XXX: Don't know how to print union
   class GLib::Node < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def child_index(data)
       _v1 = GirFFI::InPointer.from(:void, data)
       _v2 = GLib::Lib.g_node_child_index(self, _v1)
@@ -3373,12 +3280,6 @@ module GLib
       _v2 = result
       GLib::Lib.g_once_init_leave(_v1, _v2)
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def status
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
@@ -3408,12 +3309,7 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print callback
   class GLib::OptionContext < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def add_group(group)
       _v1 = GLib::OptionGroup.from(group)
       GLib::Lib.g_option_context_add_group(self, _v1)
@@ -3506,10 +3402,10 @@ module GLib
       _v1 = GirFFI::InPointer.from(:utf8, summary)
       GLib::Lib.g_option_context_set_summary(self, _v1)
     end
-    def set_translate_func(func, data, destroy_notify)
+    def set_translate_func(&func)
       _v1 = GLib::TranslateFunc.from(func)
-      _v2 = GirFFI::InPointer.from_closure_data(data)
-      _v3 = GLib::DestroyNotify.from(destroy_notify)
+      _v2 = GirFFI::InPointer.from_closure_data(_v1.object_id)
+      _v3 = GLib::DestroyNotify.default
       GLib::Lib.g_option_context_set_translate_func(self, _v1, _v2, _v3)
     end
     def set_translation_domain(domain)
@@ -3518,12 +3414,7 @@ module GLib
     end
   end
   class GLib::OptionEntry < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def long_name
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -3616,9 +3507,9 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
   class GLib::OptionGroup < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def add_entries(entries)
@@ -3633,10 +3524,10 @@ module GLib
       _v2 = GLib::OptionGroup.wrap(_v1)
       return _v2
     end
-    def set_translate_func(func, data, destroy_notify)
+    def set_translate_func(&func)
       _v1 = GLib::TranslateFunc.from(func)
-      _v2 = GirFFI::InPointer.from_closure_data(data)
-      _v3 = GLib::DestroyNotify.from(destroy_notify)
+      _v2 = GirFFI::InPointer.from_closure_data(_v1.object_id)
+      _v3 = GLib::DestroyNotify.default
       GLib::Lib.g_option_group_set_translate_func(self, _v1, _v2, _v3)
     end
     def set_translation_domain(domain)
@@ -3659,12 +3550,7 @@ module GLib
   PRIORITY_HIGH_IDLE = 100
   PRIORITY_LOW = 300
   class GLib::PatternSpec < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def equal(pspec2)
       _v1 = GLib::PatternSpec.from(pspec2)
       _v2 = GLib::Lib.g_pattern_spec_equal(self, _v1)
@@ -3675,12 +3561,7 @@ module GLib
     end
   end
   class GLib::PollFD < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def fd
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
@@ -3721,12 +3602,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::Private < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def replace(value)
       _v1 = GirFFI::InPointer.from(:void, value)
       GLib::Lib.g_private_replace(self, _v1)
@@ -3756,9 +3632,6 @@ module GLib
     end
   end
   class GLib::PtrArray < GirFFI::StructBase
-    def self.new(type)
-      wrap(type, Lib.g_ptr_array_new)
-    end
     def self.from_enumerable(type, it)
       new(type).tap { |arr| arr.add_array(it) }
     end
@@ -3817,19 +3690,14 @@ module GLib
     end
   end
   class GLib::Queue < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def clear
       GLib::Lib.g_queue_clear(self)
     end
     def free
       GLib::Lib.g_queue_free(self)
     end
-    def free_full(free_func)
+    def free_full(&free_func)
       _v1 = GLib::DestroyNotify.from(free_func)
       GLib::Lib.g_queue_free_full(self, _v1)
     end
@@ -3915,12 +3783,7 @@ module GLib
     end
   end
   class GLib::RWLock < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def clear
       GLib::Lib.g_rw_lock_clear(self)
     end
@@ -3962,12 +3825,7 @@ module GLib
     end
   end
   class GLib::Rand < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def double
       _v1 = GLib::Lib.g_rand_double(self)
       return _v1
@@ -4002,12 +3860,7 @@ module GLib
     end
   end
   class GLib::RecMutex < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def clear
       GLib::Lib.g_rec_mutex_clear(self)
     end
@@ -4039,9 +3892,9 @@ module GLib
     end
   end
   class GLib::Regex < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.check_replacement(replacement)
@@ -4269,12 +4122,7 @@ module GLib
   SYSDEF_MSG_OOB = 1
   SYSDEF_MSG_PEEK = 2
   class GLib::Scanner < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def cur_line
       _v1 = GLib::Lib.g_scanner_cur_line(self)
       return _v1
@@ -4566,12 +4414,7 @@ module GLib
     end
   end
   class GLib::ScannerConfig < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def cset_skip_characters
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -4928,12 +4771,6 @@ module GLib
       _v2 = GLib::SequenceIter.from(b)
       GLib::Lib.g_sequence_swap(_v1, _v2)
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def free
       GLib::Lib.g_sequence_free(self)
     end
@@ -4943,12 +4780,7 @@ module GLib
     end
   end
   class GLib::SequenceIter < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def compare(b)
       _v1 = GLib::SequenceIter.from(b)
       _v2 = GLib::Lib.g_sequence_iter_compare(self, _v1)
@@ -4971,9 +4803,9 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
   class GLib::Source < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def self.remove(tag)
@@ -5078,10 +4910,10 @@ module GLib
       _v1 = GirFFI::InPointer.from(:void, tag)
       GLib::Lib.g_source_remove_unix_fd(self, _v1)
     end
-    def set_callback(func, data, notify)
+    def set_callback(&func)
       _v1 = GLib::SourceFunc.from(func)
-      _v2 = GirFFI::InPointer.from_closure_data(data)
-      _v3 = GLib::DestroyNotify.from(notify)
+      _v2 = GirFFI::InPointer.from_closure_data(_v1.object_id)
+      _v3 = GLib::DestroyNotify.default
       GLib::Lib.g_source_set_callback(self, _v1, _v2, _v3)
     end
     def set_callback_indirect(callback_data, callback_funcs)
@@ -5200,12 +5032,7 @@ module GLib
     end
   end
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def ref
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Ref, _v1)
@@ -5228,12 +5055,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::SourceFuncs < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def prepare
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Prepare, _v1)
@@ -5272,33 +5094,18 @@ module GLib
     end
   end
   class GLib::SourcePrivate < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
   
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::StatBuf < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
   
   end
   class GLib::String < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def append(val)
       _v1 = GirFFI::InPointer.from(:utf8, val)
       _v2 = GLib::Lib.g_string_append(self, _v1)
@@ -5505,12 +5312,7 @@ module GLib
     end
   end
   class GLib::StringChunk < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def clear
       GLib::Lib.g_string_chunk_clear(self)
     end
@@ -5543,21 +5345,11 @@ module GLib
   TIME_SPAN_MINUTE = 60000000
   TIME_SPAN_SECOND = 1000000
   class GLib::TestCase < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
   
   end
   class GLib::TestConfig < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def test_initialized
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
@@ -5636,12 +5428,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::TestLogBuffer < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def free
       GLib::Lib.g_test_log_buffer_free(self)
     end
@@ -5667,12 +5454,7 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::TestLogMsg < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def free
       GLib::Lib.g_test_log_msg_free(self)
     end
@@ -5741,12 +5523,7 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::TestSuite < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def add(test_case)
       _v1 = GLib::TestCase.from(test_case)
       GLib::Lib.g_test_suite_add(self, _v1)
@@ -5773,12 +5550,6 @@ module GLib
     end
     def self.yield
       GLib::Lib.g_thread_yield
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def ref
       _v1 = GLib::Lib.g_thread_ref(self)
@@ -5813,12 +5584,6 @@ module GLib
     end
     def self.stop_unused_threads
       GLib::Lib.g_thread_pool_stop_unused_threads
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def free(immediate, wait_)
       _v1 = immediate
@@ -5901,12 +5666,6 @@ module GLib
       _v3 = GLib::Lib.g_time_val_from_iso8601(_v1, _v2)
       return [_v3, _v2]
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def add(microseconds)
       _v1 = microseconds
       GLib::Lib.g_time_val_add(self, _v1)
@@ -5942,19 +5701,21 @@ module GLib
     end
   end
   class GLib::TimeZone < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
-    def self.new_local(*args)
+    def self.new_local(*args, &block)
+      raise(NoMethodError) unless (self == GLib::TimeZone)
       obj = allocate
-      obj.__send__(:initialize_local, *args)
+      obj.__send__(:initialize_local, *args, &block)
       obj
     end
-    def self.new_utc(*args)
+    def self.new_utc(*args, &block)
+      raise(NoMethodError) unless (self == GLib::TimeZone)
       obj = allocate
-      obj.__send__(:initialize_utc, *args)
+      obj.__send__(:initialize_utc, *args, &block)
       obj
     end
     def adjust_time(type, time_)
@@ -6003,12 +5764,7 @@ module GLib
     end
   end
   class GLib::Timer < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def continue
       GLib::Lib.g_timer_continue(self)
     end
@@ -6044,12 +5800,6 @@ module GLib
       _v2 = GirFFI::InPointer.from(:void, data_p)
       GLib::Lib.g_trash_stack_push(_v1, _v2)
     end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
     def next
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::TrashStack], _v1)
@@ -6068,12 +5818,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
   class GLib::Tree < GirFFI::StructBase
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
-    end
+  
     def destroy
       GLib::Lib.g_tree_destroy(self)
     end
@@ -6128,129 +5873,154 @@ module GLib
   VA_COPY_AS_ARRAY = 1
   VERSION_MIN_REQUIRED = 2
   class GLib::Variant < GirFFI::StructBase
-    def self.new_array(*args)
+    def self.new_array(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_array, *args)
+      obj.__send__(:initialize_array, *args, &block)
       obj
     end
-    def self.new_boolean(*args)
+    def self.new_boolean(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_boolean, *args)
+      obj.__send__(:initialize_boolean, *args, &block)
       obj
     end
-    def self.new_byte(*args)
+    def self.new_byte(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_byte, *args)
+      obj.__send__(:initialize_byte, *args, &block)
       obj
     end
-    def self.new_bytestring(*args)
+    def self.new_bytestring(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_bytestring, *args)
+      obj.__send__(:initialize_bytestring, *args, &block)
       obj
     end
-    def self.new_bytestring_array(*args)
+    def self.new_bytestring_array(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_bytestring_array, *args)
+      obj.__send__(:initialize_bytestring_array, *args, &block)
       obj
     end
-    def self.new_dict_entry(*args)
+    def self.new_dict_entry(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_dict_entry, *args)
+      obj.__send__(:initialize_dict_entry, *args, &block)
       obj
     end
-    def self.new_double(*args)
+    def self.new_double(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_double, *args)
+      obj.__send__(:initialize_double, *args, &block)
       obj
     end
-    def self.new_fixed_array(*args)
+    def self.new_fixed_array(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_fixed_array, *args)
+      obj.__send__(:initialize_fixed_array, *args, &block)
       obj
     end
-    def self.new_from_bytes(*args)
+    def self.new_from_bytes(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_from_bytes, *args)
+      obj.__send__(:initialize_from_bytes, *args, &block)
       obj
     end
-    def self.new_from_data(*args)
+    def self.new_from_data(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_from_data, *args)
+      obj.__send__(:initialize_from_data, *args, &block)
       obj
     end
-    def self.new_handle(*args)
+    def self.new_handle(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_handle, *args)
+      obj.__send__(:initialize_handle, *args, &block)
       obj
     end
-    def self.new_int16(*args)
+    def self.new_int16(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_int16, *args)
+      obj.__send__(:initialize_int16, *args, &block)
       obj
     end
-    def self.new_int32(*args)
+    def self.new_int32(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_int32, *args)
+      obj.__send__(:initialize_int32, *args, &block)
       obj
     end
-    def self.new_int64(*args)
+    def self.new_int64(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_int64, *args)
+      obj.__send__(:initialize_int64, *args, &block)
       obj
     end
-    def self.new_maybe(*args)
+    def self.new_maybe(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_maybe, *args)
+      obj.__send__(:initialize_maybe, *args, &block)
       obj
     end
-    def self.new_object_path(*args)
+    def self.new_object_path(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_object_path, *args)
+      obj.__send__(:initialize_object_path, *args, &block)
       obj
     end
-    def self.new_objv(*args)
+    def self.new_objv(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_objv, *args)
+      obj.__send__(:initialize_objv, *args, &block)
       obj
     end
-    def self.new_signature(*args)
+    def self.new_signature(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_signature, *args)
+      obj.__send__(:initialize_signature, *args, &block)
       obj
     end
-    def self.new_string(*args)
+    def self.new_string(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_string, *args)
+      obj.__send__(:initialize_string, *args, &block)
       obj
     end
-    def self.new_strv(*args)
+    def self.new_strv(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_strv, *args)
+      obj.__send__(:initialize_strv, *args, &block)
       obj
     end
-    def self.new_tuple(*args)
+    def self.new_tuple(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_tuple, *args)
+      obj.__send__(:initialize_tuple, *args, &block)
       obj
     end
-    def self.new_uint16(*args)
+    def self.new_uint16(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_uint16, *args)
+      obj.__send__(:initialize_uint16, *args, &block)
       obj
     end
-    def self.new_uint32(*args)
+    def self.new_uint32(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_uint32, *args)
+      obj.__send__(:initialize_uint32, *args, &block)
       obj
     end
-    def self.new_uint64(*args)
+    def self.new_uint64(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_uint64, *args)
+      obj.__send__(:initialize_uint64, *args, &block)
       obj
     end
-    def self.new_variant(*args)
+    def self.new_variant(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
-      obj.__send__(:initialize_variant, *args)
+      obj.__send__(:initialize_variant, *args, &block)
       obj
     end
     def self.is_object_path(string)
@@ -6288,12 +6058,6 @@ module GLib
     def self.parser_get_error_quark
       _v1 = GLib::Lib.g_variant_parser_get_error_quark
       return _v1
-    end
-    # TODO: Make this behave more like a real .new method
-    def self._allocate
-      obj = allocate
-      obj.instance_variable_set(:@struct, self::Struct.new)
-      obj
     end
     def byteswap
       _v1 = GLib::Lib.g_variant_byteswap(self)
@@ -6597,7 +6361,7 @@ module GLib
       _v4 = GLib::Lib.g_variant_new_from_bytes(_v1, _v2, _v3)
       store_pointer(_v4)
     end
-    def initialize_from_data(type, data, trusted, notify, user_data)
+    def initialize_from_data(type, data, trusted, user_data, &notify)
       _v1 = GLib::VariantType.from(type)
       size = data.nil? ? (0) : (data.length)
       _v2 = size
@@ -6694,9 +6458,9 @@ module GLib
     alias_method 'get_string_without_override', 'get_string'
   end
   class GLib::VariantBuilder < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def add_value(value)
@@ -6733,9 +6497,9 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::VariantDict < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
     def clear
@@ -6786,29 +6550,33 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::VariantType < GirFFI::StructBase
-    def self.new(*args)
+    def self.new(*args, &block)
       obj = allocate
-      obj.__send__(:initialize, *args)
+      obj.__send__(:initialize, *args, &block)
       obj
     end
-    def self.new_array(*args)
+    def self.new_array(*args, &block)
+      raise(NoMethodError) unless (self == GLib::VariantType)
       obj = allocate
-      obj.__send__(:initialize_array, *args)
+      obj.__send__(:initialize_array, *args, &block)
       obj
     end
-    def self.new_dict_entry(*args)
+    def self.new_dict_entry(*args, &block)
+      raise(NoMethodError) unless (self == GLib::VariantType)
       obj = allocate
-      obj.__send__(:initialize_dict_entry, *args)
+      obj.__send__(:initialize_dict_entry, *args, &block)
       obj
     end
-    def self.new_maybe(*args)
+    def self.new_maybe(*args, &block)
+      raise(NoMethodError) unless (self == GLib::VariantType)
       obj = allocate
-      obj.__send__(:initialize_maybe, *args)
+      obj.__send__(:initialize_maybe, *args, &block)
       obj
     end
-    def self.new_tuple(*args)
+    def self.new_tuple(*args, &block)
+      raise(NoMethodError) unless (self == GLib::VariantType)
       obj = allocate
-      obj.__send__(:initialize_tuple, *args)
+      obj.__send__(:initialize_tuple, *args, &block)
       obj
     end
     def self.checked_(arg0)
@@ -7084,7 +6852,7 @@ module GLib
     _v5 = GirFFI::InPointer.from(:utf8, expr)
     GLib::Lib.g_assertion_message_expr(_v1, _v2, _v3, _v4, _v5)
   end
-  def self.atexit(func)
+  def self.atexit(&func)
     _v1 = GLib::VoidFunc.from(func)
     GLib::Lib.g_atexit(_v1)
   end
@@ -7354,12 +7122,12 @@ module GLib
     _v2 = GLib::Lib.g_checksum_type_get_length(_v1)
     return _v2
   end
-  def self.child_watch_add(priority, pid, function, data, notify)
+  def self.child_watch_add(priority, pid, &function)
     _v1 = priority
     _v2 = pid
     _v3 = GLib::ChildWatchFunc.from(function)
-    _v4 = GirFFI::InPointer.from_closure_data(data)
-    _v5 = GLib::DestroyNotify.from(notify)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GLib::Lib.g_child_watch_add_full(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
@@ -7481,7 +7249,7 @@ module GLib
     _v2 = GLib::Lib.g_datalist_get_flags(_v1)
     return _v2
   end
-  def self.datalist_id_replace_data(datalist, key_id, oldval, newval, destroy, old_destroy)
+  def self.datalist_id_replace_data(datalist, key_id, oldval, newval, old_destroy, &destroy)
     _v1 = GLib::Data.from(datalist)
     _v2 = key_id
     _v3 = GirFFI::InPointer.from(:void, oldval)
@@ -7491,7 +7259,7 @@ module GLib
     _v7 = GLib::Lib.g_datalist_id_replace_data(_v1, _v2, _v3, _v4, _v5, _v6)
     return _v7
   end
-  def self.datalist_id_set_data_full(datalist, key_id, data, destroy_func)
+  def self.datalist_id_set_data_full(datalist, key_id, data, &destroy_func)
     _v1 = GLib::Data.from(datalist)
     _v2 = key_id
     _v3 = GirFFI::InPointer.from(:void, data)
@@ -7516,7 +7284,7 @@ module GLib
     _v1 = GirFFI::InPointer.from(:void, dataset_location)
     GLib::Lib.g_dataset_destroy(_v1)
   end
-  def self.dataset_id_set_data_full(dataset_location, key_id, data, destroy_func)
+  def self.dataset_id_set_data_full(dataset_location, key_id, data, &destroy_func)
     _v1 = GirFFI::InPointer.from(:void, dataset_location)
     _v2 = key_id
     _v3 = GirFFI::InPointer.from(:void, data)
@@ -8096,11 +7864,11 @@ module GLib
     _v6 = GLib::Lib.g_iconv(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
-  def self.idle_add(priority, function, data, notify)
+  def self.idle_add(priority, &function)
     _v1 = priority
     _v2 = GLib::SourceFunc.from(function)
-    _v3 = GirFFI::InPointer.from_closure_data(data)
-    _v4 = GLib::DestroyNotify.from(notify)
+    _v3 = GirFFI::InPointer.from_closure_data(_v2.object_id)
+    _v4 = GLib::DestroyNotify.default
     _v5 = GLib::Lib.g_idle_add_full(_v1, _v2, _v3, _v4)
     return _v5
   end
@@ -8148,13 +7916,13 @@ module GLib
     _v3 = _v2.to_utf8
     return _v3
   end
-  def self.io_add_watch(channel, priority, condition, func, user_data, notify)
+  def self.io_add_watch(channel, priority, condition, &func)
     _v1 = GLib::IOChannel.from(channel)
     _v2 = priority
     _v3 = condition
     _v4 = GLib::IOFunc.from(func)
-    _v5 = GirFFI::InPointer.from_closure_data(user_data)
-    _v6 = GLib::DestroyNotify.from(notify)
+    _v5 = GirFFI::InPointer.from_closure_data(_v4.object_id)
+    _v6 = GLib::DestroyNotify.default
     _v7 = GLib::Lib.g_io_add_watch_full(_v1, _v2, _v3, _v4, _v5, _v6)
     return _v7
   end
@@ -8228,12 +7996,12 @@ module GLib
     _v3 = GLib::Lib.g_log_set_fatal_mask(_v1, _v2)
     return _v3
   end
-  def self.log_set_handler(log_domain, log_levels, log_func, user_data, destroy)
+  def self.log_set_handler(log_domain, log_levels, &log_func)
     _v1 = GirFFI::InPointer.from(:utf8, log_domain)
     _v2 = log_levels
     _v3 = GLib::LogFunc.from(log_func)
-    _v4 = GirFFI::InPointer.from_closure_data(user_data)
-    _v5 = GLib::DestroyNotify.from(destroy)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GLib::Lib.g_log_set_handler_full(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
@@ -8657,13 +8425,13 @@ module GLib
     _v2 = GLib::Lib.g_spaced_primes_closest(_v1)
     return _v2
   end
-  def self.spawn_async(working_directory, argv, envp, flags, child_setup, user_data)
+  def self.spawn_async(working_directory, argv, envp, flags, &child_setup)
     _v1 = GirFFI::InPointer.from(:utf8, working_directory)
     _v2 = GLib::Strv.from(argv)
     _v3 = GLib::Strv.from(envp)
     _v4 = flags
     _v5 = GLib::SpawnChildSetupFunc.from(child_setup)
-    _v6 = GirFFI::InPointer.from_closure_data(user_data)
+    _v6 = GirFFI::InPointer.from_closure_data(_v5.object_id)
     _v7 = GirFFI::InOutPointer.for(:gint32)
     _v8 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
     _v9 = GLib::Lib.g_spawn_async(_v1, _v2, _v3, _v4, _v5, _v6, _v7, _v8)
@@ -8671,13 +8439,13 @@ module GLib
     _v10 = _v7.to_value
     return [_v9, _v10]
   end
-  def self.spawn_async_with_pipes(working_directory, argv, envp, flags, child_setup, user_data)
+  def self.spawn_async_with_pipes(working_directory, argv, envp, flags, &child_setup)
     _v1 = GirFFI::InPointer.from(:utf8, working_directory)
     _v2 = GLib::Strv.from(argv)
     _v3 = GLib::Strv.from(envp)
     _v4 = flags
     _v5 = GLib::SpawnChildSetupFunc.from(child_setup)
-    _v6 = GirFFI::InPointer.from_closure_data(user_data)
+    _v6 = GirFFI::InPointer.from_closure_data(_v5.object_id)
     _v7 = GirFFI::InOutPointer.for(:gint32)
     _v8 = GirFFI::InOutPointer.for(:gint32)
     _v9 = GirFFI::InOutPointer.for(:gint32)
@@ -8730,13 +8498,13 @@ module GLib
     _v1 = GLib::Lib.g_spawn_exit_error_quark
     return _v1
   end
-  def self.spawn_sync(working_directory, argv, envp, flags, child_setup, user_data)
+  def self.spawn_sync(working_directory, argv, envp, flags, &child_setup)
     _v1 = GirFFI::InPointer.from(:utf8, working_directory)
     _v2 = GLib::Strv.from(argv)
     _v3 = GLib::Strv.from(envp)
     _v4 = flags
     _v5 = GLib::SpawnChildSetupFunc.from(child_setup)
-    _v6 = GirFFI::InPointer.from_closure_data(user_data)
+    _v6 = GirFFI::InPointer.from_closure_data(_v5.object_id)
     _v7 = GirFFI::InOutPointer.for([:pointer, :zero_terminated])
     _v8 = GirFFI::InOutPointer.for([:pointer, :zero_terminated])
     _v9 = GirFFI::InOutPointer.for(:gint32)
@@ -9011,20 +8779,20 @@ module GLib
     _v2 = GLib::Lib.g_strv_length(_v1)
     return _v2
   end
-  def self.test_add_data_func(testpath, test_data, test_func)
+  def self.test_add_data_func(testpath, test_data, &test_func)
     _v1 = GirFFI::InPointer.from(:utf8, testpath)
     _v2 = GirFFI::InPointer.from(:void, test_data)
     _v3 = GLib::TestDataFunc.from(test_func)
     GLib::Lib.g_test_add_data_func(_v1, _v2, _v3)
   end
-  def self.test_add_data_func_full(testpath, test_data, test_func, data_free_func)
+  def self.test_add_data_func_full(testpath, test_data, &test_func)
     _v1 = GirFFI::InPointer.from(:utf8, testpath)
     _v2 = GirFFI::InPointer.from(:void, test_data)
     _v3 = GLib::TestDataFunc.from(test_func)
-    _v4 = GLib::DestroyNotify.from(data_free_func)
+    _v4 = GLib::DestroyNotify.default
     GLib::Lib.g_test_add_data_func_full(_v1, _v2, _v3, _v4)
   end
-  def self.test_add_func(testpath, test_func)
+  def self.test_add_func(testpath, &test_func)
     _v1 = GirFFI::InPointer.from(:utf8, testpath)
     _v2 = GLib::TestFunc.from(test_func)
     GLib::Lib.g_test_add_func(_v1, _v2)
@@ -9073,7 +8841,7 @@ module GLib
     _v3 = _v2.to_utf8
     return _v3
   end
-  def self.test_queue_destroy(destroy_func, destroy_data)
+  def self.test_queue_destroy(destroy_data, &destroy_func)
     _v1 = GLib::DestroyNotify.from(destroy_func)
     _v2 = GirFFI::InPointer.from(:void, destroy_data)
     GLib::Lib.g_test_queue_destroy(_v1, _v2)
@@ -9207,21 +8975,21 @@ module GLib
     _v3 = GLib::Lib.g_time_val_from_iso8601(_v1, _v2)
     return [_v3, _v2]
   end
-  def self.timeout_add(priority, interval, function, data, notify)
+  def self.timeout_add(priority, interval, &function)
     _v1 = priority
     _v2 = interval
     _v3 = GLib::SourceFunc.from(function)
-    _v4 = GirFFI::InPointer.from_closure_data(data)
-    _v5 = GLib::DestroyNotify.from(notify)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GLib::Lib.g_timeout_add_full(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
-  def self.timeout_add_seconds(priority, interval, function, data, notify)
+  def self.timeout_add_seconds(priority, interval, &function)
     _v1 = priority
     _v2 = interval
     _v3 = GLib::SourceFunc.from(function)
-    _v4 = GirFFI::InPointer.from_closure_data(data)
-    _v5 = GLib::DestroyNotify.from(notify)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GLib::Lib.g_timeout_add_seconds_full(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
@@ -9462,13 +9230,13 @@ module GLib
     _v1 = GLib::Lib.g_unix_error_quark
     return _v1
   end
-  def self.unix_fd_add_full(priority, fd, condition, function, user_data, notify)
+  def self.unix_fd_add_full(priority, fd, condition, &function)
     _v1 = priority
     _v2 = fd
     _v3 = condition
     _v4 = GLib::UnixFDSourceFunc.from(function)
-    _v5 = GirFFI::InPointer.from_closure_data(user_data)
-    _v6 = GLib::DestroyNotify.from(notify)
+    _v5 = GirFFI::InPointer.from_closure_data(_v4.object_id)
+    _v6 = GLib::DestroyNotify.default
     _v7 = GLib::Lib.g_unix_fd_add_full(_v1, _v2, _v3, _v4, _v5, _v6)
     return _v7
   end
@@ -9495,12 +9263,12 @@ module GLib
     GirFFI::ArgHelper.check_error(_v3)
     return _v4
   end
-  def self.unix_signal_add(priority, signum, handler, user_data, notify)
+  def self.unix_signal_add(priority, signum, &handler)
     _v1 = priority
     _v2 = signum
     _v3 = GLib::SourceFunc.from(handler)
-    _v4 = GirFFI::InPointer.from_closure_data(user_data)
-    _v5 = GLib::DestroyNotify.from(notify)
+    _v4 = GirFFI::InPointer.from_closure_data(_v3.object_id)
+    _v5 = GLib::DestroyNotify.default
     _v6 = GLib::Lib.g_unix_signal_add_full(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
