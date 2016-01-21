@@ -3,13 +3,22 @@ module GLib
   ASCII_DTOSTR_BUF_SIZE = 39
   class GLib::Array < GirFFI::StructBase
     # @api private
-    def self.from_enumerable(elmtype, it)
-      new(elmtype).tap { |arr| arr.append_vals(it) }
-    end
-    # @api private
     def self.calculated_element_size(type)
       ffi_type = GirFFI::TypeMap.type_specification_to_ffi_type(type)
       FFI.type_size(ffi_type)
+    end
+    # @api private
+    def self.from_enumerable(elmtype, it)
+      new(elmtype).tap { |arr| arr.append_vals(it) }
+    end
+    def ==(other)
+      (to_a == other.to_a)
+    end
+    # @override
+    def append_vals(ary)
+      bytes = GirFFI::InPointer.from_array(element_type, ary)
+      Lib.g_array_append_vals(self, bytes, ary.length)
+      self
     end
     def data
       _v1 = (@struct.to_ptr + 0)
@@ -24,6 +33,12 @@ module GLib
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
+    def each
+      length.times { |idx| yield(index(idx)) }
+    end
+    def get_element_size
+      Lib.g_array_get_element_size(self)
+    end
     def len
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -36,23 +51,8 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    # @override
-    def append_vals(ary)
-      bytes = GirFFI::InPointer.from_array(element_type, ary)
-      Lib.g_array_append_vals(self, bytes, ary.length)
-      self
-    end
-    def each
-      length.times { |idx| yield(index(idx)) }
-    end
     def length
       @struct[:len]
-    end
-    def get_element_size
-      Lib.g_array_get_element_size(self)
-    end
-    def ==(other)
-      (to_a == other.to_a)
     end
     # @api private
     def reset_typespec(typespec = nil)
@@ -428,6 +428,11 @@ module GLib
       _v1 = array
       GLib::Lib.g_byte_array_unref(_v1)
     end
+    def append(data)
+      bytes = GirFFI::InPointer.from(:utf8, data)
+      len = data.bytesize
+      self.class.wrap(Lib.g_byte_array_append(to_ptr, bytes, len))
+    end
     def data
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :guint8], _v1)
@@ -455,13 +460,18 @@ module GLib
     def to_string
       GirFFI::ArgHelper.ptr_to_utf8_length(@struct[:data], @struct[:len])
     end
-    def append(data)
-      bytes = GirFFI::InPointer.from(:utf8, data)
-      len = data.bytesize
-      self.class.wrap(Lib.g_byte_array_append(to_ptr, bytes, len))
-    end
   end
   class GLib::Bytes < GirFFI::StructBase
+    def self.from(it)
+      case it
+      when self then
+        it
+      when FFI::Pointer then
+        wrap(it)
+      else
+        new(it)
+      end
+    end
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
@@ -473,25 +483,25 @@ module GLib
       obj.__send__(:initialize_take, *args, &block)
       obj
     end
-    def self.from(it)
-      case it
-      when self then
-        it
-      when FFI::Pointer then
-        wrap(it)
-      else
-        new(it)
-      end
-    end
     def compare(bytes2)
       _v1 = GLib::Bytes.from(bytes2)
       _v2 = GLib::Lib.g_bytes_compare(self, _v1)
       return _v2
     end
+    def each(&block)
+      data.each(&block)
+    end
     def equal(bytes2)
       _v1 = GLib::Bytes.from(bytes2)
       _v2 = GLib::Lib.g_bytes_equal(self, _v1)
       return _v2
+    end
+    # @override
+    def get_data
+      length_ptr = GirFFI::InOutPointer.for(:gsize)
+      data_ptr = Lib.g_bytes_get_data(self, length_ptr)
+      length = length_ptr.to_value
+      GirFFI::SizedArray.wrap(:guint8, length, data_ptr)
     end
     def get_size
       _v1 = GLib::Lib.g_bytes_get_size(self)
@@ -500,6 +510,13 @@ module GLib
     def hash
       _v1 = GLib::Lib.g_bytes_hash(self)
       return _v1
+    end
+    def initialize_take(data)
+      size = data.nil? ? (0) : (data.length)
+      _v1 = size
+      _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
+      _v3 = GLib::Lib.g_bytes_new_take(_v2, _v1)
+      store_pointer(_v3)
     end
     def new_from_bytes(offset, length)
       _v1 = offset
@@ -525,23 +542,6 @@ module GLib
       _v1 = size
       _v2 = GLib::Lib.g_bytes_unref_to_data(self.ref, _v1)
       return _v2
-    end
-    # @override
-    def get_data
-      length_ptr = GirFFI::InOutPointer.for(:gsize)
-      data_ptr = Lib.g_bytes_get_data(self, length_ptr)
-      length = length_ptr.to_value
-      GirFFI::SizedArray.wrap(:guint8, length, data_ptr)
-    end
-    def each(&block)
-      data.each(&block)
-    end
-    def initialize_take(data)
-      size = data.nil? ? (0) : (data.length)
-      _v1 = size
-      _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
-      _v3 = GLib::Lib.g_bytes_new_take(_v2, _v1)
-      store_pointer(_v3)
     end
   end
   CAN_INLINE = 1
@@ -594,8 +594,21 @@ module GLib
     def clear
       GLib::Lib.g_cond_clear(self)
     end
+    def i
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
+      _v4
+    end
     def init
       GLib::Lib.g_cond_init(self)
+    end
+    def p
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def signal
       GLib::Lib.g_cond_signal(self)
@@ -609,19 +622,6 @@ module GLib
       _v2 = end_time
       _v3 = GLib::Lib.g_cond_wait_until(self, _v1, _v2)
       return _v3
-    end
-    def p
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
-      _v4
     end
   end
   # XXX: Don't know how to print enum
@@ -637,23 +637,6 @@ module GLib
   end
   # XXX: Don't know how to print callback
   class GLib::Date < GirFFI::StructBase
-    def self.new(*args, &block)
-      obj = allocate
-      obj.__send__(:initialize, *args, &block)
-      obj
-    end
-    def self.new_dmy(*args, &block)
-      raise(NoMethodError) unless (self == GLib::Date)
-      obj = allocate
-      obj.__send__(:initialize_dmy, *args, &block)
-      obj
-    end
-    def self.new_julian(*args, &block)
-      raise(NoMethodError) unless (self == GLib::Date)
-      obj = allocate
-      obj.__send__(:initialize_julian, *args, &block)
-      obj
-    end
     def self.get_days_in_month(month, year)
       _v1 = month
       _v2 = year
@@ -674,6 +657,23 @@ module GLib
       _v1 = year
       _v2 = GLib::Lib.g_date_is_leap_year(_v1)
       return _v2
+    end
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def self.new_dmy(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Date)
+      obj = allocate
+      obj.__send__(:initialize_dmy, *args, &block)
+      obj
+    end
+    def self.new_julian(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Date)
+      obj = allocate
+      obj.__send__(:initialize_julian, *args, &block)
+      obj
     end
     def self.strftime(s, slen, format, date)
       _v1 = GirFFI::InPointer.from(:utf8, s)
@@ -741,10 +741,34 @@ module GLib
       _v2 = GLib::Lib.g_date_compare(self, _v1)
       return _v2
     end
+    def day
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def day=(value)
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def days_between(date2)
       _v1 = GLib::Date.from(date2)
       _v2 = GLib::Lib.g_date_days_between(self, _v1)
       return _v2
+    end
+    def dmy
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def dmy=(value)
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
     end
     def free
       GLib::Lib.g_date_free(self)
@@ -785,6 +809,18 @@ module GLib
       _v1 = GLib::Lib.g_date_get_year(self)
       return _v1
     end
+    def initialize_dmy(day, month, year)
+      _v1 = day
+      _v2 = month
+      _v3 = year
+      _v4 = GLib::Lib.g_date_new_dmy(_v1, _v2, _v3)
+      store_pointer(_v4)
+    end
+    def initialize_julian(julian_day)
+      _v1 = julian_day
+      _v2 = GLib::Lib.g_date_new_julian(_v1)
+      store_pointer(_v2)
+    end
     def is_first_of_month
       _v1 = GLib::Lib.g_date_is_first_of_month(self)
       return _v1
@@ -792,6 +828,42 @@ module GLib
     def is_last_of_month
       _v1 = GLib::Lib.g_date_is_last_of_month(self)
       return _v1
+    end
+    def julian
+      _v1 = (@struct.to_ptr + 4)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def julian=(value)
+      _v1 = (@struct.to_ptr + 4)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def julian_days
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def julian_days=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def month
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def month=(value)
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
     end
     def order(date2)
       _v1 = GLib::Date.from(date2)
@@ -855,66 +927,6 @@ module GLib
       _v1 = GLib::Lib.g_date_valid(self)
       return _v1
     end
-    def julian_days
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def julian_days=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def julian
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def julian=(value)
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def dmy
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def dmy=(value)
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def day
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def day=(value)
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def month
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def month=(value)
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
     def year
       _v1 = (@struct.to_ptr + 20)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -927,22 +939,27 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def initialize_dmy(day, month, year)
-      _v1 = day
-      _v2 = month
-      _v3 = year
-      _v4 = GLib::Lib.g_date_new_dmy(_v1, _v2, _v3)
-      store_pointer(_v4)
-    end
-    def initialize_julian(julian_day)
-      _v1 = julian_day
-      _v2 = GLib::Lib.g_date_new_julian(_v1)
-      store_pointer(_v2)
-    end
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
   class GLib::DateTime < GirFFI::StructBase
+    def self.compare(dt1, dt2)
+      _v1 = GirFFI::InPointer.from(:void, dt1)
+      _v2 = GirFFI::InPointer.from(:void, dt2)
+      _v3 = GLib::Lib.g_date_time_compare(_v1, _v2)
+      return _v3
+    end
+    def self.equal(dt1, dt2)
+      _v1 = GirFFI::InPointer.from(:void, dt1)
+      _v2 = GirFFI::InPointer.from(:void, dt2)
+      _v3 = GLib::Lib.g_date_time_equal(_v1, _v2)
+      return _v3
+    end
+    def self.hash(datetime)
+      _v1 = GirFFI::InPointer.from(:void, datetime)
+      _v2 = GLib::Lib.g_date_time_hash(_v1)
+      return _v2
+    end
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
@@ -1001,23 +1018,6 @@ module GLib
       obj = allocate
       obj.__send__(:initialize_utc, *args, &block)
       obj
-    end
-    def self.compare(dt1, dt2)
-      _v1 = GirFFI::InPointer.from(:void, dt1)
-      _v2 = GirFFI::InPointer.from(:void, dt2)
-      _v3 = GLib::Lib.g_date_time_compare(_v1, _v2)
-      return _v3
-    end
-    def self.equal(dt1, dt2)
-      _v1 = GirFFI::InPointer.from(:void, dt1)
-      _v2 = GirFFI::InPointer.from(:void, dt2)
-      _v3 = GLib::Lib.g_date_time_equal(_v1, _v2)
-      return _v3
-    end
-    def self.hash(datetime)
-      _v1 = GirFFI::InPointer.from(:void, datetime)
-      _v2 = GLib::Lib.g_date_time_hash(_v1)
-      return _v2
     end
     def add(timespan)
       _v1 = timespan
@@ -1156,43 +1156,6 @@ module GLib
       _v6 = _v3.to_value
       return [_v4, _v5, _v6]
     end
-    def is_daylight_savings
-      _v1 = GLib::Lib.g_date_time_is_daylight_savings(self)
-      return _v1
-    end
-    def ref
-      _v1 = GLib::Lib.g_date_time_ref(self)
-      _v2 = GLib::DateTime.wrap(_v1)
-      return _v2
-    end
-    def to_local
-      _v1 = GLib::Lib.g_date_time_to_local(self)
-      _v2 = GLib::DateTime.wrap(_v1)
-      return _v2
-    end
-    def to_timeval(tv)
-      _v1 = GLib::TimeVal.from(tv)
-      _v2 = GLib::Lib.g_date_time_to_timeval(self, _v1)
-      return _v2
-    end
-    def to_timezone(tz)
-      _v1 = GLib::TimeZone.from(tz)
-      _v2 = GLib::Lib.g_date_time_to_timezone(self, _v1)
-      _v3 = GLib::DateTime.wrap(_v2)
-      return _v3
-    end
-    def to_unix
-      _v1 = GLib::Lib.g_date_time_to_unix(self)
-      return _v1
-    end
-    def to_utc
-      _v1 = GLib::Lib.g_date_time_to_utc(self)
-      _v2 = GLib::DateTime.wrap(_v1)
-      return _v2
-    end
-    def unref
-      GLib::Lib.g_date_time_unref(self)
-    end
     def initialize_from_timeval_local(tv)
       _v1 = GLib::TimeVal.from(tv)
       _v2 = GLib::Lib.g_date_time_new_from_timeval_local(_v1)
@@ -1245,6 +1208,43 @@ module GLib
       _v6 = seconds
       _v7 = GLib::Lib.g_date_time_new_utc(_v1, _v2, _v3, _v4, _v5, _v6)
       store_pointer(_v7)
+    end
+    def is_daylight_savings
+      _v1 = GLib::Lib.g_date_time_is_daylight_savings(self)
+      return _v1
+    end
+    def ref
+      _v1 = GLib::Lib.g_date_time_ref(self)
+      _v2 = GLib::DateTime.wrap(_v1)
+      return _v2
+    end
+    def to_local
+      _v1 = GLib::Lib.g_date_time_to_local(self)
+      _v2 = GLib::DateTime.wrap(_v1)
+      return _v2
+    end
+    def to_timeval(tv)
+      _v1 = GLib::TimeVal.from(tv)
+      _v2 = GLib::Lib.g_date_time_to_timeval(self, _v1)
+      return _v2
+    end
+    def to_timezone(tz)
+      _v1 = GLib::TimeZone.from(tz)
+      _v2 = GLib::Lib.g_date_time_to_timezone(self, _v1)
+      _v3 = GLib::DateTime.wrap(_v2)
+      return _v3
+    end
+    def to_unix
+      _v1 = GLib::Lib.g_date_time_to_unix(self)
+      return _v1
+    end
+    def to_utc
+      _v1 = GLib::Lib.g_date_time_to_utc(self)
+      _v2 = GLib::DateTime.wrap(_v1)
+      return _v2
+    end
+    def unref
+      GLib::Lib.g_date_time_unref(self)
     end
   end
   # XXX: Don't know how to print enum
@@ -1302,43 +1302,17 @@ module GLib
   E = 2.718282
   # XXX: Don't know how to print callback
   class GLib::Error < GirFFI::StructBase
+    def self.from(it)
+      from_exception(it)
+    end
+    def self.from_exception(ex)
+      new_literal(GIR_FFI_DOMAIN, 0, ex.message)
+    end
     def self.new_literal(*args, &block)
       raise(NoMethodError) unless (self == GLib::Error)
       obj = allocate
       obj.__send__(:initialize_literal, *args, &block)
       obj
-    end
-    def self.from_exception(ex)
-      new_literal(GIR_FFI_DOMAIN, 0, ex.message)
-    end
-    def self.from(it)
-      from_exception(it)
-    end
-    def copy
-      _v1 = GLib::Lib.g_error_copy(self)
-      _v2 = GLib::Error.wrap(_v1)
-      return _v2
-    end
-    def free
-      GLib::Lib.g_error_free(self)
-    end
-    def matches(domain, code)
-      _v1 = domain
-      _v2 = code
-      _v3 = GLib::Lib.g_error_matches(self, _v1, _v2)
-      return _v3
-    end
-    def domain
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def domain=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
     end
     def code
       _v1 = (@struct.to_ptr + 4)
@@ -1352,6 +1326,39 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
+    def copy
+      _v1 = GLib::Lib.g_error_copy(self)
+      _v2 = GLib::Error.wrap(_v1)
+      return _v2
+    end
+    def domain
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def domain=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def free
+      GLib::Lib.g_error_free(self)
+    end
+    def initialize_literal(domain, code, message)
+      _v1 = domain
+      _v2 = code
+      _v3 = GirFFI::InPointer.from(:utf8, message)
+      _v4 = GLib::Lib.g_error_new_literal(_v1, _v2, _v3)
+      store_pointer(_v4)
+    end
+    def matches(domain, code)
+      _v1 = domain
+      _v2 = code
+      _v3 = GLib::Lib.g_error_matches(self, _v1, _v2)
+      return _v3
+    end
     def message
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -1364,13 +1371,6 @@ module GLib
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
-    end
-    def initialize_literal(domain, code, message)
-      _v1 = domain
-      _v2 = code
-      _v3 = GirFFI::InPointer.from(:utf8, message)
-      _v4 = GLib::Lib.g_error_new_literal(_v1, _v2, _v3)
-      store_pointer(_v4)
     end
   end
   # XXX: Don't know how to print enum
@@ -1427,6 +1427,12 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_destroy(_v1)
     end
+    # @api private
+    def self.from_enumerable(typespec, hash)
+      ghash = new(*typespec)
+      hash.each { |key, val| ghash.insert(key, val) }
+      ghash
+    end
     def self.insert(hash_table, key, value)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       _v2 = GirFFI::InPointer.from(:void, key)
@@ -1478,12 +1484,6 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_unref(_v1)
     end
-    # @api private
-    def self.from_enumerable(typespec, hash)
-      ghash = new(*typespec)
-      hash.each { |key, val| ghash.insert(key, val) }
-      ghash
-    end
     def each
       prc = proc do |keyptr, valptr, _userdata|
         key = GirFFI::ArgHelper.cast_from_pointer(key_type, keyptr)
@@ -1492,9 +1492,6 @@ module GLib
       end
       callback = GLib::HFunc.from(prc)
       ::GLib::Lib.g_hash_table_foreach(to_ptr, callback, nil)
-    end
-    def to_hash
-      Hash[to_a]
     end
     # @override
     def insert(key, value)
@@ -1507,29 +1504,12 @@ module GLib
       @key_type, @value_type = *typespec
       self
     end
+    def to_hash
+      Hash[to_a]
+    end
   end
   class GLib::HashTableIter < GirFFI::StructBase
   
-    def init(hash_table)
-      _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
-      GLib::Lib.g_hash_table_iter_init(self, _v1)
-    end
-    def next(key, value)
-      _v1 = GirFFI::InPointer.from(:void, key)
-      _v2 = GirFFI::InPointer.from(:void, value)
-      _v3 = GLib::Lib.g_hash_table_iter_next(self, _v1, _v2)
-      return _v3
-    end
-    def remove
-      GLib::Lib.g_hash_table_iter_remove(self)
-    end
-    def replace(value)
-      _v1 = GirFFI::InPointer.from(:void, value)
-      GLib::Lib.g_hash_table_iter_replace(self, _v1)
-    end
-    def steal
-      GLib::Lib.g_hash_table_iter_steal(self)
-    end
     def dummy1
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -1565,6 +1545,26 @@ module GLib
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = _v2.to_value
       _v3
+    end
+    def init(hash_table)
+      _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
+      GLib::Lib.g_hash_table_iter_init(self, _v1)
+    end
+    def next(key, value)
+      _v1 = GirFFI::InPointer.from(:void, key)
+      _v2 = GirFFI::InPointer.from(:void, value)
+      _v3 = GLib::Lib.g_hash_table_iter_next(self, _v1, _v2)
+      return _v3
+    end
+    def remove
+      GLib::Lib.g_hash_table_iter_remove(self)
+    end
+    def replace(value)
+      _v1 = GirFFI::InPointer.from(:void, value)
+      GLib::Lib.g_hash_table_iter_replace(self, _v1)
+    end
+    def steal
+      GLib::Lib.g_hash_table_iter_steal(self)
     end
   end
   class GLib::Hmac < GirFFI::StructBase
@@ -1639,6 +1639,54 @@ module GLib
       _v3 = GirFFI::InPointer.from(:void, value)
       _v2.set_value(_v3)
     end
+    def destroy
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def destroy=(value)
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
+      _v3 = GLib::DestroyNotify.from(value)
+      _v2.set_value(_v3)
+    end
+    def flags
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def flags=(value)
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def func
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def func=(value)
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
+    def hook_id
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def hook_id=(value)
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def next
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Hook], _v1)
@@ -1677,54 +1725,6 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def hook_id
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def hook_id=(value)
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def flags
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def flags=(value)
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def func
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def func=(value)
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = GirFFI::InPointer.from(:void, value)
-      _v2.set_value(_v3)
-    end
-    def destroy
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def destroy=(value)
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
-      _v3 = GLib::DestroyNotify.from(value)
-      _v2.set_value(_v3)
-    end
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
@@ -1738,28 +1738,42 @@ module GLib
     def clear
       GLib::Lib.g_hook_list_clear(self)
     end
-    def init(hook_size)
-      _v1 = hook_size
-      GLib::Lib.g_hook_list_init(self, _v1)
+    def dummy
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v3)
+      _v4
     end
-    def invoke(may_recurse)
-      _v1 = may_recurse
-      GLib::Lib.g_hook_list_invoke(self, _v1)
-    end
-    def invoke_check(may_recurse)
-      _v1 = may_recurse
-      GLib::Lib.g_hook_list_invoke_check(self, _v1)
-    end
-    def seq_id
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+    def dummy3
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def seq_id=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = value
+    def dummy3=(value)
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
+    def dummy=(value)
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      GirFFI::ArgHelper.check_fixed_array_size(2, value, "value")
+      _v3 = GirFFI::SizedArray.from([:pointer, :void], 2, value)
+      _v2.set_value(_v3)
+    end
+    def finalize_hook
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(GLib::HookFinalizeFunc, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def finalize_hook=(value)
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(GLib::HookFinalizeFunc, _v1)
+      _v3 = GLib::HookFinalizeFunc.from(value)
       _v2.set_value(_v3)
     end
     def hook_size
@@ -1770,18 +1784,6 @@ module GLib
     end
     def hook_size=(value)
       _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def is_setup
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def is_setup=(value)
-      _v1 = (@struct.to_ptr + 12)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -1799,42 +1801,40 @@ module GLib
       _v3 = GLib::Hook.from(value)
       _v2.set_value(_v3)
     end
-    def dummy3
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+    def init(hook_size)
+      _v1 = hook_size
+      GLib::Lib.g_hook_list_init(self, _v1)
+    end
+    def invoke(may_recurse)
+      _v1 = may_recurse
+      GLib::Lib.g_hook_list_invoke(self, _v1)
+    end
+    def invoke_check(may_recurse)
+      _v1 = may_recurse
+      GLib::Lib.g_hook_list_invoke_check(self, _v1)
+    end
+    def is_setup
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def dummy3=(value)
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = GirFFI::InPointer.from(:void, value)
+    def is_setup=(value)
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
       _v2.set_value(_v3)
     end
-    def finalize_hook
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(GLib::HookFinalizeFunc, _v1)
+    def seq_id
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def finalize_hook=(value)
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(GLib::HookFinalizeFunc, _v1)
-      _v3 = GLib::HookFinalizeFunc.from(value)
-      _v2.set_value(_v3)
-    end
-    def dummy
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v3)
-      _v4
-    end
-    def dummy=(value)
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      GirFFI::ArgHelper.check_fixed_array_size(2, value, "value")
-      _v3 = GirFFI::SizedArray.from([:pointer, :void], 2, value)
+    def seq_id=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = value
       _v2.set_value(_v3)
     end
   end
@@ -1862,6 +1862,15 @@ module GLib
   IEEE754_DOUBLE_BIAS = 1023
   IEEE754_FLOAT_BIAS = 127
   class GLib::IOChannel < GirFFI::StructBase
+    def self.error_from_errno(en)
+      _v1 = en
+      _v2 = GLib::Lib.g_io_channel_error_from_errno(_v1)
+      return _v2
+    end
+    def self.error_quark
+      _v1 = GLib::Lib.g_io_channel_error_quark
+      return _v1
+    end
     def self.new_file(*args, &block)
       raise(NoMethodError) unless (self == GLib::IOChannel)
       obj = allocate
@@ -1874,23 +1883,53 @@ module GLib
       obj.__send__(:unix_new, *args, &block)
       obj
     end
-    def self.error_from_errno(en)
-      _v1 = en
-      _v2 = GLib::Lib.g_io_channel_error_from_errno(_v1)
-      return _v2
-    end
-    def self.error_quark
-      _v1 = GLib::Lib.g_io_channel_error_quark
-      return _v1
+    def buf_size
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def close
       GLib::Lib.g_io_channel_close(self)
+    end
+    def close_on_unref
+      _v1 = (@struct.to_ptr + 104)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def do_encode
+      _v1 = (@struct.to_ptr + 100)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def encoded_read_buf
+      _v1 = (@struct.to_ptr + 72)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def encoding
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
     end
     def flush
       _v1 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
       _v2 = GLib::Lib.g_io_channel_flush(self, _v1)
       GirFFI::ArgHelper.check_error(_v1)
       return _v2
+    end
+    def funcs
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IOFuncs], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IOFuncs.wrap(_v3)
+      _v4
     end
     def get_buffer_condition
       _v1 = GLib::Lib.g_io_channel_get_buffer_condition(self)
@@ -1926,12 +1965,72 @@ module GLib
     def init
       GLib::Lib.g_io_channel_init(self)
     end
+    def initialize_file(filename, mode)
+      _v1 = GirFFI::InPointer.from(:utf8, filename)
+      _v2 = GirFFI::InPointer.from(:utf8, mode)
+      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+      _v4 = GLib::Lib.g_io_channel_new_file(_v1, _v2, _v3)
+      GirFFI::ArgHelper.check_error(_v3)
+      store_pointer(_v4)
+    end
+    def is_readable
+      _v1 = (@struct.to_ptr + 108)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def is_seekable
+      _v1 = (@struct.to_ptr + 116)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def is_writeable
+      _v1 = (@struct.to_ptr + 112)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def line_term
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def line_term_len
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def partial_write_buf
+      _v1 = (@struct.to_ptr + 88)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap(:gint8, 6, _v3)
+      _v4
+    end
     def read(buf, count, bytes_read)
       _v1 = GirFFI::InPointer.from(:utf8, buf)
       _v2 = count
       _v3 = bytes_read
       _v4 = GLib::Lib.g_io_channel_read(self, _v1, _v2, _v3)
       return _v4
+    end
+    def read_buf
+      _v1 = (@struct.to_ptr + 64)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def read_cd
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IConv.wrap(_v3)
+      _v4
     end
     def read_chars
       count = buf.nil? ? (0) : (buf.length)
@@ -1987,6 +2086,24 @@ module GLib
       _v1 = GLib::Lib.g_io_channel_ref(self)
       _v2 = GLib::IOChannel.wrap(_v1)
       return _v2
+    end
+    def ref_count
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def reserved1
+      _v1 = (@struct.to_ptr + 120)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def reserved2
+      _v1 = (@struct.to_ptr + 128)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def seek(offset, type)
       _v1 = offset
@@ -2044,8 +2161,19 @@ module GLib
       _v1 = GLib::Lib.g_io_channel_unix_get_fd(self)
       return _v1
     end
+    def unix_new(fd)
+      _v1 = fd
+      _v2 = GLib::Lib.g_io_channel_unix_new(_v1)
+      store_pointer(_v2)
+    end
     def unref
       GLib::Lib.g_io_channel_unref(self)
+    end
+    def use_buffer
+      _v1 = (@struct.to_ptr + 96)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def write(buf, count, bytes_written)
       _v1 = GirFFI::InPointer.from(:utf8, buf)
@@ -2053,6 +2181,20 @@ module GLib
       _v3 = bytes_written
       _v4 = GLib::Lib.g_io_channel_write(self, _v1, _v2, _v3)
       return _v4
+    end
+    def write_buf
+      _v1 = (@struct.to_ptr + 80)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::String.wrap(_v3)
+      _v4
+    end
+    def write_cd
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::IConv.wrap(_v3)
+      _v4
     end
     def write_chars(buf, count)
       _v1 = GirFFI::SizedArray.from(:guint8, -1, buf)
@@ -2071,148 +2213,6 @@ module GLib
       GirFFI::ArgHelper.check_error(_v2)
       return _v3
     end
-    def ref_count
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def funcs
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IOFuncs], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::IOFuncs.wrap(_v3)
-      _v4
-    end
-    def encoding
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
-      _v4
-    end
-    def read_cd
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::IConv.wrap(_v3)
-      _v4
-    end
-    def write_cd
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::IConv], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::IConv.wrap(_v3)
-      _v4
-    end
-    def line_term
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
-      _v4
-    end
-    def line_term_len
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def buf_size
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def read_buf
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::String.wrap(_v3)
-      _v4
-    end
-    def encoded_read_buf
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::String.wrap(_v3)
-      _v4
-    end
-    def write_buf
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::String.wrap(_v3)
-      _v4
-    end
-    def partial_write_buf
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap(:gint8, 6, _v3)
-      _v4
-    end
-    def use_buffer
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def do_encode
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def close_on_unref
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def is_readable
-      _v1 = (@struct.to_ptr + 108)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def is_writeable
-      _v1 = (@struct.to_ptr + 112)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def is_seekable
-      _v1 = (@struct.to_ptr + 116)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def reserved1
-      _v1 = (@struct.to_ptr + 120)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def reserved2
-      _v1 = (@struct.to_ptr + 128)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def initialize_file(filename, mode)
-      _v1 = GirFFI::InPointer.from(:utf8, filename)
-      _v2 = GirFFI::InPointer.from(:utf8, mode)
-      _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-      _v4 = GLib::Lib.g_io_channel_new_file(_v1, _v2, _v3)
-      GirFFI::ArgHelper.check_error(_v3)
-      store_pointer(_v4)
-    end
-    def unix_new(fd)
-      _v1 = fd
-      _v2 = GLib::Lib.g_io_channel_unix_new(_v1)
-      store_pointer(_v2)
-    end
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
@@ -2221,24 +2221,6 @@ module GLib
   # XXX: Don't know how to print callback
   class GLib::IOFuncs < GirFFI::StructBase
   
-    def io_read
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::Io_read, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def io_write
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(GLib::Io_write, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def io_seek
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(GLib::Io_seek, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
     def io_close
       _v1 = (@struct.to_ptr + 24)
       _v2 = GirFFI::InOutPointer.new(GLib::Io_close, _v1)
@@ -2257,15 +2239,33 @@ module GLib
       _v3 = _v2.to_value
       _v3
     end
+    def io_get_flags
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(GLib::Io_get_flags, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def io_read
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::Io_read, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def io_seek
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(GLib::Io_seek, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
     def io_set_flags
       _v1 = (@struct.to_ptr + 48)
       _v2 = GirFFI::InOutPointer.new(GLib::Io_set_flags, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def io_get_flags
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(GLib::Io_get_flags, _v1)
+    def io_write
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(GLib::Io_write, _v1)
       _v3 = _v2.to_value
       _v3
     end
@@ -2300,14 +2300,14 @@ module GLib
   KEY_FILE_DESKTOP_TYPE_DIRECTORY = "Directory"
   KEY_FILE_DESKTOP_TYPE_LINK = "Link"
   class GLib::KeyFile < GirFFI::StructBase
+    def self.error_quark
+      _v1 = GLib::Lib.g_key_file_error_quark
+      return _v1
+    end
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
       obj
-    end
-    def self.error_quark
-      _v1 = GLib::Lib.g_key_file_error_quark
-      return _v1
     end
     def get_boolean(group_name, key)
       _v1 = GirFFI::InPointer.from(:utf8, group_name)
@@ -2664,11 +2664,20 @@ module GLib
     def self.from_enumerable(type, arr)
       arr.reduce(new(type)) { |lst, val| lst.append(val) }
     end
+    def append(data)
+      self.class.wrap(element_type, Lib.g_list_append(self, element_ptr_for(data)))
+    end
+    def head
+      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
+    end
     def data=(value)
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = GirFFI::InPointer.from(:void, value)
       _v2.set_value(_v3)
+    end
+    def tail
+      self.class.wrap(element_type, @struct[:next])
     end
     def next=(value)
       _v1 = (@struct.to_ptr + 8)
@@ -2689,17 +2698,8 @@ module GLib
       _v3 = GLib::List.from([:pointer, :void], value)
       _v2.set_value(_v3)
     end
-    def tail
-      self.class.wrap(element_type, @struct[:next])
-    end
-    def head
-      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
-    end
-    def append(data)
-      self.class.wrap(element_type, Lib.g_list_append(self, element_ptr_for(data)))
-    end
-    alias_method 'next', 'tail'
     alias_method 'data', 'head'
+    alias_method 'next', 'tail'
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
@@ -2720,11 +2720,6 @@ module GLib
   MINOR_VERSION = 46
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::StructBase
-    def self.new(*args, &block)
-      obj = allocate
-      obj.__send__(:initialize, *args, &block)
-      obj
-    end
     def self.default
       _v1 = GLib::Lib.g_main_context_default
       _v2 = GLib::MainContext.wrap(_v1)
@@ -2734,6 +2729,11 @@ module GLib
       _v1 = GLib::Lib.g_main_context_get_thread_default
       _v2 = GLib::MainContext.wrap(_v1)
       return _v2
+    end
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
     end
     def self.ref_thread_default
       _v1 = GLib::Lib.g_main_context_ref_thread_default
@@ -2847,11 +2847,6 @@ module GLib
     end
   end
   class GLib::MainLoop < GirFFI::StructBase
-    def self.new(*args, &block)
-      obj = allocate
-      obj.__send__(:initialize, *args, &block)
-      obj
-    end
     def self.handle_exception(ex)
       current_loop = RUNNING_LOOPS.last
       if current_loop then
@@ -2860,6 +2855,11 @@ module GLib
       else
         raise(ex)
       end
+    end
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
     end
     def get_context
       _v1 = GLib::Lib.g_main_loop_get_context(self)
@@ -2877,9 +2877,6 @@ module GLib
       _v1 = GLib::Lib.g_main_loop_ref(self)
       _v2 = GLib::MainLoop.wrap(_v1)
       return _v2
-    end
-    def unref
-      GLib::Lib.g_main_loop_unref(self)
     end
     def run_with_thread_enabler
       case RUBY_ENGINE
@@ -2899,6 +2896,9 @@ module GLib
     end
     def run
       GLib::Lib.g_main_loop_run(self)
+    end
+    def unref
+      GLib::Lib.g_main_loop_unref(self)
     end
     alias_method 'run', 'run_with_thread_enabler'
     alias_method 'run_without_thread_enabler', 'run'
@@ -2932,14 +2932,6 @@ module GLib
       _v1 = GLib::Lib.g_mapped_file_get_length(self)
       return _v1
     end
-    def ref
-      _v1 = GLib::Lib.g_mapped_file_ref(self)
-      _v2 = GLib::MappedFile.wrap(_v1)
-      return _v2
-    end
-    def unref
-      GLib::Lib.g_mapped_file_unref(self)
-    end
     def initialize_from_fd(fd, writable)
       _v1 = fd
       _v2 = writable
@@ -2947,6 +2939,14 @@ module GLib
       _v4 = GLib::Lib.g_mapped_file_new_from_fd(_v1, _v2, _v3)
       GirFFI::ArgHelper.check_error(_v3)
       store_pointer(_v4)
+    end
+    def ref
+      _v1 = GLib::Lib.g_mapped_file_ref(self)
+      _v2 = GLib::MappedFile.wrap(_v1)
+      return _v2
+    end
+    def unref
+      GLib::Lib.g_mapped_file_unref(self)
     end
   end
   # XXX: Don't know how to print flags
@@ -3001,21 +3001,15 @@ module GLib
   # XXX: Don't know how to print flags
   class GLib::MarkupParser < GirFFI::StructBase
   
-    def start_element
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::Start_element, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
     def end_element
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(GLib::End_element, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def text
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(GLib::Text, _v1)
+    def error
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(GLib::Error, _v1)
       _v3 = _v2.to_value
       _v3
     end
@@ -3025,9 +3019,15 @@ module GLib
       _v3 = _v2.to_value
       _v3
     end
-    def error
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(GLib::Error, _v1)
+    def start_element
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::Start_element, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def text
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(GLib::Text, _v1)
       _v3 = _v2.to_value
       _v3
     end
@@ -3119,14 +3119,8 @@ module GLib
   end
   class GLib::MemVTable < GirFFI::StructBase
   
-    def malloc
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def realloc
-      _v1 = (@struct.to_ptr + 8)
+    def calloc
+      _v1 = (@struct.to_ptr + 24)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = _v2.to_value
       _v3
@@ -3137,8 +3131,14 @@ module GLib
       _v3 = _v2.to_value
       _v3
     end
-    def calloc
-      _v1 = (@struct.to_ptr + 24)
+    def malloc
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def realloc
+      _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = _v2.to_value
       _v3
@@ -3169,6 +3169,31 @@ module GLib
       _v2 = GLib::Lib.g_node_child_position(self, _v1)
       return _v2
     end
+    def children
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::Node.wrap(_v3)
+      _v4
+    end
+    def children=(value)
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
+      _v3 = GLib::Node.from(value)
+      _v2.set_value(_v3)
+    end
+    def data
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def data=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
     def depth
       _v1 = GLib::Lib.g_node_depth(self)
       return _v1
@@ -3194,24 +3219,6 @@ module GLib
       _v2 = GLib::Lib.g_node_n_nodes(self, _v1)
       return _v2
     end
-    def reverse_children
-      GLib::Lib.g_node_reverse_children(self)
-    end
-    def unlink
-      GLib::Lib.g_node_unlink(self)
-    end
-    def data
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def data=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = GirFFI::InPointer.from(:void, value)
-      _v2.set_value(_v3)
-    end
     def next
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
@@ -3221,19 +3228,6 @@ module GLib
     end
     def next=(value)
       _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
-      _v3 = GLib::Node.from(value)
-      _v2.set_value(_v3)
-    end
-    def prev
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::Node.wrap(_v3)
-      _v4
-    end
-    def prev=(value)
-      _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
       _v3 = GLib::Node.from(value)
       _v2.set_value(_v3)
@@ -3251,18 +3245,24 @@ module GLib
       _v3 = GLib::Node.from(value)
       _v2.set_value(_v3)
     end
-    def children
-      _v1 = (@struct.to_ptr + 32)
+    def prev
+      _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
       _v3 = _v2.to_value
       _v4 = GLib::Node.wrap(_v3)
       _v4
     end
-    def children=(value)
-      _v1 = (@struct.to_ptr + 32)
+    def prev=(value)
+      _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Node], _v1)
       _v3 = GLib::Node.from(value)
       _v2.set_value(_v3)
+    end
+    def reverse_children
+      GLib::Lib.g_node_reverse_children(self)
+    end
+    def unlink
+      GLib::Lib.g_node_unlink(self)
     end
   end
   # XXX: Don't know how to print callback
@@ -3280,18 +3280,6 @@ module GLib
       _v2 = result
       GLib::Lib.g_once_init_leave(_v1, _v2)
     end
-    def status
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def status=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
     def retval
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -3302,6 +3290,18 @@ module GLib
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
+    def status
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def status=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::OnceStatus, _v1)
+      _v3 = value
       _v2.set_value(_v3)
     end
   end
@@ -3415,43 +3415,6 @@ module GLib
   end
   class GLib::OptionEntry < GirFFI::StructBase
   
-    def long_name
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
-      _v4
-    end
-    def long_name=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = GirFFI::InPointer.from(:utf8, value)
-      _v2.set_value(_v3)
-    end
-    def short_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:gint8, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def short_name=(value)
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:gint8, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def flags
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def flags=(value)
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
     def arg
       _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new(GLib::OptionArg, _v1)
@@ -3476,6 +3439,19 @@ module GLib
       _v3 = GirFFI::InPointer.from(:void, value)
       _v2.set_value(_v3)
     end
+    def arg_description
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def arg_description=(value)
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = GirFFI::InPointer.from(:utf8, value)
+      _v2.set_value(_v3)
+    end
     def description
       _v1 = (@struct.to_ptr + 32)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -3489,17 +3465,41 @@ module GLib
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
-    def arg_description
-      _v1 = (@struct.to_ptr + 40)
+    def flags
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def flags=(value)
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def long_name
+      _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = _v2.to_value
       _v4 = _v3.to_utf8
       _v4
     end
-    def arg_description=(value)
-      _v1 = (@struct.to_ptr + 40)
+    def long_name=(value)
+      _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = GirFFI::InPointer.from(:utf8, value)
+      _v2.set_value(_v3)
+    end
+    def short_name
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:gint8, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def short_name=(value)
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:gint8, _v1)
+      _v3 = value
       _v2.set_value(_v3)
     end
   end
@@ -3562,18 +3562,6 @@ module GLib
   end
   class GLib::PollFD < GirFFI::StructBase
   
-    def fd
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def fd=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
     def events
       _v1 = (@struct.to_ptr + 4)
       _v2 = GirFFI::InOutPointer.new(:guint16, _v1)
@@ -3583,6 +3571,18 @@ module GLib
     def events=(value)
       _v1 = (@struct.to_ptr + 4)
       _v2 = GirFFI::InOutPointer.new(:guint16, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def fd
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def fd=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
@@ -3603,6 +3603,25 @@ module GLib
   # XXX: Don't know how to print callback
   class GLib::Private < GirFFI::StructBase
   
+    def future
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v3)
+      _v4
+    end
+    def notify
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def p
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
     def replace(value)
       _v1 = GirFFI::InPointer.from(:void, value)
       GLib::Lib.g_private_replace(self, _v1)
@@ -3611,44 +3630,32 @@ module GLib
       _v1 = GirFFI::InPointer.from(:void, value)
       GLib::Lib.g_private_set(self, _v1)
     end
-    def p
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def notify
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(GLib::DestroyNotify, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def future
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v3)
-      _v4
-    end
   end
   class GLib::PtrArray < GirFFI::StructBase
-    def self.from_enumerable(type, it)
-      new(type).tap { |arr| arr.add_array(it) }
-    end
     def self.add(array, data)
       array.add(data)
     end
-    def pdata
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
+    def self.from_enumerable(type, it)
+      new(type).tap { |arr| arr.add_array(it) }
     end
-    def pdata=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = GirFFI::InPointer.from(:void, value)
-      _v2.set_value(_v3)
+    def ==(other)
+      (to_a == other.to_a)
+    end
+    def add(data)
+      ptr = GirFFI::InPointer.from(element_type, data)
+      Lib.g_ptr_array_add(self, ptr)
+    end
+    def add_array(ary)
+      ary.each { |item| add(item) }
+    end
+    def data_ptr
+      @struct[:pdata]
+    end
+    def each
+      length.times { |idx| yield(index(idx)) }
+    end
+    def element_size
+      POINTER_SIZE
     end
     def len
       _v1 = (@struct.to_ptr + 8)
@@ -3662,31 +3669,24 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def reset_typespec(typespec)
-      @element_type = typespec
-      self
-    end
-    def add(data)
-      ptr = GirFFI::InPointer.from(element_type, data)
-      Lib.g_ptr_array_add(self, ptr)
-    end
-    def add_array(ary)
-      ary.each { |item| add(item) }
-    end
-    def data_ptr
-      @struct[:pdata]
-    end
-    def element_size
-      POINTER_SIZE
-    end
-    def each
-      length.times { |idx| yield(index(idx)) }
-    end
     def length
       @struct[:len]
     end
-    def ==(other)
-      (to_a == other.to_a)
+    def pdata
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def pdata=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
+    def reset_typespec(typespec)
+      @element_type = typespec
+      self
     end
   end
   class GLib::Queue < GirFFI::StructBase
@@ -3705,6 +3705,19 @@ module GLib
       _v1 = GLib::Lib.g_queue_get_length(self)
       return _v1
     end
+    def head
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :glist], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::List.wrap([:pointer, :void], _v3)
+      _v4
+    end
+    def head=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :glist], _v1)
+      _v3 = GLib::List.from([:pointer, :void], value)
+      _v2.set_value(_v3)
+    end
     def index(data)
       _v1 = GirFFI::InPointer.from(:void, data)
       _v2 = GLib::Lib.g_queue_index(self, _v1)
@@ -3716,6 +3729,18 @@ module GLib
     def is_empty
       _v1 = GLib::Lib.g_queue_is_empty(self)
       return _v1
+    end
+    def length
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def length=(value)
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
     end
     def push_head(data)
       _v1 = GirFFI::InPointer.from(:void, data)
@@ -3743,19 +3768,6 @@ module GLib
     def reverse
       GLib::Lib.g_queue_reverse(self)
     end
-    def head
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :glist], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::List.wrap([:pointer, :void], _v3)
-      _v4
-    end
-    def head=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :glist], _v1)
-      _v3 = GLib::List.from([:pointer, :void], value)
-      _v2.set_value(_v3)
-    end
     def tail
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :glist], _v1)
@@ -3769,26 +3781,27 @@ module GLib
       _v3 = GLib::List.from([:pointer, :void], value)
       _v2.set_value(_v3)
     end
-    def length
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def length=(value)
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
   end
   class GLib::RWLock < GirFFI::StructBase
   
     def clear
       GLib::Lib.g_rw_lock_clear(self)
     end
+    def i
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
+      _v4
+    end
     def init
       GLib::Lib.g_rw_lock_init(self)
+    end
+    def p
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def reader_lock
       GLib::Lib.g_rw_lock_reader_lock(self)
@@ -3809,19 +3822,6 @@ module GLib
     end
     def writer_unlock
       GLib::Lib.g_rw_lock_writer_unlock(self)
-    end
-    def p
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
-      _v4
     end
   end
   class GLib::Rand < GirFFI::StructBase
@@ -3864,11 +3864,24 @@ module GLib
     def clear
       GLib::Lib.g_rec_mutex_clear(self)
     end
+    def i
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:c, _v1)
+      _v3 = _v2.to_value
+      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
+      _v4
+    end
     def init
       GLib::Lib.g_rec_mutex_init(self)
     end
     def lock
       GLib::Lib.g_rec_mutex_lock(self)
+    end
+    def p
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def trylock
       _v1 = GLib::Lib.g_rec_mutex_trylock(self)
@@ -3877,26 +3890,8 @@ module GLib
     def unlock
       GLib::Lib.g_rec_mutex_unlock(self)
     end
-    def p
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:c, _v1)
-      _v3 = _v2.to_value
-      _v4 = GirFFI::SizedArray.wrap(:guint32, 2, _v3)
-      _v4
-    end
   end
   class GLib::Regex < GirFFI::StructBase
-    def self.new(*args, &block)
-      obj = allocate
-      obj.__send__(:initialize, *args, &block)
-      obj
-    end
     def self.check_replacement(replacement)
       _v1 = GirFFI::InPointer.from(:utf8, replacement)
       _v2 = GirFFI::InOutPointer.for(:gboolean)
@@ -3932,6 +3927,11 @@ module GLib
       _v4 = match_options
       _v5 = GLib::Lib.g_regex_match_simple(_v1, _v2, _v3, _v4)
       return _v5
+    end
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
     end
     def self.split_simple(pattern, string, compile_options, match_options)
       _v1 = GirFFI::InPointer.from(:utf8, pattern)
@@ -4087,11 +4087,17 @@ module GLib
     def self.from_enumerable(type, arr)
       arr.reverse.reduce(new(type)) { |lst, val| lst.prepend(val) }
     end
+    def head
+      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
+    end
     def data=(value)
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = GirFFI::InPointer.from(:void, value)
       _v2.set_value(_v3)
+    end
+    def tail
+      self.class.wrap(element_type, @struct[:next])
     end
     def next=(value)
       _v1 = (@struct.to_ptr + 8)
@@ -4099,17 +4105,11 @@ module GLib
       _v3 = GLib::SList.from([:pointer, :void], value)
       _v2.set_value(_v3)
     end
-    def tail
-      self.class.wrap(element_type, @struct[:next])
-    end
-    def head
-      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
-    end
     def prepend(data)
       self.class.wrap(element_type, Lib.g_slist_prepend(self, element_ptr_for(data)))
     end
-    alias_method 'next', 'tail'
     alias_method 'data', 'head'
+    alias_method 'next', 'tail'
   end
   SOURCE_CONTINUE = true
   SOURCE_REMOVE = false
@@ -4123,6 +4123,26 @@ module GLib
   SYSDEF_MSG_PEEK = 2
   class GLib::Scanner < GirFFI::StructBase
   
+    def buffer
+      _v1 = (@struct.to_ptr + 120)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def config
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::ScannerConfig], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::ScannerConfig.wrap(_v3)
+      _v4
+    end
+    def config=(value)
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::ScannerConfig], _v1)
+      _v3 = GLib::ScannerConfig.from(value)
+      _v2.set_value(_v3)
+    end
     def cur_line
       _v1 = GLib::Lib.g_scanner_cur_line(self)
       return _v1
@@ -4146,82 +4166,15 @@ module GLib
       _v1 = GLib::Lib.g_scanner_get_next_token(self)
       return _v1
     end
+    def input_fd
+      _v1 = (@struct.to_ptr + 96)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
     def input_file(input_fd)
       _v1 = input_fd
       GLib::Lib.g_scanner_input_file(self, _v1)
-    end
-    def input_text(text, text_len)
-      _v1 = GirFFI::InPointer.from(:utf8, text)
-      _v2 = text_len
-      GLib::Lib.g_scanner_input_text(self, _v1, _v2)
-    end
-    def peek_next_token
-      _v1 = GLib::Lib.g_scanner_peek_next_token(self)
-      return _v1
-    end
-    def scope_add_symbol(scope_id, symbol, value)
-      _v1 = scope_id
-      _v2 = GirFFI::InPointer.from(:utf8, symbol)
-      _v3 = GirFFI::InPointer.from(:void, value)
-      GLib::Lib.g_scanner_scope_add_symbol(self, _v1, _v2, _v3)
-    end
-    def scope_remove_symbol(scope_id, symbol)
-      _v1 = scope_id
-      _v2 = GirFFI::InPointer.from(:utf8, symbol)
-      GLib::Lib.g_scanner_scope_remove_symbol(self, _v1, _v2)
-    end
-    def set_scope(scope_id)
-      _v1 = scope_id
-      _v2 = GLib::Lib.g_scanner_set_scope(self, _v1)
-      return _v2
-    end
-    def sync_file_offset
-      GLib::Lib.g_scanner_sync_file_offset(self)
-    end
-    def unexp_token(expected_token, identifier_spec, symbol_spec, symbol_name, message, is_error)
-      _v1 = expected_token
-      _v2 = GirFFI::InPointer.from(:utf8, identifier_spec)
-      _v3 = GirFFI::InPointer.from(:utf8, symbol_spec)
-      _v4 = GirFFI::InPointer.from(:utf8, symbol_name)
-      _v5 = GirFFI::InPointer.from(:utf8, message)
-      _v6 = is_error
-      GLib::Lib.g_scanner_unexp_token(self, _v1, _v2, _v3, _v4, _v5, _v6)
-    end
-    def user_data
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def user_data=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = GirFFI::InPointer.from(:void, value)
-      _v2.set_value(_v3)
-    end
-    def max_parse_errors
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def max_parse_errors=(value)
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def parse_errors
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def parse_errors=(value)
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
     end
     def input_name
       _v1 = (@struct.to_ptr + 16)
@@ -4236,56 +4189,10 @@ module GLib
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
-    def qdata
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Data], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::Data.wrap(_v3)
-      _v4
-    end
-    def qdata=(value)
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Data], _v1)
-      _v3 = GLib::Data.from(value)
-      _v2.set_value(_v3)
-    end
-    def config
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::ScannerConfig], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::ScannerConfig.wrap(_v3)
-      _v4
-    end
-    def config=(value)
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::ScannerConfig], _v1)
-      _v3 = GLib::ScannerConfig.from(value)
-      _v2.set_value(_v3)
-    end
-    def token
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(GLib::TokenType, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def token=(value)
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(GLib::TokenType, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def value
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new(GLib::TokenValue, _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::TokenValue.wrap(_v3)
-      _v4
-    end
-    def value=(value)
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new(GLib::TokenValue, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
+    def input_text(text, text_len)
+      _v1 = GirFFI::InPointer.from(:utf8, text)
+      _v2 = text_len
+      GLib::Lib.g_scanner_input_text(self, _v1, _v2)
     end
     def line
       _v1 = (@struct.to_ptr + 56)
@@ -4299,14 +4206,50 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def position
-      _v1 = (@struct.to_ptr + 60)
+    def max_parse_errors
+      _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def position=(value)
-      _v1 = (@struct.to_ptr + 60)
+    def max_parse_errors=(value)
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def msg_handler
+      _v1 = (@struct.to_ptr + 136)
+      _v2 = GirFFI::InOutPointer.new(GLib::ScannerMsgFunc, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def msg_handler=(value)
+      _v1 = (@struct.to_ptr + 136)
+      _v2 = GirFFI::InOutPointer.new(GLib::ScannerMsgFunc, _v1)
+      _v3 = GLib::ScannerMsgFunc.from(value)
+      _v2.set_value(_v3)
+    end
+    def next_line
+      _v1 = (@struct.to_ptr + 80)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def next_line=(value)
+      _v1 = (@struct.to_ptr + 80)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def next_position
+      _v1 = (@struct.to_ptr + 84)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def next_position=(value)
+      _v1 = (@struct.to_ptr + 84)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -4336,29 +4279,68 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def next_line
-      _v1 = (@struct.to_ptr + 80)
+    def parse_errors
+      _v1 = (@struct.to_ptr + 12)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def next_line=(value)
-      _v1 = (@struct.to_ptr + 80)
+    def parse_errors=(value)
+      _v1 = (@struct.to_ptr + 12)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
-    def next_position
-      _v1 = (@struct.to_ptr + 84)
+    def peek_next_token
+      _v1 = GLib::Lib.g_scanner_peek_next_token(self)
+      return _v1
+    end
+    def position
+      _v1 = (@struct.to_ptr + 60)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def next_position=(value)
-      _v1 = (@struct.to_ptr + 84)
+    def position=(value)
+      _v1 = (@struct.to_ptr + 60)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
+    end
+    def qdata
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Data], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::Data.wrap(_v3)
+      _v4
+    end
+    def qdata=(value)
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Data], _v1)
+      _v3 = GLib::Data.from(value)
+      _v2.set_value(_v3)
+    end
+    def scope_add_symbol(scope_id, symbol, value)
+      _v1 = scope_id
+      _v2 = GirFFI::InPointer.from(:utf8, symbol)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      GLib::Lib.g_scanner_scope_add_symbol(self, _v1, _v2, _v3)
+    end
+    def scope_id
+      _v1 = (@struct.to_ptr + 128)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def scope_remove_symbol(scope_id, symbol)
+      _v1 = scope_id
+      _v2 = GirFFI::InPointer.from(:utf8, symbol)
+      GLib::Lib.g_scanner_scope_remove_symbol(self, _v1, _v2)
+    end
+    def set_scope(scope_id)
+      _v1 = scope_id
+      _v2 = GLib::Lib.g_scanner_set_scope(self, _v1)
+      return _v2
     end
     def symbol_table
       _v1 = (@struct.to_ptr + 88)
@@ -4367,11 +4349,8 @@ module GLib
       _v4 = GLib::HashTable.wrap([[:pointer, :void], [:pointer, :void]], _v3)
       _v4
     end
-    def input_fd
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = _v2.to_value
-      _v3
+    def sync_file_offset
+      GLib::Lib.g_scanner_sync_file_offset(self)
     end
     def text
       _v1 = (@struct.to_ptr + 104)
@@ -4387,43 +4366,88 @@ module GLib
       _v4 = _v3.to_utf8
       _v4
     end
-    def buffer
-      _v1 = (@struct.to_ptr + 120)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+    def token
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(GLib::TokenType, _v1)
       _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
+      _v3
+    end
+    def token=(value)
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(GLib::TokenType, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def unexp_token(expected_token, identifier_spec, symbol_spec, symbol_name, message, is_error)
+      _v1 = expected_token
+      _v2 = GirFFI::InPointer.from(:utf8, identifier_spec)
+      _v3 = GirFFI::InPointer.from(:utf8, symbol_spec)
+      _v4 = GirFFI::InPointer.from(:utf8, symbol_name)
+      _v5 = GirFFI::InPointer.from(:utf8, message)
+      _v6 = is_error
+      GLib::Lib.g_scanner_unexp_token(self, _v1, _v2, _v3, _v4, _v5, _v6)
+    end
+    def user_data
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def user_data=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = GirFFI::InPointer.from(:void, value)
+      _v2.set_value(_v3)
+    end
+    def value
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new(GLib::TokenValue, _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::TokenValue.wrap(_v3)
       _v4
     end
-    def scope_id
-      _v1 = (@struct.to_ptr + 128)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def msg_handler
-      _v1 = (@struct.to_ptr + 136)
-      _v2 = GirFFI::InOutPointer.new(GLib::ScannerMsgFunc, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def msg_handler=(value)
-      _v1 = (@struct.to_ptr + 136)
-      _v2 = GirFFI::InOutPointer.new(GLib::ScannerMsgFunc, _v1)
-      _v3 = GLib::ScannerMsgFunc.from(value)
+    def value=(value)
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new(GLib::TokenValue, _v1)
+      _v3 = value
       _v2.set_value(_v3)
     end
   end
   class GLib::ScannerConfig < GirFFI::StructBase
   
-    def cset_skip_characters
-      _v1 = (@struct.to_ptr + 0)
+    def case_sensitive
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def case_sensitive=(value)
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def char_2_token
+      _v1 = (@struct.to_ptr + 104)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def char_2_token=(value)
+      _v1 = (@struct.to_ptr + 104)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def cpair_comment_single
+      _v1 = (@struct.to_ptr + 24)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = _v2.to_value
       _v4 = _v3.to_utf8
       _v4
     end
-    def cset_skip_characters=(value)
-      _v1 = (@struct.to_ptr + 0)
+    def cpair_comment_single=(value)
+      _v1 = (@struct.to_ptr + 24)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
@@ -4454,114 +4478,60 @@ module GLib
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
-    def cpair_comment_single
-      _v1 = (@struct.to_ptr + 24)
+    def cset_skip_characters
+      _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = _v2.to_value
       _v4 = _v3.to_utf8
       _v4
     end
-    def cpair_comment_single=(value)
-      _v1 = (@struct.to_ptr + 24)
+    def cset_skip_characters=(value)
+      _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
-    def case_sensitive
-      _v1 = (@struct.to_ptr + 32)
+    def identifier_2_string
+      _v1 = (@struct.to_ptr + 100)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def case_sensitive=(value)
-      _v1 = (@struct.to_ptr + 32)
+    def identifier_2_string=(value)
+      _v1 = (@struct.to_ptr + 100)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
-    def skip_comment_multi
-      _v1 = (@struct.to_ptr + 36)
+    def int_2_float
+      _v1 = (@struct.to_ptr + 96)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def skip_comment_multi=(value)
-      _v1 = (@struct.to_ptr + 36)
+    def int_2_float=(value)
+      _v1 = (@struct.to_ptr + 96)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
-    def skip_comment_single
-      _v1 = (@struct.to_ptr + 40)
+    def numbers_2_int
+      _v1 = (@struct.to_ptr + 92)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def skip_comment_single=(value)
-      _v1 = (@struct.to_ptr + 40)
+    def numbers_2_int=(value)
+      _v1 = (@struct.to_ptr + 92)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
-    def scan_comment_multi
-      _v1 = (@struct.to_ptr + 44)
+    def padding_dummy
+      _v1 = (@struct.to_ptr + 120)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
-    end
-    def scan_comment_multi=(value)
-      _v1 = (@struct.to_ptr + 44)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def scan_identifier
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def scan_identifier=(value)
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def scan_identifier_1char
-      _v1 = (@struct.to_ptr + 52)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def scan_identifier_1char=(value)
-      _v1 = (@struct.to_ptr + 52)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def scan_identifier_NULL
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def scan_identifier_NULL=(value)
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def scan_symbols
-      _v1 = (@struct.to_ptr + 60)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def scan_symbols=(value)
-      _v1 = (@struct.to_ptr + 60)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
     end
     def scan_binary
       _v1 = (@struct.to_ptr + 64)
@@ -4575,14 +4545,14 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def scan_octal
-      _v1 = (@struct.to_ptr + 68)
+    def scan_comment_multi
+      _v1 = (@struct.to_ptr + 44)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def scan_octal=(value)
-      _v1 = (@struct.to_ptr + 68)
+    def scan_comment_multi=(value)
+      _v1 = (@struct.to_ptr + 44)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -4623,14 +4593,50 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def scan_string_sq
-      _v1 = (@struct.to_ptr + 84)
+    def scan_identifier
+      _v1 = (@struct.to_ptr + 48)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def scan_string_sq=(value)
-      _v1 = (@struct.to_ptr + 84)
+    def scan_identifier=(value)
+      _v1 = (@struct.to_ptr + 48)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def scan_identifier_1char
+      _v1 = (@struct.to_ptr + 52)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def scan_identifier_1char=(value)
+      _v1 = (@struct.to_ptr + 52)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def scan_identifier_NULL
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def scan_identifier_NULL=(value)
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def scan_octal
+      _v1 = (@struct.to_ptr + 68)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def scan_octal=(value)
+      _v1 = (@struct.to_ptr + 68)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -4647,62 +4653,26 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def numbers_2_int
-      _v1 = (@struct.to_ptr + 92)
+    def scan_string_sq
+      _v1 = (@struct.to_ptr + 84)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def numbers_2_int=(value)
-      _v1 = (@struct.to_ptr + 92)
+    def scan_string_sq=(value)
+      _v1 = (@struct.to_ptr + 84)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
     end
-    def int_2_float
-      _v1 = (@struct.to_ptr + 96)
+    def scan_symbols
+      _v1 = (@struct.to_ptr + 60)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def int_2_float=(value)
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def identifier_2_string
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def identifier_2_string=(value)
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def char_2_token
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def char_2_token=(value)
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def symbol_2_token
-      _v1 = (@struct.to_ptr + 108)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def symbol_2_token=(value)
-      _v1 = (@struct.to_ptr + 108)
+    def scan_symbols=(value)
+      _v1 = (@struct.to_ptr + 60)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -4719,6 +4689,30 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
+    def skip_comment_multi
+      _v1 = (@struct.to_ptr + 36)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def skip_comment_multi=(value)
+      _v1 = (@struct.to_ptr + 36)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def skip_comment_single
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def skip_comment_single=(value)
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def store_int64
       _v1 = (@struct.to_ptr + 116)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -4731,11 +4725,17 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def padding_dummy
-      _v1 = (@struct.to_ptr + 120)
+    def symbol_2_token
+      _v1 = (@struct.to_ptr + 108)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
+    end
+    def symbol_2_token=(value)
+      _v1 = (@struct.to_ptr + 108)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
     end
   end
   # XXX: Don't know how to print callback
@@ -4842,8 +4842,34 @@ module GLib
       _v2 = GLib::Lib.g_source_attach(self, _v1)
       return _v2
     end
+    def callback_data
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def callback_funcs
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::SourceCallbackFuncs], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::SourceCallbackFuncs.wrap(_v3)
+      _v4
+    end
+    def context
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::MainContext], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::MainContext.wrap(_v3)
+      _v4
+    end
     def destroy
       GLib::Lib.g_source_destroy(self)
+    end
+    def flags
+      _v1 = (@struct.to_ptr + 44)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def get_can_recurse
       _v1 = GLib::Lib.g_source_get_can_recurse(self)
@@ -4888,6 +4914,47 @@ module GLib
       _v2 = new_events
       GLib::Lib.g_source_modify_unix_fd(self, _v1, _v2)
     end
+    def name
+      _v1 = (@struct.to_ptr + 80)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def next
+      _v1 = (@struct.to_ptr + 72)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Source], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::Source.wrap(_v3)
+      _v4
+    end
+    def poll_fds
+      _v1 = (@struct.to_ptr + 56)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :gslist], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::SList.wrap([:pointer, :void], _v3)
+      _v4
+    end
+    def prev
+      _v1 = (@struct.to_ptr + 64)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Source], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::Source.wrap(_v3)
+      _v4
+    end
+    def priority
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def priv
+      _v1 = (@struct.to_ptr + 88)
+      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::SourcePrivate], _v1)
+      _v3 = _v2.to_value
+      _v4 = GLib::SourcePrivate.wrap(_v3)
+      _v4
+    end
     def query_unix_fd(tag)
       _v1 = GirFFI::InPointer.from(:void, tag)
       _v2 = GLib::Lib.g_source_query_unix_fd(self, _v1)
@@ -4897,6 +4964,12 @@ module GLib
       _v1 = GLib::Lib.g_source_ref(self)
       _v2 = GLib::Source.wrap(_v1)
       return _v2
+    end
+    def ref_count
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
     end
     def remove_child_source(child_source)
       _v1 = GLib::Source.from(child_source)
@@ -4941,22 +5014,6 @@ module GLib
       _v1 = ready_time
       GLib::Lib.g_source_set_ready_time(self, _v1)
     end
-    def unref
-      GLib::Lib.g_source_unref(self)
-    end
-    def callback_data
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def callback_funcs
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::SourceCallbackFuncs], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::SourceCallbackFuncs.wrap(_v3)
-      _v4
-    end
     def source_funcs
       _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::SourceFuncs], _v1)
@@ -4964,75 +5021,24 @@ module GLib
       _v4 = GLib::SourceFuncs.wrap(_v3)
       _v4
     end
-    def ref_count
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def context
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::MainContext], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::MainContext.wrap(_v3)
-      _v4
-    end
-    def priority
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(:gint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def flags
-      _v1 = (@struct.to_ptr + 44)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
     def source_id
       _v1 = (@struct.to_ptr + 48)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def poll_fds
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :gslist], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::SList.wrap([:pointer, :void], _v3)
-      _v4
-    end
-    def prev
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Source], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::Source.wrap(_v3)
-      _v4
-    end
-    def next
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::Source], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::Source.wrap(_v3)
-      _v4
-    end
-    def name
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
-      _v4
-    end
-    def priv
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::InOutPointer.new([:pointer, GLib::SourcePrivate], _v1)
-      _v3 = _v2.to_value
-      _v4 = GLib::SourcePrivate.wrap(_v3)
-      _v4
+    def unref
+      GLib::Lib.g_source_unref(self)
     end
   end
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
   
+    def get
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
     def ref
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(GLib::Ref, _v1)
@@ -5045,26 +5051,26 @@ module GLib
       _v3 = _v2.to_value
       _v3
     end
-    def get
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GLib::SourceFuncs < GirFFI::StructBase
   
-    def prepare
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::Prepare, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
     def check
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(GLib::Check, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def closure_callback
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = GirFFI::InOutPointer.new(GLib::SourceFunc, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def closure_marshal
+      _v1 = (@struct.to_ptr + 40)
+      _v2 = GirFFI::InOutPointer.new(GLib::SourceDummyMarshal, _v1)
       _v3 = _v2.to_value
       _v3
     end
@@ -5080,15 +5086,9 @@ module GLib
       _v3 = _v2.to_value
       _v3
     end
-    def closure_callback
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GirFFI::InOutPointer.new(GLib::SourceFunc, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def closure_marshal
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::InOutPointer.new(GLib::SourceDummyMarshal, _v1)
+    def prepare
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::Prepare, _v1)
       _v3 = _v2.to_value
       _v3
     end
@@ -5106,6 +5106,18 @@ module GLib
   end
   class GLib::String < GirFFI::StructBase
   
+    def allocated_len
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def allocated_len=(value)
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def append(val)
       _v1 = GirFFI::InPointer.from(:utf8, val)
       _v2 = GLib::Lib.g_string_append(self, _v1)
@@ -5216,6 +5228,18 @@ module GLib
       _v4 = GLib::String.wrap(_v3)
       return _v4
     end
+    def len
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def len=(value)
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def overwrite(pos, val)
       _v1 = pos
       _v2 = GirFFI::InPointer.from(:utf8, val)
@@ -5262,17 +5286,6 @@ module GLib
       _v3 = GLib::String.wrap(_v2)
       return _v3
     end
-    def truncate(len)
-      _v1 = len
-      _v2 = GLib::Lib.g_string_truncate(self, _v1)
-      _v3 = GLib::String.wrap(_v2)
-      return _v3
-    end
-    def up
-      _v1 = GLib::Lib.g_string_up(self)
-      _v2 = GLib::String.wrap(_v1)
-      return _v2
-    end
     def str
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
@@ -5286,29 +5299,16 @@ module GLib
       _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
-    def len
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = _v2.to_value
-      _v3
+    def truncate(len)
+      _v1 = len
+      _v2 = GLib::Lib.g_string_truncate(self, _v1)
+      _v3 = GLib::String.wrap(_v2)
+      return _v3
     end
-    def len=(value)
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def allocated_len
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def allocated_len=(value)
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:guint64, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
+    def up
+      _v1 = GLib::Lib.g_string_up(self)
+      _v2 = GLib::String.wrap(_v1)
+      return _v2
     end
   end
   class GLib::StringChunk < GirFFI::StructBase
@@ -5362,18 +5362,6 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def test_quick
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def test_quick=(value)
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
     def test_perf
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
@@ -5386,14 +5374,14 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def test_verbose
-      _v1 = (@struct.to_ptr + 12)
+    def test_quick
+      _v1 = (@struct.to_ptr + 4)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
       _v3 = _v2.to_value
       _v3
     end
-    def test_verbose=(value)
-      _v1 = (@struct.to_ptr + 12)
+    def test_quick=(value)
+      _v1 = (@struct.to_ptr + 4)
       _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -5422,6 +5410,18 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
+    def test_verbose
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def test_verbose=(value)
+      _v1 = (@struct.to_ptr + 12)
+      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
@@ -5429,14 +5429,6 @@ module GLib
   # XXX: Don't know how to print callback
   class GLib::TestLogBuffer < GirFFI::StructBase
   
-    def free
-      GLib::Lib.g_test_log_buffer_free(self)
-    end
-    def push(n_bytes, bytes)
-      _v1 = n_bytes
-      _v2 = bytes
-      GLib::Lib.g_test_log_buffer_push(self, _v1, _v2)
-    end
     def data
       _v1 = (@struct.to_ptr + 0)
       _v2 = GirFFI::InOutPointer.new([:pointer, GLib::String], _v1)
@@ -5444,12 +5436,20 @@ module GLib
       _v4 = GLib::String.wrap(_v3)
       _v4
     end
+    def free
+      GLib::Lib.g_test_log_buffer_free(self)
+    end
     def msgs
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :gslist], _v1)
       _v3 = _v2.to_value
       _v4 = GLib::SList.wrap([:pointer, :void], _v3)
       _v4
+    end
+    def push(n_bytes, bytes)
+      _v1 = n_bytes
+      _v2 = bytes
+      GLib::Lib.g_test_log_buffer_push(self, _v1, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -5470,31 +5470,6 @@ module GLib
       _v3 = value
       _v2.set_value(_v3)
     end
-    def n_strings
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def n_strings=(value)
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
-      _v3 = value
-      _v2.set_value(_v3)
-    end
-    def strings
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = _v2.to_value
-      _v4 = _v3.to_utf8
-      _v4
-    end
-    def strings=(value)
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
-      _v3 = GirFFI::InPointer.from(:utf8, value)
-      _v2.set_value(_v3)
-    end
     def n_nums
       _v1 = (@struct.to_ptr + 16)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
@@ -5503,6 +5478,18 @@ module GLib
     end
     def n_nums=(value)
       _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
+    def n_strings
+      _v1 = (@struct.to_ptr + 4)
+      _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def n_strings=(value)
+      _v1 = (@struct.to_ptr + 4)
       _v2 = GirFFI::InOutPointer.new(:guint32, _v1)
       _v3 = value
       _v2.set_value(_v3)
@@ -5517,6 +5504,19 @@ module GLib
       _v1 = (@struct.to_ptr + 24)
       _v2 = GirFFI::InOutPointer.new([:pointer, :gint64], _v1)
       _v3 = value
+      _v2.set_value(_v3)
+    end
+    def strings
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = _v2.to_value
+      _v4 = _v3.to_utf8
+      _v4
+    end
+    def strings=(value)
+      _v1 = (@struct.to_ptr + 8)
+      _v2 = GirFFI::InOutPointer.new(:utf8, _v1)
+      _v3 = GirFFI::InPointer.from(:utf8, value)
       _v2.set_value(_v3)
     end
   end
@@ -5585,10 +5585,34 @@ module GLib
     def self.stop_unused_threads
       GLib::Lib.g_thread_pool_stop_unused_threads
     end
+    def exclusive
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def exclusive=(value)
+      _v1 = (@struct.to_ptr + 16)
+      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
+      _v3 = value
+      _v2.set_value(_v3)
+    end
     def free(immediate, wait_)
       _v1 = immediate
       _v2 = wait_
       GLib::Lib.g_thread_pool_free(self, _v1, _v2)
+    end
+    def func
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::Func, _v1)
+      _v3 = _v2.to_value
+      _v3
+    end
+    def func=(value)
+      _v1 = (@struct.to_ptr + 0)
+      _v2 = GirFFI::InOutPointer.new(GLib::Func, _v1)
+      _v3 = GLib::Func.from(value)
+      _v2.set_value(_v3)
     end
     def get_max_threads
       _v1 = GLib::Lib.g_thread_pool_get_max_threads(self)
@@ -5621,18 +5645,6 @@ module GLib
       _v1 = GLib::Lib.g_thread_pool_unprocessed(self)
       return _v1
     end
-    def func
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::Func, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def func=(value)
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GirFFI::InOutPointer.new(GLib::Func, _v1)
-      _v3 = GLib::Func.from(value)
-      _v2.set_value(_v3)
-    end
     def user_data
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
@@ -5643,18 +5655,6 @@ module GLib
       _v1 = (@struct.to_ptr + 8)
       _v2 = GirFFI::InOutPointer.new([:pointer, :void], _v1)
       _v3 = GirFFI::InPointer.from(:void, value)
-      _v2.set_value(_v3)
-    end
-    def exclusive
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
-      _v3 = _v2.to_value
-      _v3
-    end
-    def exclusive=(value)
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::InOutPointer.new(:gboolean, _v1)
-      _v3 = value
       _v2.set_value(_v3)
     end
   end
@@ -5741,6 +5741,14 @@ module GLib
       _v2 = GLib::Lib.g_time_zone_get_offset(self, _v1)
       return _v2
     end
+    def initialize_local
+      _v1 = GLib::Lib.g_time_zone_new_local
+      store_pointer(_v1)
+    end
+    def initialize_utc
+      _v1 = GLib::Lib.g_time_zone_new_utc
+      store_pointer(_v1)
+    end
     def is_dst(interval)
       _v1 = interval
       _v2 = GLib::Lib.g_time_zone_is_dst(self, _v1)
@@ -5753,14 +5761,6 @@ module GLib
     end
     def unref
       GLib::Lib.g_time_zone_unref(self)
-    end
-    def initialize_local
-      _v1 = GLib::Lib.g_time_zone_new_local
-      store_pointer(_v1)
-    end
-    def initialize_utc
-      _v1 = GLib::Lib.g_time_zone_new_utc
-      store_pointer(_v1)
     end
   end
   class GLib::Timer < GirFFI::StructBase
@@ -5873,6 +5873,16 @@ module GLib
   VA_COPY_AS_ARRAY = 1
   VERSION_MIN_REQUIRED = 2
   class GLib::Variant < GirFFI::StructBase
+    def self.is_object_path(string)
+      _v1 = GirFFI::InPointer.from(:utf8, string)
+      _v2 = GLib::Lib.g_variant_is_object_path(_v1)
+      return _v2
+    end
+    def self.is_signature(string)
+      _v1 = GirFFI::InPointer.from(:utf8, string)
+      _v2 = GLib::Lib.g_variant_is_signature(_v1)
+      return _v2
+    end
     def self.new_array(*args, &block)
       raise(NoMethodError) unless (self == GLib::Variant)
       obj = allocate
@@ -6022,16 +6032,6 @@ module GLib
       obj = allocate
       obj.__send__(:initialize_variant, *args, &block)
       obj
-    end
-    def self.is_object_path(string)
-      _v1 = GirFFI::InPointer.from(:utf8, string)
-      _v2 = GLib::Lib.g_variant_is_object_path(_v1)
-      return _v2
-    end
-    def self.is_signature(string)
-      _v1 = GirFFI::InPointer.from(:utf8, string)
-      _v2 = GLib::Lib.g_variant_is_signature(_v1)
-      return _v2
     end
     def self.parse(type, text, limit, endptr)
       _v1 = GLib::VariantType.from(type)
@@ -6192,6 +6192,16 @@ module GLib
       _v1 = GLib::Lib.g_variant_get_size(self)
       return _v1
     end
+    def get_string_with_override
+      get_string_without_override.first
+    end
+    def get_string
+      _v1 = GirFFI::InOutPointer.for(:guint64)
+      _v2 = GLib::Lib.g_variant_get_string(self, _v1)
+      _v3 = _v1.to_value
+      _v4 = _v2.to_utf8
+      return [_v4, _v3]
+    end
     def get_strv
       _v1 = GirFFI::InOutPointer.for(:guint64)
       _v2 = GLib::Lib.g_variant_get_strv(self, _v1)
@@ -6228,82 +6238,6 @@ module GLib
     def hash
       _v1 = GLib::Lib.g_variant_hash(self)
       return _v1
-    end
-    def is_container
-      _v1 = GLib::Lib.g_variant_is_container(self)
-      return _v1
-    end
-    def is_floating
-      _v1 = GLib::Lib.g_variant_is_floating(self)
-      return _v1
-    end
-    def is_normal_form
-      _v1 = GLib::Lib.g_variant_is_normal_form(self)
-      return _v1
-    end
-    def is_of_type(type)
-      _v1 = GLib::VariantType.from(type)
-      _v2 = GLib::Lib.g_variant_is_of_type(self, _v1)
-      return _v2
-    end
-    def lookup_value(key, expected_type)
-      _v1 = GirFFI::InPointer.from(:utf8, key)
-      _v2 = GLib::VariantType.from(expected_type)
-      _v3 = GLib::Lib.g_variant_lookup_value(self, _v1, _v2)
-      _v4 = GLib::Variant.wrap(_v3)
-      return _v4
-    end
-    def n_children
-      _v1 = GLib::Lib.g_variant_n_children(self)
-      return _v1
-    end
-    def print(type_annotate)
-      _v1 = type_annotate
-      _v2 = GLib::Lib.g_variant_print(self, _v1)
-      _v3 = _v2.to_utf8
-      return _v3
-    end
-    def ref
-      _v1 = GLib::Lib.g_variant_ref(self)
-      _v2 = GLib::Variant.wrap(_v1)
-      return _v2
-    end
-    def ref_sink
-      _v1 = GLib::Lib.g_variant_ref_sink(self)
-      _v2 = GLib::Variant.wrap(_v1)
-      return _v2
-    end
-    def store(data)
-      _v1 = GirFFI::InPointer.from(:void, data)
-      GLib::Lib.g_variant_store(self, _v1)
-    end
-    def take_ref
-      _v1 = GLib::Lib.g_variant_take_ref(self)
-      _v2 = GLib::Variant.wrap(_v1)
-      return _v2
-    end
-    def unref
-      GLib::Lib.g_variant_unref(self)
-    end
-    def get_string_with_override
-      get_string_without_override.first
-    end
-    # Initializing method used in constructors. For Variant, this needs to sink
-    # the variant's floating reference.
-    #
-    # NOTE: This is very hard to test since it is not possible to get the
-    # variant's ref count directely. However, there is an error when running
-    # the tests on 32-bit systems.
-    def store_pointer(ptr)
-      super
-      ::GLib::Lib.g_variant_ref_sink(ptr)
-    end
-    def get_string
-      _v1 = GirFFI::InOutPointer.for(:guint64)
-      _v2 = GLib::Lib.g_variant_get_string(self, _v1)
-      _v3 = _v1.to_value
-      _v4 = _v2.to_utf8
-      return [_v4, _v3]
     end
     def initialize_array(child_type, children)
       _v1 = GLib::VariantType.from(child_type)
@@ -6454,6 +6388,72 @@ module GLib
       _v2 = GLib::Lib.g_variant_new_variant(_v1)
       store_pointer(_v2)
     end
+    def is_container
+      _v1 = GLib::Lib.g_variant_is_container(self)
+      return _v1
+    end
+    def is_floating
+      _v1 = GLib::Lib.g_variant_is_floating(self)
+      return _v1
+    end
+    def is_normal_form
+      _v1 = GLib::Lib.g_variant_is_normal_form(self)
+      return _v1
+    end
+    def is_of_type(type)
+      _v1 = GLib::VariantType.from(type)
+      _v2 = GLib::Lib.g_variant_is_of_type(self, _v1)
+      return _v2
+    end
+    def lookup_value(key, expected_type)
+      _v1 = GirFFI::InPointer.from(:utf8, key)
+      _v2 = GLib::VariantType.from(expected_type)
+      _v3 = GLib::Lib.g_variant_lookup_value(self, _v1, _v2)
+      _v4 = GLib::Variant.wrap(_v3)
+      return _v4
+    end
+    def n_children
+      _v1 = GLib::Lib.g_variant_n_children(self)
+      return _v1
+    end
+    def print(type_annotate)
+      _v1 = type_annotate
+      _v2 = GLib::Lib.g_variant_print(self, _v1)
+      _v3 = _v2.to_utf8
+      return _v3
+    end
+    def ref
+      _v1 = GLib::Lib.g_variant_ref(self)
+      _v2 = GLib::Variant.wrap(_v1)
+      return _v2
+    end
+    def ref_sink
+      _v1 = GLib::Lib.g_variant_ref_sink(self)
+      _v2 = GLib::Variant.wrap(_v1)
+      return _v2
+    end
+    def store(data)
+      _v1 = GirFFI::InPointer.from(:void, data)
+      GLib::Lib.g_variant_store(self, _v1)
+    end
+    # Initializing method used in constructors. For Variant, this needs to sink
+    # the variant's floating reference.
+    #
+    # NOTE: This is very hard to test since it is not possible to get the
+    # variant's ref count directely. However, there is an error when running
+    # the tests on 32-bit systems.
+    def store_pointer(ptr)
+      super
+      ::GLib::Lib.g_variant_ref_sink(ptr)
+    end
+    def take_ref
+      _v1 = GLib::Lib.g_variant_take_ref(self)
+      _v2 = GLib::Variant.wrap(_v1)
+      return _v2
+    end
+    def unref
+      GLib::Lib.g_variant_unref(self)
+    end
     alias_method 'get_string', 'get_string_with_override'
     alias_method 'get_string_without_override', 'get_string'
   end
@@ -6550,6 +6550,12 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::VariantType < GirFFI::StructBase
+    def self.checked_(arg0)
+      _v1 = GirFFI::InPointer.from(:utf8, arg0)
+      _v2 = GLib::Lib.g_variant_type_checked_(_v1)
+      _v3 = GLib::VariantType.wrap(_v2)
+      return _v3
+    end
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
@@ -6578,12 +6584,6 @@ module GLib
       obj = allocate
       obj.__send__(:initialize_tuple, *args, &block)
       obj
-    end
-    def self.checked_(arg0)
-      _v1 = GirFFI::InPointer.from(:utf8, arg0)
-      _v2 = GLib::Lib.g_variant_type_checked_(_v1)
-      _v3 = GLib::VariantType.wrap(_v2)
-      return _v3
     end
     def self.string_is_valid(type_string)
       _v1 = GirFFI::InPointer.from(:utf8, type_string)
@@ -6633,6 +6633,29 @@ module GLib
     def hash
       _v1 = GLib::Lib.g_variant_type_hash(self)
       return _v1
+    end
+    def initialize_array(element)
+      _v1 = GLib::VariantType.from(element)
+      _v2 = GLib::Lib.g_variant_type_new_array(_v1)
+      store_pointer(_v2)
+    end
+    def initialize_dict_entry(key, value)
+      _v1 = GLib::VariantType.from(key)
+      _v2 = GLib::VariantType.from(value)
+      _v3 = GLib::Lib.g_variant_type_new_dict_entry(_v1, _v2)
+      store_pointer(_v3)
+    end
+    def initialize_maybe(element)
+      _v1 = GLib::VariantType.from(element)
+      _v2 = GLib::Lib.g_variant_type_new_maybe(_v1)
+      store_pointer(_v2)
+    end
+    def initialize_tuple(items)
+      length = items.nil? ? (0) : (items.length)
+      _v1 = length
+      _v2 = GirFFI::SizedArray.from([:pointer, GLib::VariantType], -1, items)
+      _v3 = GLib::Lib.g_variant_type_new_tuple(_v2, _v1)
+      store_pointer(_v3)
     end
     def is_array
       _v1 = GLib::Lib.g_variant_type_is_array(self)
@@ -6689,29 +6712,6 @@ module GLib
       _v1 = GLib::Lib.g_variant_type_value(self)
       _v2 = GLib::VariantType.wrap(_v1)
       return _v2
-    end
-    def initialize_array(element)
-      _v1 = GLib::VariantType.from(element)
-      _v2 = GLib::Lib.g_variant_type_new_array(_v1)
-      store_pointer(_v2)
-    end
-    def initialize_dict_entry(key, value)
-      _v1 = GLib::VariantType.from(key)
-      _v2 = GLib::VariantType.from(value)
-      _v3 = GLib::Lib.g_variant_type_new_dict_entry(_v1, _v2)
-      store_pointer(_v3)
-    end
-    def initialize_maybe(element)
-      _v1 = GLib::VariantType.from(element)
-      _v2 = GLib::Lib.g_variant_type_new_maybe(_v1)
-      store_pointer(_v2)
-    end
-    def initialize_tuple(items)
-      length = items.nil? ? (0) : (items.length)
-      _v1 = length
-      _v2 = GirFFI::SizedArray.from([:pointer, GLib::VariantType], -1, items)
-      _v3 = GLib::Lib.g_variant_type_new_tuple(_v2, _v1)
-      store_pointer(_v3)
     end
   end
   # XXX: Don't know how to print callback

@@ -23,7 +23,7 @@ class GirFFI::ClassPrettyPrinter
   end
 
   def instance_method_name_list
-    @klass.instance_methods(false)
+    @klass.instance_methods(false).sort
   end
 
   def instance_method_list
@@ -65,7 +65,7 @@ class GirFFI::ClassPrettyPrinter
 
   def pretty_print_singleton_methods
     arr = []
-    @klass.methods(false).each do |mname|
+    @klass.methods(false).sort.each do |mname|
       meth = @klass.method mname
 
       if meth.arity == -1
