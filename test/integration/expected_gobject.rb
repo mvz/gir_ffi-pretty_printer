@@ -322,15 +322,15 @@ module GObject
       _v1 = sizeof_closure
       _v2 = GObject::Object.from(object)
       _v3 = GObject::Lib.g_closure_new_object(_v1, _v2)
-      _v3.autorelease = true
       store_pointer(_v3)
+      @struct.owned = true
     end
     def initialize_simple(sizeof_closure, data)
       _v1 = sizeof_closure
       _v2 = data
       _v3 = GObject::Lib.g_closure_new_simple(_v1, _v2)
-      _v3.autorelease = true
       store_pointer(_v3)
+      @struct.owned = true
     end
     def invalidate
       GObject::Lib.g_closure_invalidate(self)
@@ -2365,7 +2365,7 @@ module GObject
     end
     def dup_string
       _v1 = GObject::Lib.g_value_dup_string(self)
-      _v2 = _v1.tap { |it| it.autorelease = true }.to_utf8
+      _v2 = GirFFI::AllocationHelper.free_after(_v1, &:to_utf8)
       return _v2
     end
     def dup_variant
@@ -3512,7 +3512,7 @@ module GObject
   def self.strdup_value_contents(value)
     _v1 = GObject::Value.from(value)
     _v2 = GObject::Lib.g_strdup_value_contents(_v1)
-    _v3 = _v2.tap { |it| it.autorelease = true }.to_utf8
+    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
     return _v3
   end
   def self.type_add_class_private(class_type, private_size)
