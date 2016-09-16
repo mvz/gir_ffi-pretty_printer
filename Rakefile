@@ -1,7 +1,6 @@
 require 'rake/clean'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
-require 'yard'
 
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
@@ -21,7 +20,12 @@ namespace :test do
   task all: [:unit, :integration]
 end
 
-YARD::Rake::YardocTask.new
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new
+rescue LoadError
+  puts 'Install yard to enable the documentation tasks'
+end
 
 task test: 'test:all'
 

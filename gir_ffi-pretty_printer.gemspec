@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('binding_of_caller', ['~> 0.7.2'])
   s.add_development_dependency('minitest', ['~> 5.0'])
   s.add_development_dependency('rake', ['~> 11.1'])
-  s.add_development_dependency('yard', ['~> 0.8.3'])
 
   s.require_paths = ['lib']
 end
