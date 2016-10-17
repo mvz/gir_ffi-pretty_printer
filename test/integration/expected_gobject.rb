@@ -42,8 +42,9 @@ module GObject
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print callback
   class GObject::CClosure < GirFFI::StructBase
-    def self.marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -52,7 +53,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_BOOLEAN__BOXED_BOXED(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_BOOLEAN__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_BOOLEAN__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -61,7 +62,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_BOOLEAN__FLAGS(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_STRING__OBJECT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_STRING__OBJECT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -70,7 +71,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_STRING__OBJECT_POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__BOOLEAN(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__BOOLEAN(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -79,7 +80,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__BOOLEAN(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__BOXED(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -88,7 +89,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__BOXED(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__CHAR(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__CHAR(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -97,7 +98,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__CHAR(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__DOUBLE(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__DOUBLE(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -106,7 +107,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__DOUBLE(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__ENUM(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__ENUM(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -115,7 +116,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__ENUM(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -124,7 +125,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__FLAGS(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__FLOAT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__FLOAT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -133,7 +134,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__FLOAT(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__INT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__INT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -142,7 +143,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__INT(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__LONG(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__LONG(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -151,7 +152,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__LONG(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__OBJECT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__OBJECT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -160,7 +161,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__OBJECT(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__PARAM(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__PARAM(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -169,7 +170,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__PARAM(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -178,7 +179,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__STRING(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__STRING(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -187,7 +188,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__STRING(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__UCHAR(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__UCHAR(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -196,7 +197,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__UCHAR(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__UINT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__UINT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -205,7 +206,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__UINT(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__UINT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__UINT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -214,7 +215,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__UINT_POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__ULONG(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__ULONG(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -223,7 +224,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__ULONG(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__VARIANT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__VARIANT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -232,7 +233,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__VARIANT(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_VOID__VOID(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_VOID__VOID(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_value)
       _v3 = n_param_values
@@ -241,7 +242,7 @@ module GObject
       _v6 = marshal_data
       GObject::Lib.g_cclosure_marshal_VOID__VOID(_v1, _v2, _v3, _v4, _v5, _v6)
     end
-    def self.marshal_generic(closure, return_gvalue, n_param_values, param_values, invocation_hint, marshal_data)
+    def self.marshal_generic(closure, return_gvalue, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
       _v2 = GObject::Value.from(return_gvalue)
       _v3 = n_param_values
@@ -325,7 +326,7 @@ module GObject
       store_pointer(_v3)
       @struct.owned = true
     end
-    def initialize_simple(sizeof_closure, data)
+    def initialize_simple(sizeof_closure, data = nil)
       _v1 = sizeof_closure
       _v2 = data
       _v3 = GObject::Lib.g_closure_new_simple(_v1, _v2)
@@ -335,13 +336,23 @@ module GObject
     def invalidate
       GObject::Lib.g_closure_invalidate(self)
     end
+    # @override
+    #
+    # This override of invoke ensures the return value location can be passed
+    # in as the first argument, which is needed to ensure the GValue is
+    # initialized with the proper type.
+    #
+    # @param [GObject::Value] return_value The GValue to store the return
+    #   value, or nil if no return value is expected.
+    # @param [Array] param_values the closure parameters, or nil if no
+    #   parameters are needed.
+    # @param invocation_hint
     def invoke(return_value, param_values, invocation_hint = nil)
-      _v1 = GObject::Value.from(return_value)
-      n_param_values = param_values.nil? ? (0) : (param_values.length)
-      _v2 = n_param_values
-      _v3 = invocation_hint
-      _v4 = GirFFI::SizedArray.from(GObject::Value, -1, param_values)
-      GObject::Lib.g_closure_invoke(self, _v1, _v2, _v4, _v3)
+      rval = GObject::Value.from(return_value)
+      n_params = param_values.nil? ? (0) : (param_values.length)
+      params = GirFFI::SizedArray.from(GObject::Value, -1, param_values)
+      GObject::Lib.g_closure_invoke(self, rval, n_params, params, invocation_hint)
+      rval.get_value
     end
     def is_invalid
       _v1 = (@struct.to_ptr + 36)
@@ -732,26 +743,26 @@ module GObject
   end
   # XXX: Don't know how to print callback
   class GObject::Object < GirFFI::ObjectBase
-    def self.compat_control(what, data)
+    def self.compat_control(what, data = nil)
       _v1 = what
       _v2 = data
       _v3 = GObject::Lib.g_object_compat_control(_v1, _v2)
       return _v3
     end
     def self.interface_find_property(g_iface, property_name)
-      _v1 = g_iface
+      _v1 = GObject::TypeInterface.from(g_iface)
       _v2 = GirFFI::InPointer.from_utf8(property_name)
       _v3 = GObject::Lib.g_object_interface_find_property(_v1, _v2)
       _v4 = GObject::ParamSpec.wrap(_v3).tap { |it| it and it.ref }
       return _v4
     end
     def self.interface_install_property(g_iface, pspec)
-      _v1 = g_iface
+      _v1 = GObject::TypeInterface.from(g_iface)
       _v2 = GObject::ParamSpec.from(pspec)
       GObject::Lib.g_object_interface_install_property(_v1, _v2)
     end
     def self.interface_list_properties(g_iface)
-      _v1 = g_iface
+      _v1 = GObject::TypeInterface.from(g_iface)
       _v2 = FFI::MemoryPointer.new(:uint32)
       _v3 = GObject::Lib.g_object_interface_list_properties(_v1, _v2)
       _v4 = _v2.get_uint32(0)
@@ -898,7 +909,7 @@ module GObject
     def run_dispose
       GObject::Lib.g_object_run_dispose(self)
     end
-    def set_data(key, data)
+    def set_data(key, data = nil)
       _v1 = GirFFI::InPointer.from_utf8(key)
       _v2 = data
       GObject::Lib.g_object_set_data(self, _v1, _v2)
@@ -1169,7 +1180,7 @@ module GObject
       _v2 = _v1.get_uint32(0)
       _v2
     end
-    def set_qdata(quark, data)
+    def set_qdata(quark, data = nil)
       _v1 = quark
       _v2 = data
       GObject::Lib.g_param_spec_set_qdata(self, _v1, _v2)
@@ -1803,11 +1814,6 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print union
   class GObject::TypeClass < GirFFI::StructBase
-    def self.add_private(g_class, private_size)
-      _v1 = g_class
-      _v2 = private_size
-      GObject::Lib.g_type_class_add_private(_v1, _v2)
-    end
     def self.adjust_private_offset(g_class, private_size_or_offset)
       _v1 = g_class
       _v2 = private_size_or_offset
@@ -1831,10 +1837,19 @@ module GObject
       _v3 = GObject::TypeClass.wrap_copy(_v2)
       return _v3
     end
+    def add_private(private_size)
+      _v1 = private_size
+      GObject::Lib.g_type_class_add_private(self, _v1)
+    end
     def g_type
       _v1 = (@struct.to_ptr + 0)
       _v2 = _v1.get_uint64(0)
       _v2
+    end
+    def get_private(private_type)
+      _v1 = private_type
+      _v2 = GObject::Lib.g_type_class_get_private(self, _v1)
+      return _v2
     end
     def peek_parent
       _v1 = GObject::Lib.g_type_class_peek_parent(self)
@@ -1973,6 +1988,11 @@ module GObject
       _v2 = _v1.get_pointer(0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
+    end
+    def get_private(private_type)
+      _v1 = private_type
+      _v2 = GObject::Lib.g_type_instance_get_private(self, _v1)
+      return _v2
     end
   end
   class GObject::TypeInterface < GirFFI::StructBase
@@ -2271,7 +2291,7 @@ module GObject
     end
     def value_peek_pointer
       _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v2 = GObject::Value_peek_pointer.get_value_from_pointer(_v1, 0)
       _v2
     end
   end
@@ -2484,7 +2504,7 @@ module GObject
       self
     end
     def init_from_instance(instance)
-      _v1 = instance
+      _v1 = GObject::TypeInstance.from(instance)
       GObject::Lib.g_value_init_from_instance(self, _v1)
     end
     def peek_pointer
@@ -2556,7 +2576,7 @@ module GObject
       _v1 = GObject::ParamSpec.from(param)
       GObject::Lib.g_value_set_param(self, _v1)
     end
-    def set_pointer(v_pointer)
+    def set_pointer(v_pointer = nil)
       _v1 = v_pointer
       GObject::Lib.g_value_set_pointer(self, _v1)
     end
@@ -2613,7 +2633,7 @@ module GObject
       GObject::Lib.g_value_take_string(self, _v1)
     end
     def take_variant(variant = nil)
-      _v1 = GLib::Variant.from(variant)
+      _v1 = GLib::Variant.copy_from(variant)
       GObject::Lib.g_value_take_variant(self, _v1)
     end
     def transform(dest_value)
@@ -2726,7 +2746,7 @@ module GObject
     _v2 = boxed
     GObject::Lib.g_boxed_free(_v1, _v2)
   end
-  def self.cclosure_marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2735,7 +2755,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_BOOLEAN__BOXED_BOXED(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_BOOLEAN__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_BOOLEAN__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2744,7 +2764,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_BOOLEAN__FLAGS(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_STRING__OBJECT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_STRING__OBJECT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2753,7 +2773,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_STRING__OBJECT_POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__BOOLEAN(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__BOOLEAN(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2762,7 +2782,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__BOOLEAN(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__BOXED(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2771,7 +2791,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__BOXED(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__CHAR(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__CHAR(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2780,7 +2800,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__CHAR(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__DOUBLE(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__DOUBLE(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2789,7 +2809,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__DOUBLE(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__ENUM(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__ENUM(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2798,7 +2818,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__ENUM(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__FLAGS(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2807,7 +2827,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__FLAGS(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__FLOAT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__FLOAT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2816,7 +2836,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__FLOAT(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__INT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__INT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2825,7 +2845,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__INT(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__LONG(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__LONG(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2834,7 +2854,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__LONG(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__OBJECT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__OBJECT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2843,7 +2863,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__OBJECT(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__PARAM(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__PARAM(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2852,7 +2872,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__PARAM(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2861,7 +2881,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__STRING(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__STRING(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2870,7 +2890,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__STRING(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__UCHAR(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__UCHAR(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2879,7 +2899,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__UCHAR(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__UINT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__UINT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2888,7 +2908,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__UINT(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__UINT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__UINT_POINTER(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2897,7 +2917,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__UINT_POINTER(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__ULONG(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__ULONG(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2906,7 +2926,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__ULONG(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__VARIANT(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__VARIANT(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2915,7 +2935,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__VARIANT(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_VOID__VOID(closure, return_value, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_VOID__VOID(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_value)
     _v3 = n_param_values
@@ -2924,7 +2944,7 @@ module GObject
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_VOID__VOID(_v1, _v2, _v3, _v4, _v5, _v6)
   end
-  def self.cclosure_marshal_generic(closure, return_gvalue, n_param_values, param_values, invocation_hint, marshal_data)
+  def self.cclosure_marshal_generic(closure, return_gvalue, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
     _v2 = GObject::Value.from(return_gvalue)
     _v3 = n_param_values
@@ -3288,7 +3308,7 @@ module GObject
     _v2 = GObject::Lib.g_pointer_type_register_static(_v1)
     return _v2
   end
-  def self.signal_accumulator_first_wins(ihint, return_accu, handler_return, dummy)
+  def self.signal_accumulator_first_wins(ihint, return_accu, handler_return, dummy = nil)
     _v1 = GObject::SignalInvocationHint.from(ihint)
     _v2 = GObject::Value.from(return_accu)
     _v3 = GObject::Value.from(handler_return)
@@ -3296,7 +3316,7 @@ module GObject
     _v5 = GObject::Lib.g_signal_accumulator_first_wins(_v1, _v2, _v3, _v4)
     return _v5
   end
-  def self.signal_accumulator_true_handled(ihint, return_accu, handler_return, dummy)
+  def self.signal_accumulator_true_handled(ihint, return_accu, handler_return, dummy = nil)
     _v1 = GObject::SignalInvocationHint.from(ihint)
     _v2 = GObject::Value.from(return_accu)
     _v3 = GObject::Value.from(handler_return)
@@ -3361,7 +3381,7 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_disconnect(_v1, _v2)
   end
-  def self.signal_handler_find(instance, mask, signal_id, detail, closure, func, data)
+  def self.signal_handler_find(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
@@ -3383,7 +3403,7 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_unblock(_v1, _v2)
   end
-  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure, func, data)
+  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
@@ -3398,7 +3418,7 @@ module GObject
     _v1 = GObject::Object.from(instance)
     GObject::Lib.g_signal_handlers_destroy(_v1)
   end
-  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure, func, data)
+  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
@@ -3409,7 +3429,7 @@ module GObject
     _v8 = GObject::Lib.g_signal_handlers_disconnect_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
-  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure, func, data)
+  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
@@ -3584,11 +3604,6 @@ module GObject
     _v4 = _v2.get_uint32(0)
     _v5 = GirFFI::SizedArray.wrap(:GType, _v4, _v3)
     return _v5
-  end
-  def self.type_class_add_private(g_class, private_size)
-    _v1 = g_class
-    _v2 = private_size
-    GObject::Lib.g_type_class_add_private(_v1, _v2)
   end
   def self.type_class_adjust_private_offset(g_class, private_size_or_offset)
     _v1 = g_class
@@ -3783,7 +3798,7 @@ module GObject
     _v5 = GObject::Lib.g_type_register_static(_v1, _v2, _v3, _v4)
     return _v5
   end
-  def self.type_set_qdata(type, quark, data)
+  def self.type_set_qdata(type, quark, data = nil)
     _v1 = type
     _v2 = quark
     _v3 = data
