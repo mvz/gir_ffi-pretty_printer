@@ -344,14 +344,12 @@ module GObject
     #
     # @param [GObject::Value] return_value The GValue to store the return
     #   value, or nil if no return value is expected.
-    # @param [Array] param_values the closure parameters, or nil if no
-    #   parameters are needed.
-    # @param invocation_hint
-    def invoke(return_value, param_values, invocation_hint = nil)
-      rval = GObject::Value.from(return_value)
-      n_params = param_values.nil? ? (0) : (param_values.length)
-      params = GirFFI::SizedArray.from(GObject::Value, -1, param_values)
-      GObject::Lib.g_closure_invoke(self, rval, n_params, params, invocation_hint)
+    # @param [Array] param_values the closure parameters.
+    def invoke(return_value, param_values)
+      rval = Value.from(return_value)
+      n_params = param_values.length
+      params = GirFFI::SizedArray.from(Value, -1, param_values)
+      Lib.g_closure_invoke(self, rval, n_params, params, nil)
       rval.get_value
     end
     def is_invalid
@@ -409,16 +407,16 @@ module GObject
     #
     # @param [Proc] marshal The marshaller to use for this closure object
     def set_marshal(marshal)
-      callback = GObject::ClosureMarshal.from(marshal)
+      callback = ClosureMarshal.from(marshal)
       Lib.g_closure_set_marshal(self, callback)
     end
     def sink
       GObject::Lib.g_closure_sink(self)
     end
     def store_pointer(ptr)
-      super
       Lib.g_closure_ref(ptr)
       Lib.g_closure_sink(ptr)
+      super
     end
     def unref
       GObject::Lib.g_closure_unref(self)
@@ -769,10 +767,10 @@ module GObject
       _v5 = GirFFI::SizedArray.wrap([:pointer, GObject::ParamSpec], _v4, _v3)
       return _v5
     end
-    def self.make_finalizer(ptr, name)
+    def self.make_finalizer(ptr)
       proc do
         rc = GObject::Object::Struct.new(ptr)[:ref_count]
-        if (rc == 0) then
+        if rc.zero? then
           warn("not unreffing #{name}:#{ptr} (#{rc})")
         else
           GObject::Lib.g_object_unref(ptr)
@@ -947,8 +945,7 @@ module GObject
     end
     def store_pointer(ptr)
       super
-      klass = self.class
-      ObjectSpace.define_finalizer(self, klass.make_finalizer(ptr, klass.name))
+      ObjectSpace.define_finalizer(self, self.class.make_finalizer(ptr))
     end
     def thaw_notify
       GObject::Lib.g_object_thaw_notify(self)
@@ -1116,6 +1113,9 @@ module GObject
       _v3 = _v2.to_utf8
       _v3
     end
+    def accessor_name
+      get_name.tr("-", "_")
+    end
     def flags
       _v1 = (@struct.to_ptr + 16)
       _v2 = GObject::ParamFlags.get_value_from_pointer(_v1, 0)
@@ -1203,7 +1203,7 @@ module GObject
   
     def default_value
       _v1 = (@struct.to_ptr + 72)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
   end
@@ -2298,16 +2298,10 @@ module GObject
   VALUE_COLLECT_FORMAT_MAX_LENGTH = 8
   VALUE_NOCOPY_CONTENTS = 134217728
   class GObject::Value < GirFFI::BoxedBase
-    def self.copy(val)
-      return unless val
-      result = for_gtype(val.current_gtype)
-      Lib.g_value_copy(val, result) unless val.uninitialized?
-      result
-    end
     def self.copy_value_to_pointer(value, pointer, offset = 0)
-      super(value, pointer, offset).tap do
-        value.to_ptr.autorelease = false if value
-      end
+      target = wrap((pointer + offset))
+      target.init(value.current_gtype)
+      Lib.g_value_copy(value, target) unless value.uninitialized?
     end
     def self.for_gtype(gtype)
       new.tap { |it| it.init(gtype) }
@@ -2320,12 +2314,11 @@ module GObject
         wrap_ruby_value(val)
       end
     end
-    def self.make_finalizer(struct, gtype)
+    def self.make_finalizer(struct)
       proc do
-        ptr = struct.to_ptr
-        if ptr.autorelease? then
-          ptr.autorelease = false
-          GObject::Lib.g_value_unset(ptr) unless (struct[:g_type] == TYPE_INVALID)
+        if struct.owned? then
+          ptr = struct.to_ptr
+          Lib.g_value_unset(ptr) unless (struct[:g_type] == TYPE_INVALID)
           GObject.boxed_free(gtype, ptr)
         end
       end
@@ -3658,10 +3651,14 @@ module GObject
     GObject::Lib.g_type_free_instance(_v1)
   end
   def self.type_from_name(name)
-    Lib.g_type_from_name(name)
+    _v1 = GirFFI::InPointer.from_utf8(name)
+    _v2 = GObject::Lib.g_type_from_name(_v1)
+    return _v2
   end
-  def self.type_fundamental(gtype)
-    Lib.g_type_fundamental(gtype)
+  def self.type_fundamental(type_id)
+    _v1 = type_id
+    _v2 = GObject::Lib.g_type_fundamental(_v1)
+    return _v2
   end
   def self.type_fundamental_next
     _v1 = GObject::Lib.g_type_fundamental_next
@@ -3689,7 +3686,7 @@ module GObject
     return _v1
   end
   def self.type_init
-    Lib.g_type_init
+    GObject::Lib.g_type_init
   end
   def self.type_init_with_debug_flags(debug_flags)
     _v1 = debug_flags
@@ -3749,7 +3746,10 @@ module GObject
     return _v3
   end
   def self.type_name_from_instance(instance)
-    type_name(type_from_instance(instance))
+    _v1 = GObject::TypeInstance.from(instance)
+    _v2 = GObject::Lib.g_type_name_from_instance(_v1)
+    _v3 = _v2.to_utf8
+    return _v3
   end
   def self.type_next_base(leaf_type, root_type)
     _v1 = leaf_type

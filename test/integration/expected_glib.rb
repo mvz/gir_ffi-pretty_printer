@@ -486,7 +486,7 @@ module GLib
       _v1.put_uint32(0, _v2)
     end
     def to_string
-      GirFFI::ArgHelper.ptr_to_utf8_length(@struct[:data], @struct[:len])
+      data.read_string(len)
     end
   end
   class GLib::Bytes < GirFFI::BoxedBase
@@ -1470,8 +1470,8 @@ module GLib
       _v3 = FFI::MemoryPointer.new(:pointer)
       _v4 = FFI::MemoryPointer.new(:pointer)
       _v5 = GLib::Lib.g_hash_table_lookup_extended(_v1, _v2, _v3, _v4)
-      _v6 = _v3.get_pointer(0).get_void(0)
-      _v7 = _v4.get_pointer(0).get_void(0)
+      _v6 = _v3.get_pointer(0)
+      _v7 = _v4.get_pointer(0)
       return [_v5, _v6, _v7]
     end
     def self.remove(hash_table, key = nil)
@@ -1558,7 +1558,7 @@ module GLib
     end
     def dummy5
       _v1 = (@struct.to_ptr + 28)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def dummy6
@@ -1574,8 +1574,8 @@ module GLib
       _v1 = FFI::MemoryPointer.new(:pointer)
       _v2 = FFI::MemoryPointer.new(:pointer)
       _v3 = GLib::Lib.g_hash_table_iter_next(self, _v1, _v2)
-      _v4 = _v1.get_pointer(0).get_void(0)
-      _v5 = _v2.get_pointer(0).get_void(0)
+      _v4 = _v1.get_pointer(0)
+      _v5 = _v2.get_pointer(0)
       return [_v3, _v4, _v5]
     end
     def remove
@@ -2842,9 +2842,8 @@ module GLib
   end
   class GLib::MainLoop < GirFFI::BoxedBase
     def self.handle_exception(ex)
-      unless current_loop = RUNNING_LOOPS.last then
-        raise(ex)
-      end
+      current_loop = RUNNING_LOOPS.last
+      raise(ex) unless current_loop
       (EXCEPTIONS << ex)
       current_loop.quit
     end
@@ -3864,11 +3863,11 @@ module GLib
   class GLib::Regex < GirFFI::BoxedBase
     def self.check_replacement(replacement)
       _v1 = GirFFI::InPointer.from_utf8(replacement)
-      _v2 = FFI::MemoryPointer.new(GLib::Boolean)
+      _v2 = FFI::MemoryPointer.new(GirFFI::Boolean)
       _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
       _v4 = GLib::Lib.g_regex_check_replacement(_v1, _v2, _v3)
       GirFFI::ArgHelper.check_error(_v3)
-      _v5 = GLib::Boolean.get_value_from_pointer(_v2, 0)
+      _v5 = GirFFI::Boolean.get_value_from_pointer(_v2, 0)
       return [_v4, _v5]
     end
     def self.error_quark
@@ -5206,63 +5205,63 @@ module GLib
   
     def test_initialized
       _v1 = (@struct.to_ptr + 0)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_initialized=(value)
       _v1 = (@struct.to_ptr + 0)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_perf
       _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_perf=(value)
       _v1 = (@struct.to_ptr + 8)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_quick
       _v1 = (@struct.to_ptr + 4)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_quick=(value)
       _v1 = (@struct.to_ptr + 4)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_quiet
       _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_quiet=(value)
       _v1 = (@struct.to_ptr + 16)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_undefined
       _v1 = (@struct.to_ptr + 20)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_undefined=(value)
       _v1 = (@struct.to_ptr + 20)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_verbose
       _v1 = (@struct.to_ptr + 12)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_verbose=(value)
       _v1 = (@struct.to_ptr + 12)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
   end
   # XXX: Don't know how to print callback
@@ -5422,13 +5421,13 @@ module GLib
     end
     def exclusive
       _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::Boolean.get_value_from_pointer(_v1, 0)
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def exclusive=(value)
       _v1 = (@struct.to_ptr + 16)
       _v2 = value
-      GLib::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def free(immediate, wait_)
       _v1 = immediate
@@ -5899,7 +5898,7 @@ module GLib
       _v1 = GLib::Lib.g_variant_parser_get_error_quark
       return _v1
     end
-    # TODO: Update ref?
+    # For variants, wrap_copy does not do any copying.
     def self.wrap_copy(val)
       wrap(val)
     end
@@ -6311,10 +6310,10 @@ module GLib
     # NOTE: This is very hard to test since it is not possible to get the
     # variant's ref count directely. However, there is an error when running
     # the tests on 32-bit systems.
-    # TODO: Move this logic elsewhere
+    #
     def store_pointer(ptr)
+      Lib.g_variant_ref_sink(ptr)
       super
-      ::GLib::Lib.g_variant_ref_sink(ptr)
     end
     def take_ref
       _v1 = GLib::Lib.g_variant_take_ref(self)
@@ -7665,8 +7664,8 @@ module GLib
     _v3 = FFI::MemoryPointer.new(:pointer)
     _v4 = FFI::MemoryPointer.new(:pointer)
     _v5 = GLib::Lib.g_hash_table_lookup_extended(_v1, _v2, _v3, _v4)
-    _v6 = _v3.get_pointer(0).get_void(0)
-    _v7 = _v4.get_pointer(0).get_void(0)
+    _v6 = _v3.get_pointer(0)
+    _v7 = _v4.get_pointer(0)
     return [_v5, _v6, _v7]
   end
   def self.hash_table_remove(hash_table, key = nil)
@@ -8256,11 +8255,11 @@ module GLib
   end
   def self.regex_check_replacement(replacement)
     _v1 = GirFFI::InPointer.from_utf8(replacement)
-    _v2 = FFI::MemoryPointer.new(GLib::Boolean)
+    _v2 = FFI::MemoryPointer.new(GirFFI::Boolean)
     _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
     _v4 = GLib::Lib.g_regex_check_replacement(_v1, _v2, _v3)
     GirFFI::ArgHelper.check_error(_v3)
-    _v5 = GLib::Boolean.get_value_from_pointer(_v2, 0)
+    _v5 = GirFFI::Boolean.get_value_from_pointer(_v2, 0)
     return [_v4, _v5]
   end
   def self.regex_error_quark
