@@ -1,10 +1,22 @@
 AllCops:
   Exclude:
     - 'test/integration/actual_glib.rb'
+    - 'test/integration/actual_gobject.rb'
     - 'test/integration/expected_glib.rb'
+    - 'test/integration/expected_gobject.rb'
+  DisplayCopNames: true
+
+# Test describe blocks can be any size
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'
 
 # GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
 Style/FileName:
   Enabled: false
+
+# Require at least two dependent lines before suggesting a guard clause
+Style/GuardClause:
+  MinBodyLength: 2
 
 inherit_from: .rubocop_todo.yml

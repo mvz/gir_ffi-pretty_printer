@@ -11,7 +11,7 @@ class SimpleAlias
     'hello'
   end
 
-  alias_method :foo, :bar
+  alias foo bar
 end
 
 class ComplexAlias
@@ -19,13 +19,13 @@ class ComplexAlias
     'original'
   end
 
-  alias_method :baz_without_qux, :baz
+  alias baz_without_qux baz
 
   def baz_with_qux
     baz_without_qux + '-more'
   end
 
-  alias_method :baz, :baz_with_qux
+  alias baz baz_with_qux
 end
 
 describe GirFFI::ClassPrettyPrinter do
