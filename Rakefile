@@ -1,6 +1,7 @@
 require 'rake/clean'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'rubocop/rake_task'
 
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
@@ -27,6 +28,8 @@ rescue LoadError
   puts 'Install yard to enable the documentation tasks'
 end
 
-task test: 'test:all'
+RuboCop::RakeTask.new
 
+task test: 'test:all'
 task default: 'test'
+task default: 'rubocop'
