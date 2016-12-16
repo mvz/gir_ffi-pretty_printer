@@ -12,7 +12,7 @@ class GirFFI::PrettyPrinter
   def pretty_print_function(modul, mname)
     str = ''
     begin
-      modul.setup_method mname.to_s unless modul.respond_to? mname
+      modul.setup_method mname.to_s if modul.send :respond_to_missing?, mname
 
       meth = modul.method mname
       str << meth.to_ruby
