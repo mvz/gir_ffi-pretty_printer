@@ -2870,14 +2870,7 @@ module GLib
       return _v2
     end
     def run_with_thread_enabler
-      case RUBY_ENGINE
-      when "jruby" then
-        # do nothing
-      when "rbx" then
-        # do nothing
-      else
-        ThreadEnabler.instance.setup_idle_handler
-      end
+      ThreadEnabler.instance.setup_idle_handler if (RUBY_ENGINE == "ruby")
       (RUNNING_LOOPS << self)
       result = run_without_thread_enabler
       ex = EXCEPTIONS.shift

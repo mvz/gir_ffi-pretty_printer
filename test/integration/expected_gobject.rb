@@ -1077,7 +1077,7 @@ module GObject
     end
     def pspec=(value)
       _v1 = (@struct.to_ptr + 0)
-      _v2 = GObject::ParamSpec.from(value.ref)
+      _v2 = GObject::ParamSpec.from((value and value.ref))
       _v1.put_pointer(0, _v2)
     end
     def value
