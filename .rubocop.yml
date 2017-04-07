@@ -19,4 +19,8 @@ Style/FileName:
 Style/GuardClause:
   MinBodyLength: 2
 
+# Prefer symbols to look like symbols
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
 inherit_from: .rubocop_todo.yml
