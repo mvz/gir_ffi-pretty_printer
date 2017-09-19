@@ -2626,16 +2626,10 @@ module GLib
     def append(data)
       self.class.wrap(element_type, Lib.g_list_append(self, element_ptr_for(data)))
     end
-    def head
-      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
-    end
     def data=(value)
       _v1 = (@struct.to_ptr + 0)
       _v2 = value
       _v1.put_pointer(0, _v2)
-    end
-    def tail
-      self.class.wrap(element_type, @struct[:next])
     end
     def next=(value)
       _v1 = (@struct.to_ptr + 8)
@@ -2874,9 +2868,6 @@ module GLib
       RUNNING_LOOPS.pop
       raise(ex) if ex
       result
-    end
-    def run
-      GLib::Lib.g_main_loop_run(self)
     end
     def unref
       GLib::Lib.g_main_loop_unref(self)
@@ -4047,16 +4038,10 @@ module GLib
     def self.from_enumerable(type, arr)
       arr.reverse.reduce(new(type)) { |lst, val| lst.prepend(val) }
     end
-    def head
-      GirFFI::ArgHelper.cast_from_pointer(element_type, @struct[:data])
-    end
     def data=(value)
       _v1 = (@struct.to_ptr + 0)
       _v2 = value
       _v1.put_pointer(0, _v2)
-    end
-    def tail
-      self.class.wrap(element_type, @struct[:next])
     end
     def next=(value)
       _v1 = (@struct.to_ptr + 8)
@@ -6090,13 +6075,6 @@ module GLib
     end
     def get_string_with_override
       get_string_without_override.first
-    end
-    def get_string
-      _v1 = FFI::MemoryPointer.new(:uint64)
-      _v2 = GLib::Lib.g_variant_get_string(self, _v1)
-      _v3 = _v1.get_uint64(0)
-      _v4 = _v2.to_utf8
-      return [_v4, _v3]
     end
     def get_strv
       _v1 = FFI::MemoryPointer.new(:uint64)

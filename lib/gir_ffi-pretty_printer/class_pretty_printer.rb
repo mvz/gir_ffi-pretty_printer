@@ -3,7 +3,6 @@ module GirFFI
   class ClassPrettyPrinter
     def initialize(klass)
       @klass = klass
-      @printed_instance_methods = []
     end
 
     def pretty_print
@@ -40,8 +39,7 @@ module GirFFI
     end
 
     def pretty_print_method(meth)
-      return if instance_method_printed? meth.original_name
-      @printed_instance_methods << meth.original_name
+      return if meth.name != meth.original_name
       method_source meth
     end
 
@@ -59,10 +57,6 @@ module GirFFI
       rescue => e
         warn "Printing #{@klass.name}##{meth.name} failed: #{e.message}"
       end
-    end
-
-    def instance_method_printed?(mname)
-      @printed_instance_methods.include? mname
     end
 
     def pretty_print_singleton_methods

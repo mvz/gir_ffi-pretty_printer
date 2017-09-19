@@ -6,26 +6,18 @@ class SimpleClass
   end
 end
 
-class SimpleAlias
-  def bar
-    'hello'
-  end
-
+class SimpleAlias < SimpleClass
   alias foo bar
 end
 
-class ComplexAlias
-  def baz
-    'original'
+class ComplexAlias < SimpleClass
+  alias bar_without_qux bar
+
+  def bar_with_qux
+    bar_without_qux + '-more'
   end
 
-  alias baz_without_qux baz
-
-  def baz_with_qux
-    baz_without_qux + '-more'
-  end
-
-  alias baz baz_with_qux
+  alias bar bar_with_qux
 end
 
 describe GirFFI::ClassPrettyPrinter do
@@ -53,11 +45,8 @@ describe GirFFI::ClassPrettyPrinter do
       let(:klass) { SimpleAlias }
       it 'pretty-prints the class' do
         expected = <<-END.reset_indentation.chomp
-          class SimpleAlias < Object
+          class SimpleAlias < SimpleClass
 
-            def bar
-              "hello"
-            end
             alias_method 'foo', 'bar'
           end
         END
@@ -71,16 +60,13 @@ describe GirFFI::ClassPrettyPrinter do
       let(:klass) { ComplexAlias }
       it 'pretty-prints the class' do
         expected = <<-END.reset_indentation.chomp
-          class ComplexAlias < Object
+          class ComplexAlias < SimpleClass
 
-            def baz_with_qux
-              (baz_without_qux + "-more")
+            def bar_with_qux
+              (bar_without_qux + "-more")
             end
-            def baz
-              "original"
-            end
-            alias_method 'baz', 'baz_with_qux'
-            alias_method 'baz_without_qux', 'baz'
+            alias_method 'bar', 'bar_with_qux'
+            alias_method 'bar_without_qux', 'bar'
           end
         END
 

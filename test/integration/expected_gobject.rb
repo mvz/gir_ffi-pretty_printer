@@ -808,10 +808,6 @@ module GObject
       _v8 = GObject::Binding.wrap(_v7).tap { |it| it and it.ref }
       return _v8
     end
-    def is_floating
-      _v1 = GObject::Lib.g_object_is_floating(self)
-      return _v1
-    end
     def force_floating
       GObject::Lib.g_object_force_floating(self)
     end
@@ -829,20 +825,15 @@ module GObject
       _v2 = GObject::Lib.g_object_get_data(self, _v1)
       return _v2
     end
-    def get_property_with_override(property_name)
-      gvalue = gvalue_for_property(property_name)
-      get_property_without_override(property_name, gvalue)
-      gvalue.get_value
-    end
     def get_property_extended(property_name)
       value = get_property(property_name)
       type_info = get_property_type(property_name)
       property_value_post_conversion(value, type_info)
     end
-    def get_property(property_name, value)
-      _v1 = GirFFI::InPointer.from_utf8(property_name)
-      _v2 = GObject::Value.from(value)
-      GObject::Lib.g_object_get_property(self, _v1, _v2)
+    def get_property_with_override(property_name)
+      gvalue = gvalue_for_property(property_name)
+      get_property_without_override(property_name, gvalue)
+      gvalue.get_value
     end
     def get_qdata(quark)
       _v1 = quark
@@ -875,6 +866,10 @@ module GObject
       _v3 = GirFFI::SizedArray.from(GObject::Parameter, -1, parameters)
       _v4 = GObject::Lib.g_object_newv(_v1, _v2, _v3)
       store_pointer(_v4)
+    end
+    def is_floating
+      _v1 = GObject::Lib.g_object_is_floating(self)
+      return _v1
     end
     # TODO: Generate accessor methods from GIR at class definition time
     def method_missing(method, *args)
@@ -934,20 +929,15 @@ module GObject
       _v2 = data
       GObject::Lib.g_object_set_data(self, _v1, _v2)
     end
-    def set_property_with_override(property_name, value)
-      gvalue = gvalue_for_property(property_name)
-      gvalue.set_value(value)
-      set_property_without_override(property_name, gvalue)
-    end
     def set_property_extended(property_name, value)
       type_info = get_property_type(property_name)
       adjusted_value = property_value_pre_conversion(value, type_info)
       set_property(property_name, adjusted_value)
     end
-    def set_property(property_name, value)
-      _v1 = GirFFI::InPointer.from_utf8(property_name)
-      _v2 = GObject::Value.from(value)
-      GObject::Lib.g_object_set_property(self, _v1, _v2)
+    def set_property_with_override(property_name, value)
+      gvalue = gvalue_for_property(property_name)
+      gvalue.set_value(value)
+      set_property_without_override(property_name, gvalue)
     end
     def signal_connect(event, data = nil, &block)
       GObject.signal_connect(self, event, data, &block)
