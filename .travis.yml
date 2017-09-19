@@ -2,9 +2,10 @@ sudo: required
 dist: trusty
 language: ruby
 rvm:
-  - 2.1.8
-  - 2.2.4
-  - 2.3.0
+  - 2.1
+  - 2.2
+  - 2.3
+  - 2.4
 before_install:
   - sudo apt-get update
   - sudo apt-get install libgirepository1.0-dev gobject-introspection
