@@ -2,12 +2,10 @@ module GLib
   ANALYZER_ANALYZING = 1
   ASCII_DTOSTR_BUF_SIZE = 39
   class GLib::Array < GirFFI::BoxedBase
-    # @api private
     def self.calculated_element_size(type)
       ffi_type = GirFFI::TypeMap.type_specification_to_ffi_type(type)
       FFI.type_size(ffi_type)
     end
-    # @api private
     def self.from_enumerable(elmtype, it)
       new(elmtype).tap { |arr| arr.append_vals(it) }
     end
@@ -1445,7 +1443,6 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_destroy(_v1)
     end
-    # @api private
     def self.from_enumerable(typespec, hash)
       ghash = new(*typespec)
       hash.each { |key, val| ghash.insert(key, val) }
@@ -2706,12 +2703,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 3
+  MICRO_VERSION = 0
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 50
+  MINOR_VERSION = 54
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -3240,6 +3237,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
+  # XXX: Don't know how to print enum
   OPTION_REMAINING = ""
   class GLib::Once < GirFFI::StructBase
     def self.init_enter(location)
@@ -3324,7 +3322,7 @@ module GLib
       _v2 = _v1.to_utf8
       return _v2
     end
-    def parse(argv = nil)
+    def parse(argv)
       argc = argv.nil? ? (0) : (argv.length)
       _v1 = FFI::MemoryPointer.new(:int32)
       _v1.put_int32(0, argc)
@@ -4617,6 +4615,13 @@ module GLib
       _v2 = GLib::Lib.g_sequence_get(_v1)
       return _v2
     end
+    def self.insert_before(iter, data = nil)
+      _v1 = GLib::SequenceIter.from(iter)
+      _v2 = data
+      _v3 = GLib::Lib.g_sequence_insert_before(_v1, _v2)
+      _v4 = GLib::SequenceIter.wrap_copy(_v3)
+      return _v4
+    end
     def self.move(src, dest)
       _v1 = GLib::SequenceIter.from(src)
       _v2 = GLib::SequenceIter.from(dest)
@@ -4627,6 +4632,13 @@ module GLib
       _v2 = GLib::SequenceIter.from(begin_)
       _v3 = GLib::SequenceIter.from(end_)
       GLib::Lib.g_sequence_move_range(_v1, _v2, _v3)
+    end
+    def self.range_get_midpoint(begin_, end_)
+      _v1 = GLib::SequenceIter.from(begin_)
+      _v2 = GLib::SequenceIter.from(end_)
+      _v3 = GLib::Lib.g_sequence_range_get_midpoint(_v1, _v2)
+      _v4 = GLib::SequenceIter.wrap_copy(_v3)
+      return _v4
     end
     def self.remove(iter)
       _v1 = GLib::SequenceIter.from(iter)
@@ -4647,8 +4659,30 @@ module GLib
       _v2 = GLib::SequenceIter.from(b)
       GLib::Lib.g_sequence_swap(_v1, _v2)
     end
+    def append(data = nil)
+      _v1 = data
+      _v2 = GLib::Lib.g_sequence_append(self, _v1)
+      _v3 = GLib::SequenceIter.wrap_copy(_v2)
+      return _v3
+    end
     def free
       GLib::Lib.g_sequence_free(self)
+    end
+    def get_begin_iter
+      _v1 = GLib::Lib.g_sequence_get_begin_iter(self)
+      _v2 = GLib::SequenceIter.wrap_copy(_v1)
+      return _v2
+    end
+    def get_end_iter
+      _v1 = GLib::Lib.g_sequence_get_end_iter(self)
+      _v2 = GLib::SequenceIter.wrap_copy(_v1)
+      return _v2
+    end
+    def get_iter_at_pos(pos)
+      _v1 = pos
+      _v2 = GLib::Lib.g_sequence_get_iter_at_pos(self, _v1)
+      _v3 = GLib::SequenceIter.wrap_copy(_v2)
+      return _v3
     end
     def get_length
       _v1 = GLib::Lib.g_sequence_get_length(self)
@@ -4657,6 +4691,12 @@ module GLib
     def is_empty
       _v1 = GLib::Lib.g_sequence_is_empty(self)
       return _v1
+    end
+    def prepend(data = nil)
+      _v1 = data
+      _v2 = GLib::Lib.g_sequence_prepend(self, _v1)
+      _v3 = GLib::SequenceIter.wrap_copy(_v2)
+      return _v3
     end
   end
   class GLib::SequenceIter < GirFFI::StructBase
@@ -4670,6 +4710,11 @@ module GLib
       _v1 = GLib::Lib.g_sequence_iter_get_position(self)
       return _v1
     end
+    def get_sequence
+      _v1 = GLib::Lib.g_sequence_iter_get_sequence(self)
+      _v2 = GLib::Sequence.wrap_copy(_v1)
+      return _v2
+    end
     def is_begin
       _v1 = GLib::Lib.g_sequence_iter_is_begin(self)
       return _v1
@@ -4677,6 +4722,22 @@ module GLib
     def is_end
       _v1 = GLib::Lib.g_sequence_iter_is_end(self)
       return _v1
+    end
+    def move(delta)
+      _v1 = delta
+      _v2 = GLib::Lib.g_sequence_iter_move(self, _v1)
+      _v3 = GLib::SequenceIter.wrap_copy(_v2)
+      return _v3
+    end
+    def next
+      _v1 = GLib::Lib.g_sequence_iter_next(self)
+      _v2 = GLib::SequenceIter.wrap_copy(_v1)
+      return _v2
+    end
+    def prev
+      _v1 = GLib::Lib.g_sequence_iter_prev(self)
+      _v2 = GLib::SequenceIter.wrap_copy(_v1)
+      return _v2
     end
   end
   # XXX: Don't know how to print callback
@@ -5891,7 +5952,6 @@ module GLib
       _v1 = GLib::Lib.g_variant_parser_get_error_quark
       return _v1
     end
-    # For variants, wrap_copy does not do any copying.
     def self.wrap_copy(val)
       wrap(val)
     end
@@ -6608,6 +6668,30 @@ module GLib
     _v3 = GLib::Lib.g_ascii_strdown(_v1, _v2)
     _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
     return _v4
+  end
+  def self.ascii_string_to_signed(str, base, min, max)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = base
+    _v3 = min
+    _v4 = max
+    _v5 = FFI::MemoryPointer.new(:int64)
+    _v6 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+    _v7 = GLib::Lib.g_ascii_string_to_signed(_v1, _v2, _v3, _v4, _v5, _v6)
+    GirFFI::ArgHelper.check_error(_v6)
+    _v8 = _v5.get_int64(0)
+    return [_v7, _v8]
+  end
+  def self.ascii_string_to_unsigned(str, base, min, max)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = base
+    _v3 = min
+    _v4 = max
+    _v5 = FFI::MemoryPointer.new(:uint64)
+    _v6 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+    _v7 = GLib::Lib.g_ascii_string_to_unsigned(_v1, _v2, _v3, _v4, _v5, _v6)
+    GirFFI::ArgHelper.check_error(_v6)
+    _v8 = _v5.get_uint64(0)
+    return [_v7, _v8]
   end
   def self.ascii_strncasecmp(s1, s2, n)
     _v1 = GirFFI::InPointer.from_utf8(s1)
@@ -8056,34 +8140,13 @@ module GLib
     _v3 = GLib::Lib.g_mkdir_with_parents(_v1, _v2)
     return _v3
   end
-  def self.mkdtemp(tmpl)
-    _v1 = tmpl
-    _v2 = GLib::Lib.g_mkdtemp(_v1)
-    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
-    return _v3
-  end
-  def self.mkdtemp_full(tmpl, mode)
-    _v1 = tmpl
-    _v2 = mode
-    _v3 = GLib::Lib.g_mkdtemp_full(_v1, _v2)
-    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
-    return _v4
-  end
-  def self.mkstemp(tmpl)
-    _v1 = tmpl
-    _v2 = GLib::Lib.g_mkstemp(_v1)
-    return _v2
-  end
-  def self.mkstemp_full(tmpl, flags, mode)
-    _v1 = tmpl
-    _v2 = flags
-    _v3 = mode
-    _v4 = GLib::Lib.g_mkstemp_full(_v1, _v2, _v3)
-    return _v4
-  end
   def self.nullify_pointer(nullify_location)
     _v1 = nullify_location
     GLib::Lib.g_nullify_pointer(_v1)
+  end
+  def self.number_parser_error_quark
+    _v1 = GLib::Lib.g_number_parser_error_quark
+    return _v1
   end
   def self.on_error_query(prg_name)
     _v1 = GirFFI::InPointer.from_utf8(prg_name)
@@ -8304,6 +8367,13 @@ module GLib
     _v2 = GLib::Lib.g_sequence_get(_v1)
     return _v2
   end
+  def self.sequence_insert_before(iter, data = nil)
+    _v1 = GLib::SequenceIter.from(iter)
+    _v2 = data
+    _v3 = GLib::Lib.g_sequence_insert_before(_v1, _v2)
+    _v4 = GLib::SequenceIter.wrap_copy(_v3)
+    return _v4
+  end
   def self.sequence_move(src, dest)
     _v1 = GLib::SequenceIter.from(src)
     _v2 = GLib::SequenceIter.from(dest)
@@ -8314,6 +8384,13 @@ module GLib
     _v2 = GLib::SequenceIter.from(begin_)
     _v3 = GLib::SequenceIter.from(end_)
     GLib::Lib.g_sequence_move_range(_v1, _v2, _v3)
+  end
+  def self.sequence_range_get_midpoint(begin_, end_)
+    _v1 = GLib::SequenceIter.from(begin_)
+    _v2 = GLib::SequenceIter.from(end_)
+    _v3 = GLib::Lib.g_sequence_range_get_midpoint(_v1, _v2)
+    _v4 = GLib::SequenceIter.wrap_copy(_v3)
+    return _v4
   end
   def self.sequence_remove(iter)
     _v1 = GLib::SequenceIter.from(iter)
@@ -9485,6 +9562,13 @@ module GLib
     _v3 = GLib::Lib.g_utf8_get_char_validated(_v1, _v2)
     return _v3
   end
+  def self.utf8_make_valid(str, len)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = len
+    _v3 = GLib::Lib.g_utf8_make_valid(_v1, _v2)
+    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    return _v4
+  end
   def self.utf8_normalize(str, len, mode)
     _v1 = GirFFI::InPointer.from_utf8(str)
     _v2 = len
@@ -9611,6 +9695,16 @@ module GLib
     _v4 = GLib::Lib.g_utf8_validate(_v3, _v1, _v2)
     _v5 = _v2.get_pointer(0).to_utf8
     return [_v4, _v5]
+  end
+  def self.uuid_string_is_valid(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = GLib::Lib.g_uuid_string_is_valid(_v1)
+    return _v2
+  end
+  def self.uuid_string_random
+    _v1 = GLib::Lib.g_uuid_string_random
+    _v2 = GirFFI::AllocationHelper.free_after(_v1, &:to_utf8)
+    return _v2
   end
   def self.variant_get_gtype
     _v1 = GLib::Lib.g_variant_get_gtype

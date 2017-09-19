@@ -782,6 +782,12 @@ module GObject
       obj.__send__(:initialize, *args, &block)
       obj
     end
+    def self.newv(*args, &block)
+      raise(NoMethodError) unless (self == GObject::Object)
+      obj = allocate
+      obj.__send__(:initializev, *args, &block)
+      obj
+    end
     def bind_property(source_property, target, target_property, flags)
       _v1 = GirFFI::InPointer.from_utf8(source_property)
       _v2 = GObject::Object.from(target)
@@ -843,16 +849,32 @@ module GObject
       _v2 = GObject::Lib.g_object_get_qdata(self, _v1)
       return _v2
     end
+    def getv(names, values)
+      n_properties = values.nil? ? (0) : (values.length)
+      _v1 = n_properties
+      _v2 = GirFFI::SizedArray.from(:utf8, -1, names)
+      _v3 = GirFFI::SizedArray.from(GObject::Value, -1, values)
+      GObject::Lib.g_object_getv(self, _v1, _v2, _v3)
+    end
     def initialize_with_automatic_gtype(properties = {})
-      gparameters = properties.map do |name, value|
+      names = []
+      values = []
+      properties.each do |name, value|
         name = name.to_s
-        property_param_spec(name)
-        GObject::Parameter.new.tap do |gparam|
-          gparam.name = name
-          gparam.value = value
-        end
+        gvalue = gvalue_for_property(name)
+        gvalue.set_value(value)
+        (names << name)
+        (values << gvalue)
       end
-      initialize_without_automatic_gtype(self.class.gtype, gparameters)
+      initialize_without_automatic_gtype(self.class.gtype, names, values)
+    end
+    def initializev(object_type, parameters)
+      _v1 = object_type
+      n_parameters = parameters.nil? ? (0) : (parameters.length)
+      _v2 = n_parameters
+      _v3 = GirFFI::SizedArray.from(GObject::Parameter, -1, parameters)
+      _v4 = GObject::Lib.g_object_newv(_v1, _v2, _v3)
+      store_pointer(_v4)
     end
     # TODO: Generate accessor methods from GIR at class definition time
     def method_missing(method, *args)
@@ -2335,14 +2357,12 @@ module GObject
       _v3 = GObject::Lib.g_value_type_transformable(_v1, _v2)
       return _v3
     end
-    # TODO: Combine with wrap_ruby_value
     def self.wrap_instance(instance)
       new.tap do |it|
         it.init(GObject.type_from_instance(instance))
         it.set_instance(instance)
       end
     end
-    # TODO: Give more generic name
     def self.wrap_ruby_value(val)
       new.tap { |gv| gv.__send__(:set_ruby_value, val) }
     end
@@ -2981,6 +3001,13 @@ module GObject
     _v3 = GObject::Lib.g_enum_register_static(_v1, _v2)
     return _v3
   end
+  def self.enum_to_string(g_enum_type, value)
+    _v1 = g_enum_type
+    _v2 = value
+    _v3 = GObject::Lib.g_enum_to_string(_v1, _v2)
+    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    return _v4
+  end
   def self.flags_complete_type_info(g_flags_type, const_values)
     _v1 = g_flags_type
     _v2 = FFI::MemoryPointer.new(GObject::TypeInfo)
@@ -3015,6 +3042,13 @@ module GObject
     _v2 = GObject::FlagsValue.from(const_static_values)
     _v3 = GObject::Lib.g_flags_register_static(_v1, _v2)
     return _v3
+  end
+  def self.flags_to_string(flags_type, value)
+    _v1 = flags_type
+    _v2 = value
+    _v3 = GObject::Lib.g_flags_to_string(_v1, _v2)
+    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    return _v4
   end
   def self.gtype_get_type
     _v1 = GObject::Lib.g_gtype_get_type
