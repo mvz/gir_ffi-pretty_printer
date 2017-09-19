@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email = ['matijs@matijs.net']
   s.homepage = 'http://www.github.com/mvz/gir_ffi-pretty_printer'
 
-  s.license = 'LGPL-2.1'
+  s.license = 'LGPL-2.1+'
 
   s.files = Dir['{lib,test}/**/*.rb', 'README.md', 'Rakefile']
   s.test_files = Dir['test/**/*.rb']
