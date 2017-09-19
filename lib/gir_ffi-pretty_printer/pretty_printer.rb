@@ -12,24 +12,15 @@ module GirFFI
     end
 
     def pretty_print_function(modul, mname)
-      str = ''
-      begin
-        modul.setup_method mname.to_s if modul.send :respond_to_missing?, mname
+      modul.setup_method mname.to_s if modul.send :respond_to_missing?, mname
 
-        meth = modul.method mname
-        str << meth.to_ruby
-      rescue => e
-        warn "Printing #{modul.name}.#{mname} failed: #{e.message}"
-      end
-      str
+      meth = modul.method mname
+      meth.to_ruby
     end
 
     def pretty_print_constant(modul, const_name)
       value = modul.const_get(const_name)
       "#{const_name} = #{value.inspect}"
-    rescue => e
-      warn "Printing #{modul.name}.#{const_name} failed: #{e.message}"
-      ''
     end
 
     def pretty_print(module_name, version = nil)

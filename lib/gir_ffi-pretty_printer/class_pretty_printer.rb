@@ -54,7 +54,7 @@ module GirFFI
 
       begin
         meth.to_ruby
-      rescue => e
+      rescue LiveAST::ASTNotFoundError => e
         warn "Printing #{@klass.name}##{meth.name} failed: #{e.message}"
       end
     end
@@ -69,11 +69,7 @@ module GirFFI
           meth = @klass.method mname
         end
 
-        begin
-          arr << meth.to_ruby
-        rescue => e
-          warn "Printing #{@klass.name}.#{mname} failed: #{e.message}"
-        end
+        arr << meth.to_ruby
       end
       arr.join "\n"
     end
