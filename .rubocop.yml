@@ -12,7 +12,7 @@ Metrics/BlockLength:
     - 'test/**/*'
 
 # GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
-Style/FileName:
+Naming/FileName:
   Enabled: false
 
 # Require at least two dependent lines before suggesting a guard clause

@@ -1,5 +1,3 @@
-# -*- encoding: utf-8 -*-
-
 Gem::Specification.new do |s|
   s.name = 'gir_ffi-pretty_printer'
   s.version = '0.0.3'
