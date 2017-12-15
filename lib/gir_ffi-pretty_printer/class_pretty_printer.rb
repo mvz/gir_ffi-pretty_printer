@@ -33,9 +33,8 @@ module GirFFI
     end
 
     def pretty_print_alias(meth)
-      if meth.name != meth.original_name
-        "alias_method '#{meth.name}', '#{meth.original_name}'"
-      end
+      return if meth.name == meth.original_name
+      "alias_method '#{meth.name}', '#{meth.original_name}'"
     end
 
     def pretty_print_method(meth)
@@ -45,11 +44,15 @@ module GirFFI
 
     def method_source(meth)
       if meth.arity == -1
-        unless @klass.setup_instance_method meth.name.to_s
+        name = meth.name.to_s
+
+        if @klass.gir_info.find_instance_method name
+          @klass.setup_instance_method name
+        elsif name == '_'
           @klass.setup_instance_method ''
         end
 
-        meth = @klass.instance_method meth.name
+        meth = @klass.instance_method name
       end
 
       begin
