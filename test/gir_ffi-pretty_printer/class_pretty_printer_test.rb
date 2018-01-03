@@ -23,11 +23,11 @@ class ComplexAlias < SimpleClass
 end
 
 describe GirFFI::ClassPrettyPrinter do
-  let(:instance) { GirFFI::ClassPrettyPrinter.new klass }
+  let(:instance) { GirFFI::ClassPrettyPrinter.new printed_class }
 
   describe '#pretty_print' do
     describe 'for a class with a simple method definition' do
-      let(:klass) { SimpleClass }
+      let(:printed_class) { SimpleClass }
       it 'pretty-prints the class' do
         expected = <<-RUBY.reset_indentation.chomp
           class SimpleClass < Object
@@ -44,7 +44,7 @@ describe GirFFI::ClassPrettyPrinter do
     end
 
     describe 'for a class with a simple aliased method' do
-      let(:klass) { SimpleAlias }
+      let(:printed_class) { SimpleAlias }
       it 'pretty-prints the class' do
         expected = <<-RUBY.reset_indentation.chomp
           class SimpleAlias < SimpleClass
@@ -59,7 +59,7 @@ describe GirFFI::ClassPrettyPrinter do
     end
 
     describe 'for a class with an alias chain' do
-      let(:klass) { ComplexAlias }
+      let(:printed_class) { ComplexAlias }
       it 'pretty-prints the class' do
         expected = <<-RUBY.reset_indentation.chomp
           class ComplexAlias < SimpleClass
