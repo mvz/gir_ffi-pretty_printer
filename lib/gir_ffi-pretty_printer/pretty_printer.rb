@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'live_ast/full'
 require 'live_ast/to_ruby'
 require 'gir_ffi'
