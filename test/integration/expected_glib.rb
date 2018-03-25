@@ -298,21 +298,23 @@ module GLib
       _v2 = GLib::Lib.g_bookmark_file_has_item(self, _v1)
       return _v2
     end
-    def load_from_data(data, length)
-      _v1 = GirFFI::InPointer.from_utf8(data)
-      _v2 = length
+    def load_from_data(data)
+      length = data.nil? ? (0) : (data.length)
+      _v1 = length
+      _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
       _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-      _v4 = GLib::Lib.g_bookmark_file_load_from_data(self, _v1, _v2, _v3)
+      _v4 = GLib::Lib.g_bookmark_file_load_from_data(self, _v2, _v1, _v3)
       GirFFI::ArgHelper.check_error(_v3)
       return _v4
     end
-    def load_from_data_dirs(file, full_path = nil)
+    def load_from_data_dirs(file)
       _v1 = file
-      _v2 = full_path
+      _v2 = FFI::MemoryPointer.new(:filename)
       _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
       _v4 = GLib::Lib.g_bookmark_file_load_from_data_dirs(self, _v1, _v2, _v3)
       GirFFI::ArgHelper.check_error(_v3)
-      return _v4
+      _v5 = GirFFI::AllocationHelper.free_after(_v2.get_filename(0), &:to_utf8)
+      return [_v4, _v5]
     end
     def load_from_file(filename)
       _v1 = filename
@@ -373,11 +375,12 @@ module GLib
       _v2 = GirFFI::InPointer.from_utf8(description)
       GLib::Lib.g_bookmark_file_set_description(self, _v1, _v2)
     end
-    def set_groups(uri, groups, length)
+    def set_groups(uri, groups = nil)
       _v1 = GirFFI::InPointer.from_utf8(uri)
-      _v2 = GirFFI::InPointer.from_utf8(groups)
-      _v3 = length
-      GLib::Lib.g_bookmark_file_set_groups(self, _v1, _v2, _v3)
+      length = groups.nil? ? (0) : (groups.length)
+      _v2 = length
+      _v3 = GirFFI::SizedArray.from(:utf8, -1, groups)
+      GLib::Lib.g_bookmark_file_set_groups(self, _v1, _v3, _v2)
     end
     def set_icon(uri, href, mime_type)
       _v1 = GirFFI::InPointer.from_utf8(uri)
@@ -416,8 +419,8 @@ module GLib
       _v3 = GLib::Lib.g_bookmark_file_to_data(self, _v1, _v2)
       GirFFI::ArgHelper.check_error(_v2)
       _v4 = _v1.get_uint64(0)
-      _v5 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
-      return [_v5, _v4]
+      _v5 = GirFFI::SizedArray.wrap(:guint8, _v4, _v3)
+      return _v5
     end
     def to_file(filename)
       _v1 = filename
@@ -616,6 +619,7 @@ module GLib
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print callback
   class GLib::Cond < GirFFI::StructBase
   
     def broadcast
@@ -658,8 +662,8 @@ module GLib
   DATE_BAD_DAY = 0
   DATE_BAD_JULIAN = 0
   DATE_BAD_YEAR = 0
-  DIR_SEPARATOR = 92
-  DIR_SEPARATOR_S = "\\"
+  DIR_SEPARATOR = 47
+  DIR_SEPARATOR_S = "/"
   class GLib::Data < GirFFI::StructBase
   
   
@@ -768,6 +772,11 @@ module GLib
     def compare(rhs)
       _v1 = GLib::Date.from(rhs)
       _v2 = GLib::Lib.g_date_compare(self, _v1)
+      return _v2
+    end
+    def copy
+      _v1 = GLib::Lib.g_date_copy(self)
+      _v2 = GLib::Date.wrap_own(_v1)
       return _v2
     end
     def day
@@ -984,6 +993,12 @@ module GLib
       obj.__send__(:initialize, *args, &block)
       obj
     end
+    def self.new_from_iso8601(*args, &block)
+      raise(NoMethodError) unless (self == GLib::DateTime)
+      obj = allocate
+      obj.__send__(:initialize_from_iso8601, *args, &block)
+      obj
+    end
     def self.new_from_timeval_local(*args, &block)
       raise(NoMethodError) unless (self == GLib::DateTime)
       obj = allocate
@@ -1174,6 +1189,13 @@ module GLib
       _v5 = _v2.get_int32(0)
       _v6 = _v3.get_int32(0)
       return [_v4, _v5, _v6]
+    end
+    def initialize_from_iso8601(text, default_tz = nil)
+      _v1 = GirFFI::InPointer.from_utf8(text)
+      _v2 = GLib::TimeZone.from(default_tz)
+      _v3 = GLib::Lib.g_date_time_new_from_iso8601(_v1, _v2)
+      store_pointer(_v3)
+      @struct.owned = true
     end
     def initialize_from_timeval_local(tv)
       _v1 = GLib::TimeVal.from(tv)
@@ -1828,26 +1850,6 @@ module GLib
     end
   end
   # XXX: Don't know how to print callback
-  class GLib::IConv < GirFFI::StructBase
-    def self.open(to_codeset, from_codeset)
-      to_ptr = GirFFI::InPointer.from_utf8(to_codeset)
-      from_ptr = GirFFI::InPointer.from_utf8(from_codeset)
-      result_ptr = Lib.g_iconv_open(to_ptr, from_ptr)
-      wrap(result_ptr)
-    end
-    def _(inbuf, inbytes_left, outbuf, outbytes_left)
-      _v1 = GirFFI::InPointer.from_utf8(inbuf)
-      _v2 = inbytes_left
-      _v3 = GirFFI::InPointer.from_utf8(outbuf)
-      _v4 = outbytes_left
-      _v5 = GLib::Lib.g_iconv(self, _v1, _v2, _v3, _v4)
-      return _v5
-    end
-    def close
-      _v1 = GLib::Lib.g_iconv_close(self)
-      return _v1
-    end
-  end
   IEEE754_DOUBLE_BIAS = 1023
   IEEE754_FLOAT_BIAS = 127
   class GLib::IOChannel < GirFFI::BoxedBase
@@ -2002,6 +2004,11 @@ module GLib
       _v3 = GLib::String.wrap(_v2)
       _v3
     end
+    def read_cd
+      _v1 = (@struct.to_ptr + 24)
+      _v2 = _v1.get_pointer(0)
+      _v2
+    end
     def read_chars
       count = buf.nil? ? (0) : (buf.length)
       _v1 = count
@@ -2154,6 +2161,11 @@ module GLib
       _v2 = _v1.get_pointer(0)
       _v3 = GLib::String.wrap(_v2)
       _v3
+    end
+    def write_cd
+      _v1 = (@struct.to_ptr + 32)
+      _v2 = _v1.get_pointer(0)
+      _v2
     end
     def write_chars(buf, count)
       _v1 = GirFFI::SizedArray.from(:guint8, -1, buf)
@@ -2351,6 +2363,14 @@ module GLib
       _v5 = _v2.get_uint64(0)
       _v6 = GLib::Strv.wrap(_v4)
       return [_v6, _v5]
+    end
+    def get_locale_for_key(group_name, key, locale = nil)
+      _v1 = GirFFI::InPointer.from_utf8(group_name)
+      _v2 = GirFFI::InPointer.from_utf8(key)
+      _v3 = GirFFI::InPointer.from_utf8(locale)
+      _v4 = GLib::Lib.g_key_file_get_locale_for_key(self, _v1, _v2, _v3)
+      _v5 = GirFFI::AllocationHelper.free_after(_v4, &:to_utf8)
+      return _v5
     end
     def get_locale_string(group_name, key, locale = nil)
       _v1 = GirFFI::InPointer.from_utf8(group_name)
@@ -2618,7 +2638,7 @@ module GLib
   LN2 = 0.693147
   LOG_2_BASE_10 = 0.30103
   LOG_DOMAIN = 0
-  LOG_FATAL_MASK = 0
+  LOG_FATAL_MASK = 5
   LOG_LEVEL_USER_SHIFT = 8
   class GLib::List < GirFFI::StructBase
     def self.from_enumerable(type, arr)
@@ -2698,12 +2718,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 2
+  MICRO_VERSION = 0
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 54
+  MINOR_VERSION = 56
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -4029,8 +4049,8 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
-  SEARCHPATH_SEPARATOR = 59
-  SEARCHPATH_SEPARATOR_S = ";"
+  SEARCHPATH_SEPARATOR = 58
+  SEARCHPATH_SEPARATOR_S = ":"
   SIZEOF_LONG = 8
   SIZEOF_SIZE_T = 8
   SIZEOF_SSIZE_T = 8
@@ -5389,6 +5409,7 @@ module GLib
       _v1.put_pointer(0, _v2)
     end
   end
+  # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
   class GLib::TestSuite < GirFFI::StructBase
@@ -6882,21 +6903,6 @@ module GLib
     _v5 = GirFFI::SizedArray.wrap(:guint8, _v4, _v2.get_pointer(0))
     return [_v3, _v5]
   end
-  def self.base64_decode_step(in_, state, save)
-    len = in_.nil? ? (0) : (in_.length)
-    _v1 = len
-    _v2 = FFI::MemoryPointer.new(:pointer)
-    _v3 = FFI::MemoryPointer.new(:int32)
-    _v3.put_int32(0, state)
-    _v4 = FFI::MemoryPointer.new(:uint32)
-    _v4.put_uint32(0, save)
-    _v5 = GirFFI::SizedArray.from(:guint8, -1, in_)
-    _v6 = GLib::Lib.g_base64_decode_step(_v5, _v1, _v2, _v3, _v4)
-    _v7 = GirFFI::SizedArray.wrap(:guint8, -1, _v2.get_pointer(0))
-    _v8 = _v3.get_int32(0)
-    _v9 = _v4.get_uint32(0)
-    return [_v6, _v7, _v8, _v9]
-  end
   def self.base64_encode(data)
     len = data.nil? ? (0) : (data.length)
     _v1 = len
@@ -7119,54 +7125,48 @@ module GLib
     _v7 = GirFFI::AllocationHelper.free_after(_v6, &:to_utf8)
     return _v7
   end
-  def self.convert(str, len, to_codeset, from_codeset)
-    _v1 = GirFFI::InPointer.from_utf8(str)
-    _v2 = len
-    _v3 = GirFFI::InPointer.from_utf8(to_codeset)
-    _v4 = GirFFI::InPointer.from_utf8(from_codeset)
+  def self.convert(str, to_codeset, from_codeset)
+    len = str.nil? ? (0) : (str.length)
+    _v1 = len
+    _v2 = GirFFI::InPointer.from_utf8(to_codeset)
+    _v3 = GirFFI::InPointer.from_utf8(from_codeset)
+    _v4 = FFI::MemoryPointer.new(:uint64)
     _v5 = FFI::MemoryPointer.new(:uint64)
-    _v6 = FFI::MemoryPointer.new(:uint64)
+    _v6 = GirFFI::SizedArray.from(:guint8, -1, str)
     _v7 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v8 = GLib::Lib.g_convert(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
+    _v8 = GLib::Lib.g_convert(_v6, _v1, _v2, _v3, _v4, _v5, _v7)
     GirFFI::ArgHelper.check_error(_v7)
-    _v9 = _v5.get_uint64(0)
-    _v10 = _v6.get_uint64(0)
-    _v11 = GirFFI::AllocationHelper.free_after(_v8, &:to_utf8)
-    return [_v11, _v9, _v10]
+    _v9 = _v4.get_uint64(0)
+    _v10 = _v5.get_uint64(0)
+    _v11 = GirFFI::SizedArray.wrap(:guint8, _v10, _v8)
+    return [_v11, _v9]
   end
   def self.convert_error_quark
     _v1 = GLib::Lib.g_convert_error_quark
     return _v1
   end
-  def self.convert_with_fallback(str, len, to_codeset, from_codeset, fallback, bytes_read, bytes_written)
-    _v1 = GirFFI::InPointer.from_utf8(str)
-    _v2 = len
-    _v3 = GirFFI::InPointer.from_utf8(to_codeset)
-    _v4 = GirFFI::InPointer.from_utf8(from_codeset)
-    _v5 = GirFFI::InPointer.from_utf8(fallback)
-    _v6 = bytes_read
-    _v7 = bytes_written
+  def self.convert_with_fallback(str, to_codeset, from_codeset, fallback)
+    len = str.nil? ? (0) : (str.length)
+    _v1 = len
+    _v2 = GirFFI::InPointer.from_utf8(to_codeset)
+    _v3 = GirFFI::InPointer.from_utf8(from_codeset)
+    _v4 = GirFFI::InPointer.from_utf8(fallback)
+    _v5 = FFI::MemoryPointer.new(:uint64)
+    _v6 = FFI::MemoryPointer.new(:uint64)
+    _v7 = GirFFI::SizedArray.from(:guint8, -1, str)
     _v8 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v9 = GLib::Lib.g_convert_with_fallback(_v1, _v2, _v3, _v4, _v5, _v6, _v7, _v8)
+    _v9 = GLib::Lib.g_convert_with_fallback(_v7, _v1, _v2, _v3, _v4, _v5, _v6, _v8)
     GirFFI::ArgHelper.check_error(_v8)
-    _v10 = GirFFI::AllocationHelper.free_after(_v9, &:to_utf8)
-    return _v10
+    _v10 = _v5.get_uint64(0)
+    _v11 = _v6.get_uint64(0)
+    _v12 = GirFFI::SizedArray.wrap(:guint8, _v11, _v9)
+    return [_v12, _v10]
   end
-  def self.convert_with_iconv(str, len, converter, bytes_read, bytes_written)
-    _v1 = GirFFI::InPointer.from_utf8(str)
-    _v2 = len
-    _v3 = GLib::IConv.from(converter)
-    _v4 = bytes_read
-    _v5 = bytes_written
-    _v6 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v7 = GLib::Lib.g_convert_with_iconv(_v1, _v2, _v3, _v4, _v5, _v6)
-    GirFFI::ArgHelper.check_error(_v6)
-    _v8 = GirFFI::AllocationHelper.free_after(_v7, &:to_utf8)
-    return _v8
-  end
-  def self.datalist_clear(datalist)
+  def self.datalist_foreach(datalist, &func)
     _v1 = GLib::Data.from(datalist)
-    GLib::Lib.g_datalist_clear(_v1)
+    _v2 = GLib::DataForeachFunc.from(func)
+    _v3 = GirFFI::ArgHelper.store(_v2)
+    GLib::Lib.g_datalist_foreach(_v1, _v2, _v3)
   end
   def self.datalist_get_data(datalist, key)
     _v1 = GLib::Data.from(datalist)
@@ -7185,33 +7185,6 @@ module GLib
     _v3 = GLib::Lib.g_datalist_id_get_data(_v1, _v2)
     return _v3
   end
-  def self.datalist_id_remove_no_notify(datalist, key_id)
-    _v1 = GLib::Data.from(datalist)
-    _v2 = key_id
-    _v3 = GLib::Lib.g_datalist_id_remove_no_notify(_v1, _v2)
-    return _v3
-  end
-  def self.datalist_id_replace_data(datalist, key_id, oldval = nil, newval = nil, &destroy)
-    _v1 = GLib::Data.from(datalist)
-    _v2 = key_id
-    _v3 = oldval
-    _v4 = newval
-    _v5 = GLib::DestroyNotify.from(destroy)
-    _v6 = GLib::DestroyNotify.from(old_destroy)
-    _v7 = GLib::Lib.g_datalist_id_replace_data(_v1, _v2, _v3, _v4, _v5, _v6)
-    return _v7
-  end
-  def self.datalist_id_set_data_full(datalist, key_id, data = nil, &destroy_func)
-    _v1 = GLib::Data.from(datalist)
-    _v2 = key_id
-    _v3 = data
-    _v4 = GLib::DestroyNotify.from(destroy_func)
-    GLib::Lib.g_datalist_id_set_data_full(_v1, _v2, _v3, _v4)
-  end
-  def self.datalist_init(datalist)
-    _v1 = GLib::Data.from(datalist)
-    GLib::Lib.g_datalist_init(_v1)
-  end
   def self.datalist_set_flags(datalist, flags)
     _v1 = GLib::Data.from(datalist)
     _v2 = flags
@@ -7226,24 +7199,17 @@ module GLib
     _v1 = dataset_location
     GLib::Lib.g_dataset_destroy(_v1)
   end
+  def self.dataset_foreach(dataset_location, &func)
+    _v1 = dataset_location
+    _v2 = GLib::DataForeachFunc.from(func)
+    _v3 = GirFFI::ArgHelper.store(_v2)
+    GLib::Lib.g_dataset_foreach(_v1, _v2, _v3)
+  end
   def self.dataset_id_get_data(dataset_location, key_id)
     _v1 = dataset_location
     _v2 = key_id
     _v3 = GLib::Lib.g_dataset_id_get_data(_v1, _v2)
     return _v3
-  end
-  def self.dataset_id_remove_no_notify(dataset_location, key_id)
-    _v1 = dataset_location
-    _v2 = key_id
-    _v3 = GLib::Lib.g_dataset_id_remove_no_notify(_v1, _v2)
-    return _v3
-  end
-  def self.dataset_id_set_data_full(dataset_location, key_id, data = nil, &destroy_func)
-    _v1 = dataset_location
-    _v2 = key_id
-    _v3 = data
-    _v4 = GLib::DestroyNotify.from(destroy_func)
-    GLib::Lib.g_dataset_id_set_data_full(_v1, _v2, _v3, _v4)
   end
   def self.date_get_days_in_month(month, year)
     _v1 = month
@@ -7395,15 +7361,15 @@ module GLib
   end
   def self.environ_getenv(envp, variable)
     _v1 = GLib::Strv.from(envp)
-    _v2 = GirFFI::InPointer.from_utf8(variable)
+    _v2 = variable
     _v3 = GLib::Lib.g_environ_getenv(_v1, _v2)
     _v4 = _v3.to_utf8
     return _v4
   end
   def self.environ_setenv(envp, variable, value, overwrite)
     _v1 = GLib::Strv.from(envp)
-    _v2 = GirFFI::InPointer.from_utf8(variable)
-    _v3 = GirFFI::InPointer.from_utf8(value)
+    _v2 = variable
+    _v3 = value
     _v4 = overwrite
     _v5 = GLib::Lib.g_environ_setenv(_v1, _v2, _v3, _v4)
     _v6 = GLib::Strv.wrap(_v5)
@@ -7411,7 +7377,7 @@ module GLib
   end
   def self.environ_unsetenv(envp, variable)
     _v1 = GLib::Strv.from(envp)
-    _v2 = GirFFI::InPointer.from_utf8(variable)
+    _v2 = variable
     _v3 = GLib::Lib.g_environ_unsetenv(_v1, _v2)
     _v4 = GLib::Strv.wrap(_v3)
     return _v4
@@ -7501,8 +7467,8 @@ module GLib
     GirFFI::ArgHelper.check_error(_v5)
     _v7 = _v3.get_uint64(0)
     _v8 = _v4.get_uint64(0)
-    _v9 = GirFFI::SizedArray.wrap(:guint8, _v8, _v6)
-    return [_v9, _v7]
+    _v9 = GirFFI::AllocationHelper.free_after(_v6, &:to_utf8)
+    return [_v9, _v7, _v8]
   end
   def self.filename_to_uri(filename, hostname = nil)
     _v1 = filename
@@ -7680,7 +7646,7 @@ module GLib
     return _v3
   end
   def self.getenv(variable)
-    _v1 = GirFFI::InPointer.from_utf8(variable)
+    _v1 = variable
     _v2 = GLib::Lib.g_getenv(_v1)
     _v3 = _v2.to_utf8
     return _v3
@@ -7819,15 +7785,6 @@ module GLib
     _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
     return _v3
   end
-  def self.iconv(converter, inbuf, inbytes_left, outbuf, outbytes_left)
-    _v1 = GLib::IConv.from(converter)
-    _v2 = GirFFI::InPointer.from_utf8(inbuf)
-    _v3 = inbytes_left
-    _v4 = GirFFI::InPointer.from_utf8(outbuf)
-    _v5 = outbytes_left
-    _v6 = GLib::Lib.g_iconv(_v1, _v2, _v3, _v4, _v5)
-    return _v6
-  end
   def self.idle_add(priority, &function)
     _v1 = priority
     _v2 = GLib::SourceFunc.from(function)
@@ -7925,19 +7882,20 @@ module GLib
     GirFFI::ArgHelper.check_error(_v5)
     _v7 = _v3.get_uint64(0)
     _v8 = _v4.get_uint64(0)
-    _v9 = GirFFI::AllocationHelper.free_after(_v6, &:to_utf8)
-    return [_v9, _v7, _v8]
+    _v9 = GirFFI::SizedArray.wrap(:guint8, _v8, _v6)
+    return [_v9, _v7]
   end
-  def self.locale_to_utf8(opsysstring, len)
-    _v1 = GirFFI::InPointer.from_utf8(opsysstring)
-    _v2 = len
+  def self.locale_to_utf8(opsysstring)
+    len = opsysstring.nil? ? (0) : (opsysstring.length)
+    _v1 = len
+    _v2 = FFI::MemoryPointer.new(:uint64)
     _v3 = FFI::MemoryPointer.new(:uint64)
-    _v4 = FFI::MemoryPointer.new(:uint64)
+    _v4 = GirFFI::SizedArray.from(:guint8, -1, opsysstring)
     _v5 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v6 = GLib::Lib.g_locale_to_utf8(_v1, _v2, _v3, _v4, _v5)
+    _v6 = GLib::Lib.g_locale_to_utf8(_v4, _v1, _v2, _v3, _v5)
     GirFFI::ArgHelper.check_error(_v5)
-    _v7 = _v3.get_uint64(0)
-    _v8 = _v4.get_uint64(0)
+    _v7 = _v2.get_uint64(0)
+    _v8 = _v3.get_uint64(0)
     _v9 = GirFFI::AllocationHelper.free_after(_v6, &:to_utf8)
     return [_v9, _v7, _v8]
   end
@@ -8408,8 +8366,8 @@ module GLib
     GLib::Lib.g_set_prgname(_v1)
   end
   def self.setenv(variable, value, overwrite)
-    _v1 = GirFFI::InPointer.from_utf8(variable)
-    _v2 = GirFFI::InPointer.from_utf8(value)
+    _v1 = variable
+    _v2 = value
     _v3 = overwrite
     _v4 = GLib::Lib.g_setenv(_v1, _v2, _v3)
     return _v4
@@ -8419,7 +8377,7 @@ module GLib
     return _v1
   end
   def self.shell_parse_argv(command_line)
-    _v1 = GirFFI::InPointer.from_utf8(command_line)
+    _v1 = command_line
     _v2 = FFI::MemoryPointer.new(:int32)
     _v3 = FFI::MemoryPointer.new(:pointer)
     _v4 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
@@ -8429,13 +8387,13 @@ module GLib
     return [_v5, _v6]
   end
   def self.shell_quote(unquoted_string)
-    _v1 = GirFFI::InPointer.from_utf8(unquoted_string)
+    _v1 = unquoted_string
     _v2 = GLib::Lib.g_shell_quote(_v1)
     _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
     return _v3
   end
   def self.shell_unquote(quoted_string)
-    _v1 = GirFFI::InPointer.from_utf8(quoted_string)
+    _v1 = quoted_string
     _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
     _v3 = GLib::Lib.g_shell_unquote(_v1, _v2)
     GirFFI::ArgHelper.check_error(_v2)
@@ -8558,14 +8516,14 @@ module GLib
     GLib::Lib.g_spawn_close_pid(_v1)
   end
   def self.spawn_command_line_async(command_line)
-    _v1 = GirFFI::InPointer.from_utf8(command_line)
+    _v1 = command_line
     _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
     _v3 = GLib::Lib.g_spawn_command_line_async(_v1, _v2)
     GirFFI::ArgHelper.check_error(_v2)
     return _v3
   end
   def self.spawn_command_line_sync(command_line)
-    _v1 = GirFFI::InPointer.from_utf8(command_line)
+    _v1 = command_line
     _v2 = FFI::MemoryPointer.new(:pointer)
     _v3 = FFI::MemoryPointer.new(:pointer)
     _v4 = FFI::MemoryPointer.new(:int32)
@@ -9422,7 +9380,7 @@ module GLib
     return _v2
   end
   def self.unsetenv(variable)
-    _v1 = GirFFI::InPointer.from_utf8(variable)
+    _v1 = variable
     GLib::Lib.g_unsetenv(_v1)
   end
   def self.uri_escape_string(unescaped, reserved_chars_allowed, allow_utf8)

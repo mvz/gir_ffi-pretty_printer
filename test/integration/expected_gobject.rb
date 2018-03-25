@@ -903,24 +903,6 @@ module GObject
       _v2 = GObject::Object.wrap(_v1).tap { |it| it and it.ref }
       return _v2
     end
-    def replace_data(key, oldval = nil, newval = nil, &destroy)
-      _v1 = GirFFI::InPointer.from_utf8(key)
-      _v2 = oldval
-      _v3 = newval
-      _v4 = GLib::DestroyNotify.from(destroy)
-      _v5 = GLib::DestroyNotify.from(old_destroy)
-      _v6 = GObject::Lib.g_object_replace_data(self, _v1, _v2, _v3, _v4, _v5)
-      return _v6
-    end
-    def replace_qdata(quark, oldval = nil, newval = nil, &destroy)
-      _v1 = quark
-      _v2 = oldval
-      _v3 = newval
-      _v4 = GLib::DestroyNotify.from(destroy)
-      _v5 = GLib::DestroyNotify.from(old_destroy)
-      _v6 = GObject::Lib.g_object_replace_qdata(self, _v1, _v2, _v3, _v4, _v5)
-      return _v6
-    end
     def run_dispose
       GObject::Lib.g_object_run_dispose(self)
     end
@@ -1108,7 +1090,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   PARAM_MASK = 255
-  PARAM_STATIC_STRINGS = 0
+  PARAM_STATIC_STRINGS = 224
   PARAM_USER_SHIFT = 8
   # XXX: Don't know how to print flags
   class GObject::ParamSpec < GirFFI::ObjectBase
@@ -2669,9 +2651,6 @@ module GObject
       _v2 = GObject::ValueArray.wrap_own(_v1)
       return _v2
     end
-    def free
-      GObject::Lib.g_value_array_free(self)
-    end
     def get_nth(index_)
       _v1 = index_
       _v2 = GObject::Lib.g_value_array_get_nth(self, _v1)
@@ -3534,7 +3513,7 @@ module GObject
     _v1 = itype
     _v2 = struct_offset
     _v3 = GObject::Lib.g_signal_type_cclosure_new(_v1, _v2)
-    _v4 = GObject::Closure.wrap_own(_v3)
+    _v4 = GObject::Closure.wrap_copy(_v3)
     return _v4
   end
   def self.source_set_closure(source, closure)
