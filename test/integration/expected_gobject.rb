@@ -847,18 +847,6 @@ module GObject
       _v3 = GirFFI::SizedArray.from(GObject::Value, -1, values)
       GObject::Lib.g_object_getv(self, _v1, _v2, _v3)
     end
-    def initialize_with_automatic_gtype(properties = {})
-      names = []
-      values = []
-      properties.each do |name, value|
-        name = name.to_s
-        gvalue = gvalue_for_property(name)
-        gvalue.set_value(value)
-        (names << name)
-        (values << gvalue)
-      end
-      initialize_without_automatic_gtype(self.class.gtype, names, values)
-    end
     def initializev(object_type, parameters)
       _v1 = object_type
       n_parameters = parameters.nil? ? (0) : (parameters.length)
