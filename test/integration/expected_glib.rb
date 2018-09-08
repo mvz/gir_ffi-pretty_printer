@@ -6,8 +6,8 @@ module GLib
       ffi_type = GirFFI::TypeMap.type_specification_to_ffi_type(type)
       FFI.type_size(ffi_type)
     end
-    def self.from_enumerable(elmtype, it)
-      new(elmtype).tap { |arr| arr.append_vals(it) }
+    def self.from_enumerable(elmtype, arr)
+      new(elmtype).tap { |it| it.append_vals(arr) }
     end
     def ==(other)
       (to_a == other.to_a)
@@ -491,14 +491,14 @@ module GLib
     end
   end
   class GLib::Bytes < GirFFI::BoxedBase
-    def self.from(it)
-      case it
+    def self.from(obj)
+      case obj
       when self then
-        it
+        obj
       when FFI::Pointer then
-        wrap(it)
+        wrap(obj)
       else
-        new(it)
+        new(obj)
       end
     end
     def self.new(*args, &block)
@@ -1159,6 +1159,11 @@ module GLib
       _v1 = GLib::Lib.g_date_time_get_seconds(self)
       return _v1
     end
+    def get_timezone
+      _v1 = GLib::Lib.g_date_time_get_timezone(self)
+      _v2 = GLib::TimeZone.wrap_copy(_v1)
+      return _v2
+    end
     def get_timezone_abbreviation
       _v1 = GLib::Lib.g_date_time_get_timezone_abbreviation(self)
       _v2 = _v1.to_utf8
@@ -1349,11 +1354,11 @@ module GLib
   E = 2.718282
   # XXX: Don't know how to print callback
   class GLib::Error < GirFFI::BoxedBase
-    def self.from(it)
-      from_exception(it)
+    def self.from(obj)
+      from_exception(obj)
     end
-    def self.from_exception(ex)
-      new_literal(GIR_FFI_DOMAIN, 0, ex.message)
+    def self.from_exception(exception)
+      new_literal(GIR_FFI_DOMAIN, 0, exception.message)
     end
     def self.new_literal(*args, &block)
       raise(NoMethodError) unless (self == GLib::Error)
@@ -1525,6 +1530,16 @@ module GLib
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_steal_all(_v1)
     end
+    def self.steal_extended(hash_table, lookup_key = nil)
+      _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
+      _v2 = lookup_key
+      _v3 = FFI::MemoryPointer.new(:pointer)
+      _v4 = FFI::MemoryPointer.new(:pointer)
+      _v5 = GLib::Lib.g_hash_table_steal_extended(_v1, _v2, _v3, _v4)
+      _v6 = _v3.get_pointer(0)
+      _v7 = _v4.get_pointer(0)
+      return [_v5, _v6, _v7]
+    end
     def self.unref(hash_table)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       GLib::Lib.g_hash_table_unref(_v1)
@@ -1610,10 +1625,13 @@ module GLib
   end
   class GLib::Hmac < GirFFI::StructBase
   
-    def get_digest(buffer, digest_len)
-      _v1 = buffer
-      _v2 = digest_len
-      GLib::Lib.g_hmac_get_digest(self, _v1, _v2)
+    def get_digest(buffer)
+      digest_len = buffer.nil? ? (0) : (buffer.length)
+      _v1 = FFI::MemoryPointer.new(:uint64)
+      _v1.put_uint64(0, digest_len)
+      _v2 = GirFFI::SizedArray.from(:guint8, -1, buffer)
+      GLib::Lib.g_hmac_get_digest(self, _v2, _v1)
+      _v3 = _v1.get_uint64(0)
     end
     def get_string
       _v1 = GLib::Lib.g_hmac_get_string(self)
@@ -2723,7 +2741,7 @@ module GLib
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 56
+  MINOR_VERSION = 58
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -2853,10 +2871,10 @@ module GLib
     end
   end
   class GLib::MainLoop < GirFFI::BoxedBase
-    def self.handle_exception(ex)
+    def self.handle_exception(exception)
       current_loop = RUNNING_LOOPS.last
-      raise(ex) unless current_loop
-      (EXCEPTIONS << ex)
+      raise(exception) unless current_loop
+      (EXCEPTIONS << exception)
       current_loop.quit
     end
     def self.new(*args, &block)
@@ -2885,9 +2903,9 @@ module GLib
       ThreadEnabler.instance.setup_idle_handler if (RUBY_ENGINE == "ruby")
       (RUNNING_LOOPS << self)
       result = run_without_thread_enabler
-      ex = EXCEPTIONS.shift
+      exception = EXCEPTIONS.shift
       RUNNING_LOOPS.pop
-      raise(ex) if ex
+      raise(exception) if exception
       result
     end
     def unref
@@ -3595,8 +3613,8 @@ module GLib
     def self.add(array, data)
       array.add(data)
     end
-    def self.from_enumerable(type, it)
-      new(type).tap { |arr| arr.add_array(it) }
+    def self.from_enumerable(type, arr)
+      new(type).tap { |it| it.add_array(arr) }
     end
     def ==(other)
       (to_a == other.to_a)
@@ -5597,6 +5615,12 @@ module GLib
       obj.__send__(:initialize_local, *args, &block)
       obj
     end
+    def self.new_offset(*args, &block)
+      raise(NoMethodError) unless (self == GLib::TimeZone)
+      obj = allocate
+      obj.__send__(:initialize_offset, *args, &block)
+      obj
+    end
     def self.new_utc(*args, &block)
       raise(NoMethodError) unless (self == GLib::TimeZone)
       obj = allocate
@@ -5621,6 +5645,11 @@ module GLib
       _v3 = _v2.to_utf8
       return _v3
     end
+    def get_identifier
+      _v1 = GLib::Lib.g_time_zone_get_identifier(self)
+      _v2 = _v1.to_utf8
+      return _v2
+    end
     def get_offset(interval)
       _v1 = interval
       _v2 = GLib::Lib.g_time_zone_get_offset(self, _v1)
@@ -5629,6 +5658,12 @@ module GLib
     def initialize_local
       _v1 = GLib::Lib.g_time_zone_new_local
       store_pointer(_v1)
+      @struct.owned = true
+    end
+    def initialize_offset(seconds)
+      _v1 = seconds
+      _v2 = GLib::Lib.g_time_zone_new_offset(_v1)
+      store_pointer(_v2)
       @struct.owned = true
     end
     def initialize_utc
@@ -6884,6 +6919,41 @@ module GLib
     _v3 = GLib::Lib.g_atomic_pointer_xor(_v1, _v2)
     return _v3
   end
+  def self.atomic_rc_box_acquire(mem_block)
+    _v1 = mem_block
+    _v2 = GLib::Lib.g_atomic_rc_box_acquire(_v1)
+    return _v2
+  end
+  def self.atomic_rc_box_alloc(block_size)
+    _v1 = block_size
+    _v2 = GLib::Lib.g_atomic_rc_box_alloc(_v1)
+    return _v2
+  end
+  def self.atomic_rc_box_alloc0(block_size)
+    _v1 = block_size
+    _v2 = GLib::Lib.g_atomic_rc_box_alloc0(_v1)
+    return _v2
+  end
+  def self.atomic_rc_box_dup(block_size, mem_block)
+    _v1 = block_size
+    _v2 = mem_block
+    _v3 = GLib::Lib.g_atomic_rc_box_dup(_v1, _v2)
+    return _v3
+  end
+  def self.atomic_rc_box_get_size(mem_block)
+    _v1 = mem_block
+    _v2 = GLib::Lib.g_atomic_rc_box_get_size(_v1)
+    return _v2
+  end
+  def self.atomic_rc_box_release(mem_block)
+    _v1 = mem_block
+    GLib::Lib.g_atomic_rc_box_release(_v1)
+  end
+  def self.atomic_rc_box_release_full(mem_block, &clear_func)
+    _v1 = mem_block
+    _v2 = GLib::DestroyNotify.from(clear_func)
+    GLib::Lib.g_atomic_rc_box_release_full(_v1, _v2)
+  end
   def self.base64_decode(text)
     _v1 = GirFFI::InPointer.from_utf8(text)
     _v2 = FFI::MemoryPointer.new(:uint64)
@@ -7024,6 +7094,13 @@ module GLib
   def self.byte_array_unref(array)
     _v1 = array
     GLib::Lib.g_byte_array_unref(_v1)
+  end
+  def self.canonicalize_filename(filename, relative_to = nil)
+    _v1 = filename
+    _v2 = relative_to
+    _v3 = GLib::Lib.g_canonicalize_filename(_v1, _v2)
+    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    return _v4
   end
   def self.chdir(path)
     _v1 = path
@@ -7551,10 +7628,11 @@ module GLib
     _v2 = GLib::Strv.wrap(_v1)
     return _v2
   end
-  def self.get_filename_charsets(charsets)
-    _v1 = GirFFI::InPointer.from_utf8(charsets)
+  def self.get_filename_charsets
+    _v1 = FFI::MemoryPointer.new(:pointer)
     _v2 = GLib::Lib.g_get_filename_charsets(_v1)
-    return _v2
+    _v3 = GLib::Strv.wrap(_v1.get_pointer(0))
+    return [_v2, _v3]
   end
   def self.get_home_dir
     _v1 = GLib::Lib.g_get_home_dir
@@ -7570,6 +7648,12 @@ module GLib
     _v1 = GLib::Lib.g_get_language_names
     _v2 = GLib::Strv.wrap(_v1)
     return _v2
+  end
+  def self.get_language_names_with_category(category_name)
+    _v1 = GirFFI::InPointer.from_utf8(category_name)
+    _v2 = GLib::Lib.g_get_language_names_with_category(_v1)
+    _v3 = GLib::Strv.wrap(_v2)
+    return _v3
   end
   def self.get_locale_variants(locale)
     _v1 = GirFFI::InPointer.from_utf8(locale)
@@ -7721,6 +7805,16 @@ module GLib
   def self.hash_table_steal_all(hash_table)
     _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
     GLib::Lib.g_hash_table_steal_all(_v1)
+  end
+  def self.hash_table_steal_extended(hash_table, lookup_key = nil)
+    _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
+    _v2 = lookup_key
+    _v3 = FFI::MemoryPointer.new(:pointer)
+    _v4 = FFI::MemoryPointer.new(:pointer)
+    _v5 = GLib::Lib.g_hash_table_steal_extended(_v1, _v2, _v3, _v4)
+    _v6 = _v3.get_pointer(0)
+    _v7 = _v4.get_pointer(0)
+    return [_v5, _v6, _v7]
   end
   def self.hash_table_unref(hash_table)
     _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
@@ -8233,6 +8327,41 @@ module GLib
     _v1 = seed
     GLib::Lib.g_random_set_seed(_v1)
   end
+  def self.rc_box_acquire(mem_block)
+    _v1 = mem_block
+    _v2 = GLib::Lib.g_rc_box_acquire(_v1)
+    return _v2
+  end
+  def self.rc_box_alloc(block_size)
+    _v1 = block_size
+    _v2 = GLib::Lib.g_rc_box_alloc(_v1)
+    return _v2
+  end
+  def self.rc_box_alloc0(block_size)
+    _v1 = block_size
+    _v2 = GLib::Lib.g_rc_box_alloc0(_v1)
+    return _v2
+  end
+  def self.rc_box_dup(block_size, mem_block)
+    _v1 = block_size
+    _v2 = mem_block
+    _v3 = GLib::Lib.g_rc_box_dup(_v1, _v2)
+    return _v3
+  end
+  def self.rc_box_get_size(mem_block)
+    _v1 = mem_block
+    _v2 = GLib::Lib.g_rc_box_get_size(_v1)
+    return _v2
+  end
+  def self.rc_box_release(mem_block)
+    _v1 = mem_block
+    GLib::Lib.g_rc_box_release(_v1)
+  end
+  def self.rc_box_release_full(mem_block, &clear_func)
+    _v1 = mem_block
+    _v2 = GLib::DestroyNotify.from(clear_func)
+    GLib::Lib.g_rc_box_release_full(_v1, _v2)
+  end
   def self.realloc(mem, n_bytes)
     _v1 = mem
     _v2 = n_bytes
@@ -8245,6 +8374,40 @@ module GLib
     _v3 = n_block_bytes
     _v4 = GLib::Lib.g_realloc_n(_v1, _v2, _v3)
     return _v4
+  end
+  def self.ref_string_acquire(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = GLib::Lib.g_ref_string_acquire(_v1)
+    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
+    return _v3
+  end
+  def self.ref_string_length(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = GLib::Lib.g_ref_string_length(_v1)
+    return _v2
+  end
+  def self.ref_string_new(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = GLib::Lib.g_ref_string_new(_v1)
+    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
+    return _v3
+  end
+  def self.ref_string_new_intern(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = GLib::Lib.g_ref_string_new_intern(_v1)
+    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
+    return _v3
+  end
+  def self.ref_string_new_len(str, len)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    _v2 = len
+    _v3 = GLib::Lib.g_ref_string_new_len(_v1, _v2)
+    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    return _v4
+  end
+  def self.ref_string_release(str)
+    _v1 = GirFFI::InPointer.from_utf8(str)
+    GLib::Lib.g_ref_string_release(_v1)
   end
   def self.regex_check_replacement(replacement)
     _v1 = GirFFI::InPointer.from_utf8(replacement)
@@ -8483,6 +8646,23 @@ module GLib
     GirFFI::ArgHelper.check_error(_v8)
     _v10 = _v7.get_int32(0)
     return [_v9, _v10]
+  end
+  def self.spawn_async_with_fds(working_directory, argv, envp, flags, stdin_fd, stdout_fd, stderr_fd, &child_setup)
+    _v1 = working_directory
+    _v2 = GLib::Strv.from(argv)
+    _v3 = GLib::Strv.from(envp)
+    _v4 = flags
+    _v5 = GLib::SpawnChildSetupFunc.from(child_setup)
+    _v6 = GirFFI::ArgHelper.store(_v5)
+    _v7 = FFI::MemoryPointer.new(:int32)
+    _v8 = stdin_fd
+    _v9 = stdout_fd
+    _v10 = stderr_fd
+    _v11 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
+    _v12 = GLib::Lib.g_spawn_async_with_fds(_v1, _v2, _v3, _v4, _v5, _v6, _v7, _v8, _v9, _v10, _v11)
+    GirFFI::ArgHelper.check_error(_v11)
+    _v13 = _v7.get_int32(0)
+    return [_v12, _v13]
   end
   def self.spawn_async_with_pipes(working_directory, argv, envp, flags, &child_setup)
     _v1 = working_directory
