@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.6 / 2018-09-08
+
+* Depend on GirFFI 0.13.0
+* Test with GLib 2.58
+
 ## 0.0.5 / 2018-03-25
 
 * Depend on GirFFI 0.12.0
@@ -24,7 +29,7 @@
 ## 0.0.2 / 2013-08-03
 
 * Depend on GirFFI 0.7.0
-* Use mvz-live_ast instead of live_ast
+* Use `mvz-live_ast` instead of `live_ast`
 
 ## 0.0.1 / 2013-07-04
 
