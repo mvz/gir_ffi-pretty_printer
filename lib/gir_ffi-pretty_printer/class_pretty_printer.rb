@@ -36,11 +36,13 @@ module GirFFI
 
     def pretty_print_alias(meth)
       return if meth.name == meth.original_name
+
       "alias_method '#{meth.name}', '#{meth.original_name}'"
     end
 
     def pretty_print_method(meth)
       return if meth.name != meth.original_name
+
       method_source meth
     end
 
