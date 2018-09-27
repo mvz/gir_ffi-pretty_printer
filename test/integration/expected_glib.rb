@@ -19,13 +19,13 @@ module GLib
       self
     end
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
@@ -36,17 +36,17 @@ module GLib
       Lib.g_array_get_element_size(self)
     end
     def len
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def len=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def length
-      @struct[:len]
+      struct[:len]
     end
     # @api private
     def reset_typespec(typespec = nil)
@@ -467,24 +467,24 @@ module GLib
       self.class.wrap(Lib.g_byte_array_append(to_ptr, bytes, len))
     end
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def len
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def len=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def to_string
       data.read_string(len)
@@ -629,8 +629,8 @@ module GLib
       GLib::Lib.g_cond_clear(self)
     end
     def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 8)
       _v3 = GirFFI::SizedArray.wrap(:guint32, 2, _v2)
       _v3
     end
@@ -638,7 +638,7 @@ module GLib
       GLib::Lib.g_cond_init(self)
     end
     def p
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
@@ -780,14 +780,14 @@ module GLib
       return _v2
     end
     def day
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(12)
       _v2
     end
     def day=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(12, _v2)
     end
     def days_between(date2)
       _v1 = GLib::Date.from(date2)
@@ -795,14 +795,14 @@ module GLib
       return _v2
     end
     def dmy
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def dmy=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def free
       GLib::Lib.g_date_free(self)
@@ -866,34 +866,34 @@ module GLib
       return _v1
     end
     def julian
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(4)
       _v2
     end
     def julian=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(4, _v2)
     end
     def julian_days
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def julian_days=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
     def month
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def month=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(16, _v2)
     end
     def order(date2)
       _v1 = GLib::Date.from(date2)
@@ -958,14 +958,14 @@ module GLib
       return _v1
     end
     def year
-      _v1 = (@struct.to_ptr + 20)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(20)
       _v2
     end
     def year=(value)
-      _v1 = (@struct.to_ptr + 20)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(20, _v2)
     end
   end
   # XXX: Don't know how to print enum
@@ -1306,25 +1306,25 @@ module GLib
   class GLib::DebugKey < GirFFI::StructBase
   
     def key
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def key=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
     def value
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -1367,14 +1367,14 @@ module GLib
       obj
     end
     def code
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(4)
       _v2
     end
     def code=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int32(0, _v2)
+      _v1.put_int32(4, _v2)
     end
     def copy
       _v1 = GLib::Lib.g_error_copy(self)
@@ -1382,12 +1382,12 @@ module GLib
       return _v2
     end
     def domain
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def domain=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
@@ -1408,15 +1408,15 @@ module GLib
       return _v3
     end
     def message
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def message=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print enum
@@ -1571,33 +1571,33 @@ module GLib
   class GLib::HashTableIter < GirFFI::StructBase
   
     def dummy1
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def dummy2
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v2
     end
     def dummy3
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def dummy4
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(24)
       _v2
     end
     def dummy5
-      _v1 = (@struct.to_ptr + 28)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 28)
       _v2
     end
     def dummy6
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v2
     end
     def init(hash_table)
@@ -1687,86 +1687,86 @@ module GLib
       return _v2
     end
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def destroy
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GLib::DestroyNotify.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::DestroyNotify.get_value_from_pointer(_v1, 56)
       _v2
     end
     def destroy=(value)
-      _v1 = (@struct.to_ptr + 56)
+      _v1 = @struct.to_ptr
       _v2 = GLib::DestroyNotify.from(value)
-      GLib::DestroyNotify.copy_value_to_pointer(_v2, _v1)
+      GLib::DestroyNotify.copy_value_to_pointer(_v2, _v1, 56)
     end
     def flags
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(40)
       _v2
     end
     def flags=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(40, _v2)
     end
     def func
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(48)
       _v2
     end
     def func=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(48, _v2)
     end
     def hook_id
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(32)
       _v2
     end
     def hook_id=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(32, _v2)
     end
     def next
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::Hook.wrap(_v2)
       _v3
     end
     def next=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Hook.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def prev
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GLib::Hook.wrap(_v2)
       _v3
     end
     def prev=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Hook.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def ref_count
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(24)
       _v2
     end
     def ref_count=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(24, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -1782,57 +1782,57 @@ module GLib
       GLib::Lib.g_hook_list_clear(self)
     end
     def dummy
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 40)
       _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v2)
       _v3
     end
     def dummy3
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v2
     end
     def dummy3=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
     def dummy=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       GirFFI::ArgHelper.check_fixed_array_size(2, value, "value")
       _v2 = GirFFI::SizedArray.copy_from([:pointer, :void], 2, value)
-      GirFFI::SizedArray.copy_value_to_pointer(_v2, _v1)
+      GirFFI::SizedArray.copy_value_to_pointer(_v2, _v1, 40)
     end
     def finalize_hook
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GLib::HookFinalizeFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::HookFinalizeFunc.get_value_from_pointer(_v1, 32)
       _v2
     end
     def finalize_hook=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GLib::HookFinalizeFunc.from(value)
-      GLib::HookFinalizeFunc.copy_value_to_pointer(_v2, _v1)
+      GLib::HookFinalizeFunc.copy_value_to_pointer(_v2, _v1, 32)
     end
     def hook_size
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def hook_size=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def hooks
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GLib::Hook.wrap(_v2)
       _v3
     end
     def hooks=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Hook.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def init(hook_size)
       _v1 = hook_size
@@ -1847,22 +1847,22 @@ module GLib
       GLib::Lib.g_hook_list_invoke_check(self, _v1)
     end
     def is_setup
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(12)
       _v2
     end
     def is_setup=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(12, _v2)
     end
     def seq_id
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint64(0)
       _v2
     end
     def seq_id=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint64(0, _v2)
     end
@@ -1893,32 +1893,32 @@ module GLib
       obj
     end
     def buf_size
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(56)
       _v2
     end
     def close
       GLib::Lib.g_io_channel_close(self)
     end
     def close_on_unref
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(104)
       _v2
     end
     def do_encode
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(100)
       _v2
     end
     def encoded_read_buf
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(72)
       _v3 = GLib::String.wrap(_v2)
       _v3
     end
     def encoding
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = _v2.to_utf8
       _v3
     end
@@ -1929,8 +1929,8 @@ module GLib
       return _v2
     end
     def funcs
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::IOFuncs.wrap(_v2)
       _v3
     end
@@ -1978,34 +1978,34 @@ module GLib
       @struct.owned = true
     end
     def is_readable
-      _v1 = (@struct.to_ptr + 108)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(108)
       _v2
     end
     def is_seekable
-      _v1 = (@struct.to_ptr + 116)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(116)
       _v2
     end
     def is_writeable
-      _v1 = (@struct.to_ptr + 112)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(112)
       _v2
     end
     def line_term
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(40)
       _v3 = _v2.to_utf8
       _v3
     end
     def line_term_len
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(48)
       _v2
     end
     def partial_write_buf
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 88)
       _v3 = GirFFI::SizedArray.wrap(:gint8, 6, _v2)
       _v3
     end
@@ -2017,14 +2017,14 @@ module GLib
       return _v4
     end
     def read_buf
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(64)
       _v3 = GLib::String.wrap(_v2)
       _v3
     end
     def read_cd
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v2
     end
     def read_chars
@@ -2083,18 +2083,18 @@ module GLib
       return _v2
     end
     def ref_count
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_int32(0)
       _v2
     end
     def reserved1
-      _v1 = (@struct.to_ptr + 120)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(120)
       _v2
     end
     def reserved2
-      _v1 = (@struct.to_ptr + 128)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(128)
       _v2
     end
     def seek(offset, type)
@@ -2163,8 +2163,8 @@ module GLib
       GLib::Lib.g_io_channel_unref(self)
     end
     def use_buffer
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(96)
       _v2
     end
     def write(buf, count, bytes_written)
@@ -2175,14 +2175,14 @@ module GLib
       return _v4
     end
     def write_buf
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(80)
       _v3 = GLib::String.wrap(_v2)
       _v3
     end
     def write_cd
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v2
     end
     def write_chars(buf, count)
@@ -2211,43 +2211,43 @@ module GLib
   class GLib::IOFuncs < GirFFI::StructBase
   
     def io_close
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GLib::Io_close.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_close.get_value_from_pointer(_v1, 24)
       _v2
     end
     def io_create_watch
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GLib::Io_create_watch.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_create_watch.get_value_from_pointer(_v1, 32)
       _v2
     end
     def io_free
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GLib::Io_free.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_free.get_value_from_pointer(_v1, 40)
       _v2
     end
     def io_get_flags
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GLib::Io_get_flags.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_get_flags.get_value_from_pointer(_v1, 56)
       _v2
     end
     def io_read
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Io_read.get_value_from_pointer(_v1, 0)
       _v2
     end
     def io_seek
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::Io_seek.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_seek.get_value_from_pointer(_v1, 16)
       _v2
     end
     def io_set_flags
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GLib::Io_set_flags.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_set_flags.get_value_from_pointer(_v1, 48)
       _v2
     end
     def io_write
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::Io_write.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Io_write.get_value_from_pointer(_v1, 8)
       _v2
     end
   end
@@ -2666,25 +2666,25 @@ module GLib
       self.class.wrap(element_type, Lib.g_list_append(self, element_ptr_for(data)))
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def next=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GLib::List.from([:pointer, :void], value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def prev
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GLib::List.wrap([:pointer, :void], _v2)
       _v3
     end
     def prev=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GLib::List.from([:pointer, :void], value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     alias_method 'data', 'head'
     alias_method 'next', 'tail'
@@ -2692,35 +2692,35 @@ module GLib
   class GLib::LogField < GirFFI::StructBase
   
     def key
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def key=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
     def length
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_int64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int64(16)
       _v2
     end
     def length=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int64(0, _v2)
+      _v1.put_int64(16, _v2)
     end
     def value
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v2
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -3022,28 +3022,28 @@ module GLib
   class GLib::MarkupParser < GirFFI::StructBase
   
     def end_element
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::End_element.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::End_element.get_value_from_pointer(_v1, 8)
       _v2
     end
     def error
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GLib::Error.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Error.get_value_from_pointer(_v1, 32)
       _v2
     end
     def passthrough
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GLib::Passthrough.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Passthrough.get_value_from_pointer(_v1, 24)
       _v2
     end
     def start_element
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Start_element.get_value_from_pointer(_v1, 0)
       _v2
     end
     def text
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::Text.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Text.get_value_from_pointer(_v1, 16)
       _v2
     end
   end
@@ -3135,33 +3135,33 @@ module GLib
   class GLib::MemVTable < GirFFI::StructBase
   
     def calloc
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GLib::Calloc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Calloc.get_value_from_pointer(_v1, 24)
       _v2
     end
     def free
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::Free.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Free.get_value_from_pointer(_v1, 16)
       _v2
     end
     def malloc
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Malloc.get_value_from_pointer(_v1, 0)
       _v2
     end
     def realloc
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::Realloc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Realloc.get_value_from_pointer(_v1, 8)
       _v2
     end
     def try_malloc
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GLib::Try_malloc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Try_malloc.get_value_from_pointer(_v1, 32)
       _v2
     end
     def try_realloc
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GLib::Try_realloc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Try_realloc.get_value_from_pointer(_v1, 40)
       _v2
     end
   end
@@ -3179,23 +3179,23 @@ module GLib
       return _v2
     end
     def children
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v3 = GLib::Node.wrap(_v2)
       _v3
     end
     def children=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Node.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(32, _v2)
     end
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
@@ -3225,37 +3225,37 @@ module GLib
       return _v2
     end
     def next
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::Node.wrap(_v2)
       _v3
     end
     def next=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Node.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def parent
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v3 = GLib::Node.wrap(_v2)
       _v3
     end
     def parent=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Node.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
     def prev
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GLib::Node.wrap(_v2)
       _v3
     end
     def prev=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Node.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def reverse_children
       GLib::Lib.g_node_reverse_children(self)
@@ -3281,22 +3281,22 @@ module GLib
       GLib::Lib.g_once_init_leave(_v1, _v2)
     end
     def retval
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v2
     end
     def retval=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def status
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::OnceStatus.get_value_from_pointer(_v1, 0)
       _v2
     end
     def status=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       GLib::OnceStatus.copy_value_to_pointer(_v2, _v1)
     end
@@ -3412,77 +3412,77 @@ module GLib
   class GLib::OptionEntry < GirFFI::StructBase
   
     def arg
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GLib::OptionArg.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::OptionArg.get_value_from_pointer(_v1, 16)
       _v2
     end
     def arg=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GLib::OptionArg.copy_value_to_pointer(_v2, _v1)
+      GLib::OptionArg.copy_value_to_pointer(_v2, _v1, 16)
     end
     def arg_data
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v2
     end
     def arg_data=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
     def arg_description
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(40)
       _v3 = _v2.to_utf8
       _v3
     end
     def arg_description=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(40, _v2)
     end
     def description
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v3 = _v2.to_utf8
       _v3
     end
     def description=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(32, _v2)
     end
     def flags
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(12)
       _v2
     end
     def flags=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int32(0, _v2)
+      _v1.put_int32(12, _v2)
     end
     def long_name
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def long_name=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
     def short_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_int8(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int8(8)
       _v2
     end
     def short_name=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int8(0, _v2)
+      _v1.put_int8(8, _v2)
     end
   end
   # XXX: Don't know how to print enum
@@ -3546,34 +3546,34 @@ module GLib
   class GLib::PollFD < GirFFI::BoxedBase
   
     def events
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_uint16(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint16(4)
       _v2
     end
     def events=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint16(0, _v2)
+      _v1.put_uint16(4, _v2)
     end
     def fd
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_int32(0)
       _v2
     end
     def fd=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_int32(0, _v2)
     end
     def revents
-      _v1 = (@struct.to_ptr + 6)
-      _v2 = _v1.get_uint16(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint16(6)
       _v2
     end
     def revents=(value)
-      _v1 = (@struct.to_ptr + 6)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint16(0, _v2)
+      _v1.put_uint16(6, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -3581,8 +3581,8 @@ module GLib
   class GLib::Private < GirFFI::StructBase
   
     def future
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 16)
       _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 2, _v2)
       _v3
     end
@@ -3591,12 +3591,12 @@ module GLib
       return _v1
     end
     def notify
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::DestroyNotify.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::DestroyNotify.get_value_from_pointer(_v1, 8)
       _v2
     end
     def p
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
@@ -3627,7 +3627,7 @@ module GLib
       ary.each { |item| add(item) }
     end
     def data_ptr
-      @struct[:pdata]
+      struct[:pdata]
     end
     def each
       length.times { |idx| yield(index(idx)) }
@@ -3636,25 +3636,25 @@ module GLib
       POINTER_SIZE
     end
     def len
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def len=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def length
-      @struct[:len]
+      struct[:len]
     end
     def pdata
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def pdata=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
@@ -3680,13 +3680,13 @@ module GLib
       return _v1
     end
     def head
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = GLib::List.wrap([:pointer, :void], _v2)
       _v3
     end
     def head=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::List.from([:pointer, :void], value)
       _v1.put_pointer(0, _v2)
     end
@@ -3703,14 +3703,14 @@ module GLib
       return _v1
     end
     def length
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def length=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(16, _v2)
     end
     def peek_head
       _v1 = GLib::Lib.g_queue_peek_head(self)
@@ -3765,15 +3765,15 @@ module GLib
       GLib::Lib.g_queue_reverse(self)
     end
     def tail
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::List.wrap([:pointer, :void], _v2)
       _v3
     end
     def tail=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GLib::List.from([:pointer, :void], value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   class GLib::RWLock < GirFFI::StructBase
@@ -3782,8 +3782,8 @@ module GLib
       GLib::Lib.g_rw_lock_clear(self)
     end
     def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 8)
       _v3 = GirFFI::SizedArray.wrap(:guint32, 2, _v2)
       _v3
     end
@@ -3791,7 +3791,7 @@ module GLib
       GLib::Lib.g_rw_lock_init(self)
     end
     def p
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
@@ -3857,8 +3857,8 @@ module GLib
       GLib::Lib.g_rec_mutex_clear(self)
     end
     def i
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 8)
       _v3 = GirFFI::SizedArray.wrap(:guint32, 2, _v2)
       _v3
     end
@@ -3869,7 +3869,7 @@ module GLib
       GLib::Lib.g_rec_mutex_lock(self)
     end
     def p
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
@@ -4078,14 +4078,14 @@ module GLib
       arr.reverse.reduce(new(type)) { |lst, val| lst.prepend(val) }
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def next=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GLib::SList.from([:pointer, :void], value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def prepend(data)
       self.class.wrap(element_type, Lib.g_slist_prepend(self, element_ptr_for(data)))
@@ -4106,21 +4106,21 @@ module GLib
   class GLib::Scanner < GirFFI::StructBase
   
     def buffer
-      _v1 = (@struct.to_ptr + 120)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(120)
       _v3 = _v2.to_utf8
       _v3
     end
     def config
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v3 = GLib::ScannerConfig.wrap(_v2)
       _v3
     end
     def config=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GLib::ScannerConfig.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(32, _v2)
     end
     def cur_line
       _v1 = GLib::Lib.g_scanner_cur_line(self)
@@ -4146,8 +4146,8 @@ module GLib
       return _v1
     end
     def input_fd
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(96)
       _v2
     end
     def input_file(input_fd)
@@ -4155,15 +4155,15 @@ module GLib
       GLib::Lib.g_scanner_input_file(self, _v1)
     end
     def input_name
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = _v2.to_utf8
       _v3
     end
     def input_name=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def input_text(text, text_len)
       _v1 = GirFFI::InPointer.from_utf8(text)
@@ -4171,14 +4171,14 @@ module GLib
       GLib::Lib.g_scanner_input_text(self, _v1, _v2)
     end
     def line
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(56)
       _v2
     end
     def line=(value)
-      _v1 = (@struct.to_ptr + 56)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(56, _v2)
     end
     def lookup_symbol(symbol)
       _v1 = GirFFI::InPointer.from_utf8(symbol)
@@ -4186,89 +4186,89 @@ module GLib
       return _v2
     end
     def max_parse_errors
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def max_parse_errors=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def msg_handler
-      _v1 = (@struct.to_ptr + 136)
-      _v2 = GLib::ScannerMsgFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::ScannerMsgFunc.get_value_from_pointer(_v1, 136)
       _v2
     end
     def msg_handler=(value)
-      _v1 = (@struct.to_ptr + 136)
+      _v1 = @struct.to_ptr
       _v2 = GLib::ScannerMsgFunc.from(value)
-      GLib::ScannerMsgFunc.copy_value_to_pointer(_v2, _v1)
+      GLib::ScannerMsgFunc.copy_value_to_pointer(_v2, _v1, 136)
     end
     def next_line
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(80)
       _v2
     end
     def next_line=(value)
-      _v1 = (@struct.to_ptr + 80)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(80, _v2)
     end
     def next_position
-      _v1 = (@struct.to_ptr + 84)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(84)
       _v2
     end
     def next_position=(value)
-      _v1 = (@struct.to_ptr + 84)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(84, _v2)
     end
     def next_token
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = GLib::TokenType.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::TokenType.get_value_from_pointer(_v1, 64)
       _v2
     end
     def next_token=(value)
-      _v1 = (@struct.to_ptr + 64)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GLib::TokenType.copy_value_to_pointer(_v2, _v1)
+      GLib::TokenType.copy_value_to_pointer(_v2, _v1, 64)
     end
     def next_value
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GLib::TokenValue.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::TokenValue.get_value_from_pointer(_v1, 72)
       _v3 = GLib::TokenValue.wrap(_v2)
       _v3
     end
     def next_value=(value)
-      _v1 = (@struct.to_ptr + 72)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GLib::TokenValue.copy_value_to_pointer(_v2, _v1)
+      GLib::TokenValue.copy_value_to_pointer(_v2, _v1, 72)
     end
     def parse_errors
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(12)
       _v2
     end
     def parse_errors=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(12, _v2)
     end
     def peek_next_token
       _v1 = GLib::Lib.g_scanner_peek_next_token(self)
       return _v1
     end
     def position
-      _v1 = (@struct.to_ptr + 60)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(60)
       _v2
     end
     def position=(value)
-      _v1 = (@struct.to_ptr + 60)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(60, _v2)
     end
     def scope_add_symbol(scope_id, symbol, value = nil)
       _v1 = scope_id
@@ -4277,8 +4277,8 @@ module GLib
       GLib::Lib.g_scanner_scope_add_symbol(self, _v1, _v2, _v3)
     end
     def scope_id
-      _v1 = (@struct.to_ptr + 128)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(128)
       _v2
     end
     def scope_lookup_symbol(scope_id, symbol)
@@ -4298,8 +4298,8 @@ module GLib
       return _v2
     end
     def symbol_table
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(88)
       _v3 = GLib::HashTable.wrap([[:pointer, :void], [:pointer, :void]], _v2)
       _v3
     end
@@ -4307,26 +4307,26 @@ module GLib
       GLib::Lib.g_scanner_sync_file_offset(self)
     end
     def text
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(104)
       _v3 = _v2.to_utf8
       _v3
     end
     def text_end
-      _v1 = (@struct.to_ptr + 112)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(112)
       _v3 = _v2.to_utf8
       _v3
     end
     def token
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GLib::TokenType.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::TokenType.get_value_from_pointer(_v1, 40)
       _v2
     end
     def token=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GLib::TokenType.copy_value_to_pointer(_v2, _v1)
+      GLib::TokenType.copy_value_to_pointer(_v2, _v1, 40)
     end
     def unexp_token(expected_token, identifier_spec, symbol_spec, symbol_name, message, is_error)
       _v1 = expected_token
@@ -4338,297 +4338,297 @@ module GLib
       GLib::Lib.g_scanner_unexp_token(self, _v1, _v2, _v3, _v4, _v5, _v6)
     end
     def user_data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def user_data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def value
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GLib::TokenValue.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::TokenValue.get_value_from_pointer(_v1, 48)
       _v3 = GLib::TokenValue.wrap(_v2)
       _v3
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GLib::TokenValue.copy_value_to_pointer(_v2, _v1)
+      GLib::TokenValue.copy_value_to_pointer(_v2, _v1, 48)
     end
   end
   class GLib::ScannerConfig < GirFFI::StructBase
   
     def case_sensitive
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(32)
       _v2
     end
     def case_sensitive=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(32, _v2)
     end
     def char_2_token
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(104)
       _v2
     end
     def char_2_token=(value)
-      _v1 = (@struct.to_ptr + 104)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(104, _v2)
     end
     def cpair_comment_single
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v3 = _v2.to_utf8
       _v3
     end
     def cpair_comment_single=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
     def cset_identifier_first
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def cset_identifier_first=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def cset_identifier_nth
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = _v2.to_utf8
       _v3
     end
     def cset_identifier_nth=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def cset_skip_characters
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def cset_skip_characters=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
     def identifier_2_string
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(100)
       _v2
     end
     def identifier_2_string=(value)
-      _v1 = (@struct.to_ptr + 100)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(100, _v2)
     end
     def int_2_float
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(96)
       _v2
     end
     def int_2_float=(value)
-      _v1 = (@struct.to_ptr + 96)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(96, _v2)
     end
     def numbers_2_int
-      _v1 = (@struct.to_ptr + 92)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(92)
       _v2
     end
     def numbers_2_int=(value)
-      _v1 = (@struct.to_ptr + 92)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(92, _v2)
     end
     def padding_dummy
-      _v1 = (@struct.to_ptr + 120)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(120)
       _v2
     end
     def scan_binary
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(64)
       _v2
     end
     def scan_binary=(value)
-      _v1 = (@struct.to_ptr + 64)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(64, _v2)
     end
     def scan_comment_multi
-      _v1 = (@struct.to_ptr + 44)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(44)
       _v2
     end
     def scan_comment_multi=(value)
-      _v1 = (@struct.to_ptr + 44)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(44, _v2)
     end
     def scan_float
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(72)
       _v2
     end
     def scan_float=(value)
-      _v1 = (@struct.to_ptr + 72)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(72, _v2)
     end
     def scan_hex
-      _v1 = (@struct.to_ptr + 76)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(76)
       _v2
     end
     def scan_hex=(value)
-      _v1 = (@struct.to_ptr + 76)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(76, _v2)
     end
     def scan_hex_dollar
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(80)
       _v2
     end
     def scan_hex_dollar=(value)
-      _v1 = (@struct.to_ptr + 80)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(80, _v2)
     end
     def scan_identifier
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(48)
       _v2
     end
     def scan_identifier=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(48, _v2)
     end
     def scan_identifier_1char
-      _v1 = (@struct.to_ptr + 52)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(52)
       _v2
     end
     def scan_identifier_1char=(value)
-      _v1 = (@struct.to_ptr + 52)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(52, _v2)
     end
     def scan_identifier_NULL
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(56)
       _v2
     end
     def scan_identifier_NULL=(value)
-      _v1 = (@struct.to_ptr + 56)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(56, _v2)
     end
     def scan_octal
-      _v1 = (@struct.to_ptr + 68)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(68)
       _v2
     end
     def scan_octal=(value)
-      _v1 = (@struct.to_ptr + 68)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(68, _v2)
     end
     def scan_string_dq
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(88)
       _v2
     end
     def scan_string_dq=(value)
-      _v1 = (@struct.to_ptr + 88)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(88, _v2)
     end
     def scan_string_sq
-      _v1 = (@struct.to_ptr + 84)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(84)
       _v2
     end
     def scan_string_sq=(value)
-      _v1 = (@struct.to_ptr + 84)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(84, _v2)
     end
     def scan_symbols
-      _v1 = (@struct.to_ptr + 60)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(60)
       _v2
     end
     def scan_symbols=(value)
-      _v1 = (@struct.to_ptr + 60)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(60, _v2)
     end
     def scope_0_fallback
-      _v1 = (@struct.to_ptr + 112)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(112)
       _v2
     end
     def scope_0_fallback=(value)
-      _v1 = (@struct.to_ptr + 112)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(112, _v2)
     end
     def skip_comment_multi
-      _v1 = (@struct.to_ptr + 36)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(36)
       _v2
     end
     def skip_comment_multi=(value)
-      _v1 = (@struct.to_ptr + 36)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(36, _v2)
     end
     def skip_comment_single
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(40)
       _v2
     end
     def skip_comment_single=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(40, _v2)
     end
     def store_int64
-      _v1 = (@struct.to_ptr + 116)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(116)
       _v2
     end
     def store_int64=(value)
-      _v1 = (@struct.to_ptr + 116)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(116, _v2)
     end
     def symbol_2_token
-      _v1 = (@struct.to_ptr + 108)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(108)
       _v2
     end
     def symbol_2_token=(value)
-      _v1 = (@struct.to_ptr + 108)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(108, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -4814,13 +4814,13 @@ module GLib
       return _v2
     end
     def callback_data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def callback_funcs
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::SourceCallbackFuncs.wrap(_v2)
       _v3
     end
@@ -4828,8 +4828,8 @@ module GLib
       GLib::Lib.g_source_destroy(self)
     end
     def flags
-      _v1 = (@struct.to_ptr + 44)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(44)
       _v2
     end
     def get_can_recurse
@@ -4876,32 +4876,32 @@ module GLib
       GLib::Lib.g_source_modify_unix_fd(self, _v1, _v2)
     end
     def name
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(80)
       _v3 = _v2.to_utf8
       _v3
     end
     def next
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(72)
       _v3 = GLib::Source.wrap(_v2)
       _v3
     end
     def poll_fds
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(56)
       _v3 = GLib::SList.wrap([:pointer, :void], _v2)
       _v3
     end
     def prev
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(64)
       _v3 = GLib::Source.wrap(_v2)
       _v3
     end
     def priority
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(40)
       _v2
     end
     def query_unix_fd(tag)
@@ -4915,8 +4915,8 @@ module GLib
       return _v2
     end
     def ref_count
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(24)
       _v2
     end
     def remove_child_source(child_source)
@@ -4963,14 +4963,14 @@ module GLib
       GLib::Lib.g_source_set_ready_time(self, _v1)
     end
     def source_funcs
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GLib::SourceFuncs.wrap(_v2)
       _v3
     end
     def source_id
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(48)
       _v2
     end
     def unref
@@ -4980,18 +4980,18 @@ module GLib
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
   
     def get
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def ref
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Ref.get_value_from_pointer(_v1, 0)
       _v2
     end
     def unref
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::Unref.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Unref.get_value_from_pointer(_v1, 8)
       _v2
     end
   end
@@ -5000,32 +5000,32 @@ module GLib
   class GLib::SourceFuncs < GirFFI::StructBase
   
     def check
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GLib::Check.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Check.get_value_from_pointer(_v1, 8)
       _v2
     end
     def closure_callback
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GLib::SourceFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::SourceFunc.get_value_from_pointer(_v1, 32)
       _v2
     end
     def closure_marshal
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GLib::SourceDummyMarshal.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::SourceDummyMarshal.get_value_from_pointer(_v1, 40)
       _v2
     end
     def dispatch
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def finalize
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GLib::Finalize.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GLib::Finalize.get_value_from_pointer(_v1, 24)
       _v2
     end
     def prepare
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Prepare.get_value_from_pointer(_v1, 0)
       _v2
     end
@@ -5044,14 +5044,14 @@ module GLib
   class GLib::String < GirFFI::BoxedBase
   
     def allocated_len
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(16)
       _v2
     end
     def allocated_len=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(16, _v2)
     end
     def append(val)
       _v1 = GirFFI::InPointer.from_utf8(val)
@@ -5164,14 +5164,14 @@ module GLib
       return _v4
     end
     def len
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(8)
       _v2
     end
     def len=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(8, _v2)
     end
     def overwrite(pos, val)
       _v1 = pos
@@ -5220,13 +5220,13 @@ module GLib
       return _v3
     end
     def str
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def str=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
@@ -5282,64 +5282,64 @@ module GLib
   class GLib::TestConfig < GirFFI::StructBase
   
     def test_initialized
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
       _v2
     end
     def test_initialized=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
     end
     def test_perf
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 8)
       _v2
     end
     def test_perf=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 8)
     end
     def test_quick
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 4)
       _v2
     end
     def test_quick=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 4)
     end
     def test_quiet
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 16)
       _v2
     end
     def test_quiet=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 16)
     end
     def test_undefined
-      _v1 = (@struct.to_ptr + 20)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 20)
       _v2
     end
     def test_undefined=(value)
-      _v1 = (@struct.to_ptr + 20)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 20)
     end
     def test_verbose
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 12)
       _v2
     end
     def test_verbose=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 12)
     end
   end
   # XXX: Don't know how to print callback
@@ -5349,7 +5349,7 @@ module GLib
   class GLib::TestLogBuffer < GirFFI::StructBase
   
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = GLib::String.wrap(_v2)
       _v3
@@ -5358,8 +5358,8 @@ module GLib
       GLib::Lib.g_test_log_buffer_free(self)
     end
     def msgs
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::SList.wrap([:pointer, :void], _v2)
       _v3
     end
@@ -5376,55 +5376,55 @@ module GLib
       GLib::Lib.g_test_log_msg_free(self)
     end
     def log_type
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::TestLogType.get_value_from_pointer(_v1, 0)
       _v2
     end
     def log_type=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       GLib::TestLogType.copy_value_to_pointer(_v2, _v1)
     end
     def n_nums
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def n_nums=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(16, _v2)
     end
     def n_strings
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(4)
       _v2
     end
     def n_strings=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(4, _v2)
     end
     def nums
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v2
     end
     def nums=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
     def strings
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def strings=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print enum
@@ -5499,14 +5499,14 @@ module GLib
       GLib::Lib.g_thread_pool_stop_unused_threads
     end
     def exclusive
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 16)
       _v2
     end
     def exclusive=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1)
+      GirFFI::Boolean.copy_value_to_pointer(_v2, _v1, 16)
     end
     def free(immediate, wait_)
       _v1 = immediate
@@ -5514,12 +5514,12 @@ module GLib
       GLib::Lib.g_thread_pool_free(self, _v1, _v2)
     end
     def func
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Func.get_value_from_pointer(_v1, 0)
       _v2
     end
     def func=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::Func.from(value)
       GLib::Func.copy_value_to_pointer(_v2, _v1)
     end
@@ -5555,14 +5555,14 @@ module GLib
       return _v1
     end
     def user_data
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v2
     end
     def user_data=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print enum
@@ -5583,24 +5583,24 @@ module GLib
       return _v2
     end
     def tv_sec
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_int64(0)
       _v2
     end
     def tv_sec=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_int64(0, _v2)
     end
     def tv_usec
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_int64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int64(8)
       _v2
     end
     def tv_usec=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int64(0, _v2)
+      _v1.put_int64(8, _v2)
     end
   end
   class GLib::TimeZone < GirFFI::BoxedBase
@@ -5733,13 +5733,13 @@ module GLib
       GLib::Lib.g_trash_stack_push(_v1, _v2)
     end
     def next
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = GLib::TrashStack.wrap(_v2)
       _v3
     end
     def next=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GLib::TrashStack.copy_from(value)
       _v1.put_pointer(0, _v2)
     end

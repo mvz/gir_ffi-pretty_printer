@@ -252,23 +252,23 @@ module GObject
       GObject::Lib.g_cclosure_marshal_generic(_v1, _v2, _v3, _v4, _v5, _v6)
     end
     def callback
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(64)
       _v2
     end
     def callback=(value)
-      _v1 = (@struct.to_ptr + 64)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(64, _v2)
     end
     def closure
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Closure.get_value_from_pointer(_v1, 0)
       _v3 = GObject::Closure.wrap(_v2)
       _v3
     end
     def closure=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Closure.copy_from(value)
       GObject::Closure.copy_value_to_pointer(_v2, _v1)
     end
@@ -290,34 +290,34 @@ module GObject
       obj
     end
     def data
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(48)
       _v2
     end
     def derivative_flag
-      _v1 = (@struct.to_ptr + 28)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(28)
       _v2
     end
     def floating
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(24)
       _v2
     end
     def in_inotify
-      _v1 = (@struct.to_ptr + 20)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(20)
       _v2
     end
     def in_marshal
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(32)
       _v2
     end
     def in_marshal=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(32, _v2)
     end
     def initialize_object(sizeof_closure, object)
       _v1 = sizeof_closure
@@ -353,43 +353,43 @@ module GObject
       rval.get_value
     end
     def is_invalid
-      _v1 = (@struct.to_ptr + 36)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(36)
       _v2
     end
     def is_invalid=(value)
-      _v1 = (@struct.to_ptr + 36)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(36, _v2)
     end
     def marshal
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Marshal.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Marshal.get_value_from_pointer(_v1, 40)
       _v2
     end
     def meta_marshal_nouse
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(4)
       _v2
     end
     def n_fnotifiers
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(12)
       _v2
     end
     def n_guards
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def n_inotifiers
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def notifiers
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(56)
       _v3 = GObject::ClosureNotifyData.wrap(_v2)
       _v3
     end
@@ -399,7 +399,7 @@ module GObject
       return _v2
     end
     def ref_count
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
@@ -427,210 +427,199 @@ module GObject
   class GObject::ClosureNotifyData < GirFFI::StructBase
   
     def data
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v2
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_pointer(0, _v2)
     end
     def notify
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::ClosureNotify.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::ClosureNotify.get_value_from_pointer(_v1, 8)
       _v2
     end
     def notify=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::ClosureNotify.from(value)
-      GObject::ClosureNotify.copy_value_to_pointer(_v2, _v1)
+      GObject::ClosureNotify.copy_value_to_pointer(_v2, _v1, 8)
     end
   end
   # XXX: Don't know how to print flags
   class GObject::EnumClass < GirFFI::StructBase
   
     def g_type_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
     end
     def g_type_class=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.copy_from(value)
       GObject::TypeClass.copy_value_to_pointer(_v2, _v1)
     end
     def maximum
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(12)
       _v2
     end
     def maximum=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int32(0, _v2)
+      _v1.put_int32(12, _v2)
     end
     def minimum
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_int32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_int32(8)
       _v2
     end
     def minimum=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_int32(0, _v2)
+      _v1.put_int32(8, _v2)
     end
     def n_values
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def n_values=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(16, _v2)
     end
     def values
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(24)
       _v3 = GObject::EnumValue.wrap(_v2)
       _v3
     end
     def values=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = GObject::EnumValue.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(24, _v2)
     end
   end
   class GObject::EnumValue < GirFFI::StructBase
   
     def value
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_int32(0)
       _v2
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_int32(0, _v2)
     end
     def value_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def value_name=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def value_nick
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = _v2.to_utf8
       _v3
     end
     def value_nick=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
   end
   class GObject::FlagsClass < GirFFI::StructBase
   
     def g_type_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
     end
     def g_type_class=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.copy_from(value)
       GObject::TypeClass.copy_value_to_pointer(_v2, _v1)
     end
     def mask
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(8)
       _v2
     end
     def mask=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(8, _v2)
     end
     def n_values
-      _v1 = (@struct.to_ptr + 12)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(12)
       _v2
     end
     def n_values=(value)
-      _v1 = (@struct.to_ptr + 12)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(12, _v2)
     end
     def values
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = GObject::FlagsValue.wrap(_v2)
       _v3
     end
     def values=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GObject::FlagsValue.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
   end
   class GObject::FlagsValue < GirFFI::StructBase
   
     def value
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
     def value_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def value_name=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
     def value_nick
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v3 = _v2.to_utf8
       _v3
     end
     def value_nick=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
   end
   class GObject::InitiallyUnowned < GObject::Object
   
-    def g_type_instance
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GObject::TypeInstance.get_value_from_pointer(_v1, 0)
-      _v3 = GObject::TypeInstance.wrap(_v2)
-      _v3
-    end
-    def ref_count
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
     # Initializing method used in constructors. For InitiallyUnowned and
     # descendants, this needs to sink the object's floating reference.
     def store_pointer(ptr)
@@ -641,66 +630,66 @@ module GObject
   class GObject::InitiallyUnownedClass < GObject::ObjectClass
   
     def construct_properties
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::SList.wrap([:pointer, :void], _v2)
       _v3
     end
     def constructed
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 72)
       _v2
     end
     def constructor
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def dispatch_properties_changed
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
       _v2
     end
     def dispose
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 40)
       _v2
     end
     def finalize
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 48)
       _v2
     end
     def flags
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(80)
       _v2
     end
     def g_type_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
     end
     def get_property
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 32)
       _v2
     end
     def notify
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = GObject::Notify.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Notify.get_value_from_pointer(_v1, 64)
       _v2
     end
     def pdummy
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 88)
       _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 6, _v2)
       _v3
     end
     def set_property
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 24)
       _v2
     end
   end
@@ -709,32 +698,32 @@ module GObject
   class GObject::InterfaceInfo < GirFFI::StructBase
   
     def interface_data
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def interface_data=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(16, _v2)
     end
     def interface_finalize
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::InterfaceFinalizeFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::InterfaceFinalizeFunc.get_value_from_pointer(_v1, 8)
       _v2
     end
     def interface_finalize=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::InterfaceFinalizeFunc.from(value)
-      GObject::InterfaceFinalizeFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::InterfaceFinalizeFunc.copy_value_to_pointer(_v2, _v1, 8)
     end
     def interface_init
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::InterfaceInitFunc.get_value_from_pointer(_v1, 0)
       _v2
     end
     def interface_init=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::InterfaceInitFunc.from(value)
       GObject::InterfaceInitFunc.copy_value_to_pointer(_v2, _v1)
     end
@@ -770,7 +759,7 @@ module GObject
     def self.make_finalizer(ptr)
       proc do
         rc = GObject::Object::Struct.new(ptr)[:ref_count]
-        if rc.zero? then
+        if (rc == 0) then
           warn("not unreffing #{name}:#{ptr} (#{rc})")
         else
           GObject::Lib.g_object_unref(ptr)
@@ -780,6 +769,11 @@ module GObject
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def self.new_with_properties(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize_with_properties, *args, &block)
       obj
     end
     def self.newv(*args, &block)
@@ -814,12 +808,6 @@ module GObject
     def freeze_notify
       GObject::Lib.g_object_freeze_notify(self)
     end
-    def g_type_instance
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GObject::TypeInstance.get_value_from_pointer(_v1, 0)
-      _v3 = GObject::TypeInstance.wrap(_v2)
-      _v3
-    end
     def get_data(key)
       _v1 = GirFFI::InPointer.from_utf8(key)
       _v2 = GObject::Lib.g_object_get_data(self, _v1)
@@ -846,6 +834,16 @@ module GObject
       _v2 = GirFFI::SizedArray.from(:utf8, -1, names)
       _v3 = GirFFI::SizedArray.from(GObject::Value, -1, values)
       GObject::Lib.g_object_getv(self, _v1, _v2, _v3)
+    end
+    # Starting with GLib 2.54.0, use g_object_new_with_properties, which
+    # takes an array of names and an array of values.
+    def initialize_with_properties(properties = {})
+      names, gvalues = names_and_gvalues_for_properties(properties)
+      n_properties = names.length
+      names_arr = GirFFI::SizedArray.from(:utf8, -1, names)
+      gvalues_arr = GirFFI::SizedArray.from(GObject::Value, -1, gvalues)
+      ptr = GObject::Lib.g_object_new_with_properties(self.class.gtype, n_properties, names_arr, gvalues_arr)
+      store_pointer(ptr)
     end
     def initializev(object_type, parameters)
       _v1 = object_type
@@ -880,11 +878,6 @@ module GObject
     def ref
       Lib.g_object_ref(self)
       self
-    end
-    def ref_count
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint32(0)
-      _v2
     end
     def ref_sink
       _v1 = GObject::Lib.g_object_ref_sink(self)
@@ -948,34 +941,34 @@ module GObject
   class GObject::ObjectClass < GObject::TypeClass
   
     def construct_properties
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GLib::SList.wrap([:pointer, :void], _v2)
       _v3
     end
     def constructed
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 72)
       _v2
     end
     def constructor
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(16)
       _v2
     end
     def dispatch_properties_changed
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
       _v2
     end
     def dispose
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 40)
       _v2
     end
     def finalize
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 48)
       _v2
     end
     def find_property(property_name)
@@ -985,23 +978,23 @@ module GObject
       return _v3
     end
     def flags
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(80)
       _v2
     end
     def g_type_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
     end
     def get_property
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 32)
       _v2
     end
     def get_property=(callback)
-      @struct[:get_property] = GObject::ObjectGetPropertyFunc.from(callback)
+      struct[:get_property] = GObject::ObjectGetPropertyFunc.from(callback)
     end
     def gtype
       to_ptr.get_gtype(0)
@@ -1025,8 +1018,8 @@ module GObject
       return _v4
     end
     def notify
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = GObject::Notify.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Notify.get_value_from_pointer(_v1, 64)
       _v2
     end
     def override_property(property_id, name)
@@ -1035,43 +1028,43 @@ module GObject
       GObject::Lib.g_object_class_override_property(self, _v1, _v2)
     end
     def pdummy
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 88)
       _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 6, _v2)
       _v3
     end
     def set_property
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 24)
       _v2
     end
     def set_property=(callback)
-      @struct[:set_property] = GObject::ObjectSetPropertyFunc.from(callback)
+      struct[:set_property] = GObject::ObjectSetPropertyFunc.from(callback)
     end
   end
   class GObject::ObjectConstructParam < GirFFI::StructBase
   
     def pspec
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = GObject::ParamSpec.wrap(_v2)
       _v3
     end
     def pspec=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::ParamSpec.from((value and value.ref))
       _v1.put_pointer(0, _v2)
     end
     def value
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GObject::Value.wrap(_v2)
       _v3
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Value.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print callback
@@ -1083,31 +1076,11 @@ module GObject
   # XXX: Don't know how to print flags
   class GObject::ParamSpec < GirFFI::ObjectBase
   
-    def _blurb
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
-    end
-    def _nick
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
-    end
     def accessor_name
       get_name.tr("-", "_")
     end
     def flags
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GObject::ParamFlags.get_value_from_pointer(_v1, 0)
-      _v2
-    end
-    def g_type_instance
-      _v1 = (@struct.to_ptr + 0)
-      _v2 = GObject::TypeInstance.get_value_from_pointer(_v1, 0)
-      _v3 = GObject::TypeInstance.wrap(_v2)
-      _v3
+      GObject::ParamFlags.get_value_from_pointer(to_ptr, FLAGS_OFFSET)
     end
     def get_blurb
       _v1 = GObject::Lib.g_param_spec_get_blurb(self)
@@ -1143,24 +1116,9 @@ module GObject
       _v2 = GObject::ParamSpec.wrap(_v1).tap { |it| it and it.ref }
       return _v2
     end
-    def owner_type
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
-    def param_id
-      _v1 = (@struct.to_ptr + 68)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
     def ref
       Lib.g_param_spec_ref(self)
       self
-    end
-    def ref_count
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_uint32(0)
-      _v2
     end
     def set_qdata(quark, data = nil)
       _v1 = quark
@@ -1176,18 +1134,12 @@ module GObject
       return _v2
     end
     def value_type
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_uint64(0)
-      _v2
+      to_ptr.get_gtype(VALUE_TYPE_OFFSET)
     end
   end
   class GObject::ParamSpecBoolean < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = GirFFI::Boolean.get_value_from_pointer(_v1, 0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecBoxed < GObject::ParamSpec
   
@@ -1195,197 +1147,79 @@ module GObject
   end
   class GObject::ParamSpecChar < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 74)
-      _v2 = _v1.get_int8(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 73)
-      _v2 = _v1.get_int8(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_int8(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecClass < GObject::TypeClass
   
     def dummy
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 48)
       _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 4, _v2)
       _v3
     end
     def finalize
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 16)
       _v2
     end
     def g_type_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
     end
     def value_set_default
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 24)
       _v2
     end
     def value_type
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(8)
       _v2
     end
     def value_validate
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 32)
       _v2
     end
     def values_cmp
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 40)
       _v2
     end
   end
   class GObject::ParamSpecDouble < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_double(0)
-      _v2
-    end
-    def epsilon
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = _v1.get_double(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_double(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_double(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecEnum < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_int32(0)
-      _v2
-    end
-    def enum_class
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GObject::EnumClass.wrap(_v2)
-      _v3
-    end
+  
   end
   class GObject::ParamSpecFlags < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
-    def flags_class
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GObject::FlagsClass.wrap(_v2)
-      _v3
-    end
+  
   end
   class GObject::ParamSpecFloat < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_float(0)
-      _v2
-    end
-    def epsilon
-      _v1 = (@struct.to_ptr + 84)
-      _v2 = _v1.get_float(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 76)
-      _v2 = _v1.get_float(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_float(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecGType < GObject::ParamSpec
   
-    def is_a_type
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecInt < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_int32(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 76)
-      _v2 = _v1.get_int32(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_int32(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecInt64 < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecLong < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_int64(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecObject < GObject::ParamSpec
   
@@ -1393,12 +1227,7 @@ module GObject
   end
   class GObject::ParamSpecOverride < GObject::ParamSpec
   
-    def overridden
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GObject::ParamSpec.wrap(_v2)
-      _v3
-    end
+  
   end
   class GObject::ParamSpecParam < GObject::ParamSpec
   
@@ -1449,224 +1278,117 @@ module GObject
   end
   class GObject::ParamSpecString < GObject::ParamSpec
   
-    def cset_first
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
-    end
-    def cset_nth
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
-    end
-    def default_value
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
-    end
-    def ensure_non_null
-      _v1 = (@struct.to_ptr + 104)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
-    def null_fold_if_empty
-      _v1 = (@struct.to_ptr + 100)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
-    def substitutor
-      _v1 = (@struct.to_ptr + 96)
-      _v2 = _v1.get_int8(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecTypeInfo < GirFFI::StructBase
   
     def finalize
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 24)
       _v2
     end
     def instance_init
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::Instance_init.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Instance_init.get_value_from_pointer(_v1, 8)
       _v2
     end
     def instance_size
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint16(0)
       _v2
     end
     def instance_size=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint16(0, _v2)
     end
     def n_preallocs
-      _v1 = (@struct.to_ptr + 2)
-      _v2 = _v1.get_uint16(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint16(2)
       _v2
     end
     def n_preallocs=(value)
-      _v1 = (@struct.to_ptr + 2)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint16(0, _v2)
+      _v1.put_uint16(2, _v2)
     end
     def value_set_default
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 32)
       _v2
     end
     def value_type
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(16)
       _v2
     end
     def value_type=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(16, _v2)
     end
     def value_validate
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 40)
       _v2
     end
     def values_cmp
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 48)
       _v2
     end
   end
   class GObject::ParamSpecUChar < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 74)
-      _v2 = _v1.get_uint8(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 73)
-      _v2 = _v1.get_uint8(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint8(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecUInt < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 76)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecUInt64 < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecULong < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
-    def maximum
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
-    def minimum
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint64(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecUnichar < GObject::ParamSpec
   
-    def default_value
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecValueArray < GObject::ParamSpec
   
-    def element_spec
-      _v1 = (@struct.to_ptr + 72)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GObject::ParamSpec.wrap(_v2)
-      _v3
-    end
-    def fixed_n_elements
-      _v1 = (@struct.to_ptr + 80)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
+  
   end
   class GObject::ParamSpecVariant < GObject::ParamSpec
   
-    def padding
-      _v1 = (@struct.to_ptr + 88)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
-      _v3 = GirFFI::SizedArray.wrap([:pointer, :void], 4, _v2)
-      _v3
-    end
+  
   end
   class GObject::Parameter < GirFFI::StructBase
   
     def name
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = _v2.to_utf8
       _v3
     end
     def name=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
       _v1.put_pointer(0, _v2)
     end
     def value
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::Value.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value.get_value_from_pointer(_v1, 8)
       _v3 = GObject::Value.wrap(_v2)
       _v3
     end
     def value=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Value.copy_from(value)
-      GObject::Value.copy_value_to_pointer(_v2, _v1)
+      GObject::Value.copy_value_to_pointer(_v2, _v1, 8)
     end
   end
   SIGNAL_FLAGS_MASK = 511
@@ -1677,32 +1399,32 @@ module GObject
   class GObject::SignalInvocationHint < GirFFI::StructBase
   
     def detail
-      _v1 = (@struct.to_ptr + 4)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(4)
       _v2
     end
     def detail=(value)
-      _v1 = (@struct.to_ptr + 4)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(4, _v2)
     end
     def run_type
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::SignalFlags.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::SignalFlags.get_value_from_pointer(_v1, 8)
       _v2
     end
     def run_type=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GObject::SignalFlags.copy_value_to_pointer(_v2, _v1)
+      GObject::SignalFlags.copy_value_to_pointer(_v2, _v1, 8)
     end
     def signal_id
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def signal_id=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
@@ -1711,78 +1433,78 @@ module GObject
   class GObject::SignalQuery < GirFFI::StructBase
   
     def itype
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(16)
       _v2
     end
     def itype=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(16, _v2)
     end
     def n_params
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(40)
       _v2
     end
     def n_params=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(40, _v2)
     end
     def param_types
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_uint32(0)
-      _v3 = (@struct.to_ptr + 48)
-      _v4 = _v3.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(40)
+      _v3 = @struct.to_ptr
+      _v4 = _v3.get_pointer(48)
       _v5 = GirFFI::SizedArray.wrap(:GType, _v2, _v4)
       _v5
     end
     def param_types=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::SizedArray.copy_from(:GType, -1, value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(48, _v2)
     end
     def return_type
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(32)
       _v2
     end
     def return_type=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint64(0, _v2)
+      _v1.put_uint64(32, _v2)
     end
     def signal_flags
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::SignalFlags.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::SignalFlags.get_value_from_pointer(_v1, 24)
       _v2
     end
     def signal_flags=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = value
-      GObject::SignalFlags.copy_value_to_pointer(_v2, _v1)
+      GObject::SignalFlags.copy_value_to_pointer(_v2, _v1, 24)
     end
     def signal_id
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def signal_id=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
     def signal_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def signal_name=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   TYPE_FLAG_RESERVED_ID_BIT = 1
@@ -1824,7 +1546,7 @@ module GObject
       GObject::Lib.g_type_class_add_private(self, _v1)
     end
     def g_type
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint64(0)
       _v2
     end
@@ -1849,12 +1571,12 @@ module GObject
   class GObject::TypeFundamentalInfo < GirFFI::StructBase
   
     def type_flags
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeFundamentalFlags.get_value_from_pointer(_v1, 0)
       _v2
     end
     def type_flags=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       GObject::TypeFundamentalFlags.copy_value_to_pointer(_v2, _v1)
     end
@@ -1862,111 +1584,111 @@ module GObject
   class GObject::TypeInfo < GirFFI::StructBase
   
     def base_finalize
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GObject::BaseFinalizeFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::BaseFinalizeFunc.get_value_from_pointer(_v1, 16)
       _v2
     end
     def base_finalize=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GObject::BaseFinalizeFunc.from(value)
-      GObject::BaseFinalizeFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::BaseFinalizeFunc.copy_value_to_pointer(_v2, _v1, 16)
     end
     def base_init
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::BaseInitFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::BaseInitFunc.get_value_from_pointer(_v1, 8)
       _v2
     end
     def base_init=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::BaseInitFunc.from(value)
-      GObject::BaseInitFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::BaseInitFunc.copy_value_to_pointer(_v2, _v1, 8)
     end
     def class_data
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(40)
       _v2
     end
     def class_data=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(40, _v2)
     end
     def class_finalize
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::ClassFinalizeFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::ClassFinalizeFunc.get_value_from_pointer(_v1, 32)
       _v2
     end
     def class_finalize=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GObject::ClassFinalizeFunc.from(value)
-      GObject::ClassFinalizeFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::ClassFinalizeFunc.copy_value_to_pointer(_v2, _v1, 32)
     end
     def class_init
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::ClassInitFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::ClassInitFunc.get_value_from_pointer(_v1, 24)
       _v2
     end
     def class_init=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = GObject::ClassInitFunc.from(value)
-      GObject::ClassInitFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::ClassInitFunc.copy_value_to_pointer(_v2, _v1, 24)
     end
     def class_size
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint16(0)
       _v2
     end
     def class_size=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint16(0, _v2)
     end
     def instance_init
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GObject::InstanceInitFunc.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::InstanceInitFunc.get_value_from_pointer(_v1, 56)
       _v2
     end
     def instance_init=(value)
-      _v1 = (@struct.to_ptr + 56)
+      _v1 = @struct.to_ptr
       _v2 = GObject::InstanceInitFunc.from(value)
-      GObject::InstanceInitFunc.copy_value_to_pointer(_v2, _v1)
+      GObject::InstanceInitFunc.copy_value_to_pointer(_v2, _v1, 56)
     end
     def instance_size
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_uint16(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint16(48)
       _v2
     end
     def instance_size=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint16(0, _v2)
+      _v1.put_uint16(48, _v2)
     end
     def n_preallocs
-      _v1 = (@struct.to_ptr + 50)
-      _v2 = _v1.get_uint16(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint16(50)
       _v2
     end
     def n_preallocs=(value)
-      _v1 = (@struct.to_ptr + 50)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint16(0, _v2)
+      _v1.put_uint16(50, _v2)
     end
     def value_table
-      _v1 = (@struct.to_ptr + 64)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(64)
       _v3 = GObject::TypeValueTable.wrap(_v2)
       _v3
     end
     def value_table=(value)
-      _v1 = (@struct.to_ptr + 64)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeValueTable.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(64, _v2)
     end
   end
   class GObject::TypeInstance < GirFFI::StructBase
   
     def g_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_pointer(0)
       _v3 = GObject::TypeClass.wrap(_v2)
       _v3
@@ -2006,12 +1728,12 @@ module GObject
       return _v5
     end
     def g_instance_type
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_uint64(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint64(8)
       _v2
     end
     def g_type
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint64(0)
       _v2
     end
@@ -2029,18 +1751,6 @@ module GObject
       _v2 = interface_type
       _v3 = GObject::InterfaceInfo.from(interface_info)
       GObject::Lib.g_type_module_add_interface(self, _v1, _v2, _v3)
-    end
-    def interface_infos
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GLib::SList.wrap([:pointer, :void], _v2)
-      _v3
-    end
-    def name
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_pointer(0)
-      _v3 = _v2.to_utf8
-      _v3
     end
     def register_enum(name, const_static_values)
       _v1 = GirFFI::InPointer.from_utf8(name)
@@ -2066,12 +1776,6 @@ module GObject
       _v1 = GirFFI::InPointer.from_utf8(name)
       GObject::Lib.g_type_module_set_name(self, _v1)
     end
-    def type_infos
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
-      _v3 = GLib::SList.wrap([:pointer, :void], _v2)
-      _v3
-    end
     def unuse
       GObject::Lib.g_type_module_unuse(self)
     end
@@ -2079,48 +1783,43 @@ module GObject
       _v1 = GObject::Lib.g_type_module_use(self)
       return _v1
     end
-    def use_count
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = _v1.get_uint32(0)
-      _v2
-    end
   end
   class GObject::TypeModuleClass < GObject::ObjectClass
   
     def load
-      _v1 = (@struct.to_ptr + 136)
-      _v2 = GObject::Load.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Load.get_value_from_pointer(_v1, 136)
       _v2
     end
     def parent_class
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::ObjectClass.get_value_from_pointer(_v1, 0)
       _v3 = GObject::ObjectClass.wrap(_v2)
       _v3
     end
     def reserved1
-      _v1 = (@struct.to_ptr + 152)
-      _v2 = GObject::Reserved1.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Reserved1.get_value_from_pointer(_v1, 152)
       _v2
     end
     def reserved2
-      _v1 = (@struct.to_ptr + 160)
-      _v2 = GObject::Reserved2.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Reserved2.get_value_from_pointer(_v1, 160)
       _v2
     end
     def reserved3
-      _v1 = (@struct.to_ptr + 168)
-      _v2 = GObject::Reserved3.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Reserved3.get_value_from_pointer(_v1, 168)
       _v2
     end
     def reserved4
-      _v1 = (@struct.to_ptr + 176)
-      _v2 = GObject::Reserved4.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Reserved4.get_value_from_pointer(_v1, 176)
       _v2
     end
     def unload
-      _v1 = (@struct.to_ptr + 144)
-      _v2 = GObject::Unload.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Unload.get_value_from_pointer(_v1, 144)
       _v2
     end
   end
@@ -2128,50 +1827,50 @@ module GObject
   class GObject::TypePluginClass < GirFFI::StructBase
   
     def base_iface
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypeInterface.get_value_from_pointer(_v1, 0)
       _v3 = GObject::TypeInterface.wrap(_v2)
       _v3
     end
     def complete_interface_info
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::TypePluginCompleteInterfaceInfo.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::TypePluginCompleteInterfaceInfo.get_value_from_pointer(_v1, 40)
       _v2
     end
     def complete_interface_info=(value)
-      _v1 = (@struct.to_ptr + 40)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypePluginCompleteInterfaceInfo.from(value)
-      GObject::TypePluginCompleteInterfaceInfo.copy_value_to_pointer(_v2, _v1)
+      GObject::TypePluginCompleteInterfaceInfo.copy_value_to_pointer(_v2, _v1, 40)
     end
     def complete_type_info
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = GObject::TypePluginCompleteTypeInfo.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::TypePluginCompleteTypeInfo.get_value_from_pointer(_v1, 32)
       _v2
     end
     def complete_type_info=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypePluginCompleteTypeInfo.from(value)
-      GObject::TypePluginCompleteTypeInfo.copy_value_to_pointer(_v2, _v1)
+      GObject::TypePluginCompleteTypeInfo.copy_value_to_pointer(_v2, _v1, 32)
     end
     def unuse_plugin
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::TypePluginUnuse.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::TypePluginUnuse.get_value_from_pointer(_v1, 24)
       _v2
     end
     def unuse_plugin=(value)
-      _v1 = (@struct.to_ptr + 24)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypePluginUnuse.from(value)
-      GObject::TypePluginUnuse.copy_value_to_pointer(_v2, _v1)
+      GObject::TypePluginUnuse.copy_value_to_pointer(_v2, _v1, 24)
     end
     def use_plugin
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GObject::TypePluginUse.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::TypePluginUse.get_value_from_pointer(_v1, 16)
       _v2
     end
     def use_plugin=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = GObject::TypePluginUse.from(value)
-      GObject::TypePluginUse.copy_value_to_pointer(_v2, _v1)
+      GObject::TypePluginUse.copy_value_to_pointer(_v2, _v1, 16)
     end
   end
   # XXX: Don't know how to print callback
@@ -2181,99 +1880,99 @@ module GObject
   class GObject::TypeQuery < GirFFI::StructBase
   
     def class_size
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def class_size=(value)
-      _v1 = (@struct.to_ptr + 16)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(16, _v2)
     end
     def instance_size
-      _v1 = (@struct.to_ptr + 20)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(20)
       _v2
     end
     def instance_size=(value)
-      _v1 = (@struct.to_ptr + 20)
+      _v1 = @struct.to_ptr
       _v2 = value
-      _v1.put_uint32(0, _v2)
+      _v1.put_uint32(20, _v2)
     end
     def type
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint64(0)
       _v2
     end
     def type=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint64(0, _v2)
     end
     def type_name
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = _v2.to_utf8
       _v3
     end
     def type_name=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   class GObject::TypeValueTable < GirFFI::StructBase
   
     def collect_format
-      _v1 = (@struct.to_ptr + 32)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(32)
       _v3 = _v2.to_utf8
       _v3
     end
     def collect_format=(value)
-      _v1 = (@struct.to_ptr + 32)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(32, _v2)
     end
     def collect_value
-      _v1 = (@struct.to_ptr + 40)
-      _v2 = GObject::Collect_value.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Collect_value.get_value_from_pointer(_v1, 40)
       _v2
     end
     def lcopy_format
-      _v1 = (@struct.to_ptr + 48)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(48)
       _v3 = _v2.to_utf8
       _v3
     end
     def lcopy_format=(value)
-      _v1 = (@struct.to_ptr + 48)
+      _v1 = @struct.to_ptr
       _v2 = GirFFI::InPointer.from_utf8(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(48, _v2)
     end
     def lcopy_value
-      _v1 = (@struct.to_ptr + 56)
-      _v2 = GObject::Lcopy_value.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Lcopy_value.get_value_from_pointer(_v1, 56)
       _v2
     end
     def value_copy
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = GObject::Value_copy.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_copy.get_value_from_pointer(_v1, 16)
       _v2
     end
     def value_free
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GObject::Value_free.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_free.get_value_from_pointer(_v1, 8)
       _v2
     end
     def value_init
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Value_init.get_value_from_pointer(_v1, 0)
       _v2
     end
     def value_peek_pointer
-      _v1 = (@struct.to_ptr + 24)
-      _v2 = GObject::Value_peek_pointer.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GObject::Value_peek_pointer.get_value_from_pointer(_v1, 24)
       _v2
     end
   end
@@ -2334,22 +2033,22 @@ module GObject
       GObject.type_fundamental(current_gtype)
     end
     def current_gtype
-      @struct[:g_type]
+      struct[:g_type]
     end
     def current_gtype_name
       GObject.type_name(current_gtype)
     end
     def data
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
+      _v1 = @struct.to_ptr
+      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 8)
       _v3 = GirFFI::SizedArray.wrap(GObject::Private___Value__data__union, 2, _v2)
       _v3
     end
     def data=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       GirFFI::ArgHelper.check_fixed_array_size(2, value, "value")
       _v2 = GirFFI::SizedArray.copy_from(GObject::Private___Value__data__union, 2, value)
-      GirFFI::SizedArray.copy_value_to_pointer(_v2, _v1)
+      GirFFI::SizedArray.copy_value_to_pointer(_v2, _v1, 8)
     end
     def dup_object
       _v1 = GObject::Lib.g_value_dup_object(self)
@@ -2371,7 +2070,7 @@ module GObject
       return _v1
     end
     def g_type
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint64(0)
       _v2
     end
@@ -2653,17 +2352,17 @@ module GObject
       return _v4
     end
     def n_prealloced
-      _v1 = (@struct.to_ptr + 16)
-      _v2 = _v1.get_uint32(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_uint32(16)
       _v2
     end
     def n_values
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(0)
       _v2
     end
     def n_values=(value)
-      _v1 = (@struct.to_ptr + 0)
+      _v1 = @struct.to_ptr
       _v2 = value
       _v1.put_uint32(0, _v2)
     end
@@ -2687,15 +2386,15 @@ module GObject
       return _v4
     end
     def values
-      _v1 = (@struct.to_ptr + 8)
-      _v2 = _v1.get_pointer(0)
+      _v1 = @struct.to_ptr
+      _v2 = _v1.get_pointer(8)
       _v3 = GObject::Value.wrap(_v2)
       _v3
     end
     def values=(value)
-      _v1 = (@struct.to_ptr + 8)
+      _v1 = @struct.to_ptr
       _v2 = GObject::Value.copy_from(value)
-      _v1.put_pointer(0, _v2)
+      _v1.put_pointer(8, _v2)
     end
   end
   # XXX: Don't know how to print callback
