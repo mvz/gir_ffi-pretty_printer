@@ -4,7 +4,7 @@ AllCops:
     - 'test/integration/actual_gobject.rb'
     - 'test/integration/expected_glib.rb'
     - 'test/integration/expected_gobject.rb'
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.4
 
 # Test describe blocks can be any size
 Metrics/BlockLength:
