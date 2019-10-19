@@ -35,6 +35,15 @@ module GLib
     def get_element_size
       Lib.g_array_get_element_size(self)
     end
+    # Re-implementation of the g_array_index macro
+    def index(idx)
+      unless (0...length).cover?(idx) then
+        raise(IndexError, "Index #{idx} outside of bounds 0..#{(length - 1)}")
+      end
+      item_ptr = (data_ptr + (idx * element_size))
+      convertor = GirFFI::ArrayElementConvertor.new(element_type, item_ptr)
+      convertor.to_ruby_value
+    end
     def len
       _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(8)
@@ -429,6 +438,19 @@ module GLib
       GirFFI::ArgHelper.check_error(_v2)
       return _v3
     end
+    alias_method 'added', 'get_added'
+    alias_method 'app_info', 'get_app_info'
+    alias_method 'applications', 'get_applications'
+    alias_method 'description', 'get_description'
+    alias_method 'groups', 'get_groups'
+    alias_method 'icon', 'get_icon'
+    alias_method 'is_private', 'get_is_private'
+    alias_method 'mime_type', 'get_mime_type'
+    alias_method 'modified', 'get_modified'
+    alias_method 'size', 'get_size'
+    alias_method 'title', 'get_title'
+    alias_method 'uris', 'get_uris'
+    alias_method 'visited', 'get_visited'
   end
   # XXX: Don't know how to print enum
   class GLib::ByteArray < GirFFI::BoxedBase
@@ -443,6 +465,14 @@ module GLib
       _v2 = GLib::Lib.g_byte_array_free_to_bytes(_v1)
       _v3 = GLib::Bytes.wrap_own(_v2)
       return _v3
+    end
+    def self.from(data)
+      case data
+      when self then
+        data
+      else
+        new.append(data)
+      end
     end
     def self.new
       _v1 = GLib::Lib.g_byte_array_new
@@ -566,17 +596,18 @@ module GLib
       GLib::Lib.g_bytes_unref(self)
     end
     def unref_to_array
-      _v1 = GLib::Lib.g_bytes_unref_to_array(self.ref)
+      _v1 = GLib::Lib.g_bytes_unref_to_array(self)
       _v2 = GLib::ByteArray.wrap(_v1)
       return _v2
     end
     def unref_to_data
       _v1 = FFI::MemoryPointer.new(:uint64)
-      _v2 = GLib::Lib.g_bytes_unref_to_data(self.ref, _v1)
+      _v2 = GLib::Lib.g_bytes_unref_to_data(self, _v1)
       _v3 = _v1.get_uint64(0)
       _v4 = GirFFI::SizedArray.wrap(:guint8, _v3, _v2)
       return _v4
     end
+    alias_method 'size', 'get_size'
   end
   CSET_A_2_Z = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
   CSET_DIGITS = "0123456789"
@@ -614,6 +645,7 @@ module GLib
       _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
       GLib::Lib.g_checksum_update(self, _v2, _v1)
     end
+    alias_method 'string', 'get_string'
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print callback
@@ -967,6 +999,15 @@ module GLib
       _v2 = value
       _v1.put_uint32(20, _v2)
     end
+    alias_method 'day_of_year', 'get_day_of_year'
+    alias_method 'iso8601_week_of_year', 'get_iso8601_week_of_year'
+    alias_method 'monday_week_of_year', 'get_monday_week_of_year'
+    alias_method 'parse=', 'set_parse'
+    alias_method 'sunday_week_of_year', 'get_sunday_week_of_year'
+    alias_method 'time=', 'set_time'
+    alias_method 'time_t=', 'set_time_t'
+    alias_method 'time_val=', 'set_time_val'
+    alias_method 'weekday', 'get_weekday'
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
@@ -1301,6 +1342,22 @@ module GLib
     def unref
       GLib::Lib.g_date_time_unref(self)
     end
+    alias_method 'day_of_month', 'get_day_of_month'
+    alias_method 'day_of_week', 'get_day_of_week'
+    alias_method 'day_of_year', 'get_day_of_year'
+    alias_method 'hour', 'get_hour'
+    alias_method 'microsecond', 'get_microsecond'
+    alias_method 'minute', 'get_minute'
+    alias_method 'month', 'get_month'
+    alias_method 'second', 'get_second'
+    alias_method 'seconds', 'get_seconds'
+    alias_method 'timezone', 'get_timezone'
+    alias_method 'timezone_abbreviation', 'get_timezone_abbreviation'
+    alias_method 'utc_offset', 'get_utc_offset'
+    alias_method 'week_numbering_year', 'get_week_numbering_year'
+    alias_method 'week_of_year', 'get_week_of_year'
+    alias_method 'year', 'get_year'
+    alias_method 'ymd', 'get_ymd'
   end
   # XXX: Don't know how to print enum
   class GLib::DebugKey < GirFFI::StructBase
@@ -1647,6 +1704,8 @@ module GLib
       _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
       GLib::Lib.g_hmac_update(self, _v2, _v1)
     end
+    alias_method 'digest', 'get_digest'
+    alias_method 'string', 'get_string'
   end
   class GLib::Hook < GirFFI::StructBase
     def self.destroy(hook_list, hook_id)
@@ -2202,6 +2261,15 @@ module GLib
       GirFFI::ArgHelper.check_error(_v2)
       return _v3
     end
+    alias_method 'buffer_condition', 'get_buffer_condition'
+    alias_method 'buffer_size', 'get_buffer_size'
+    alias_method 'buffer_size=', 'set_buffer_size'
+    alias_method 'buffered', 'get_buffered'
+    alias_method 'buffered=', 'set_buffered'
+    alias_method 'close_on_unref=', 'set_close_on_unref'
+    alias_method 'encoding=', 'set_encoding'
+    alias_method 'flags', 'get_flags'
+    alias_method 'flags=', 'set_flags'
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
@@ -2648,6 +2716,25 @@ module GLib
     def unref
       GLib::Lib.g_key_file_unref(self)
     end
+    alias_method 'boolean', 'get_boolean'
+    alias_method 'boolean_list', 'get_boolean_list'
+    alias_method 'comment', 'get_comment'
+    alias_method 'double', 'get_double'
+    alias_method 'double_list', 'get_double_list'
+    alias_method 'groups', 'get_groups'
+    alias_method 'int64', 'get_int64'
+    alias_method 'integer', 'get_integer'
+    alias_method 'integer_list', 'get_integer_list'
+    alias_method 'keys', 'get_keys'
+    alias_method 'list_separator=', 'set_list_separator'
+    alias_method 'locale_for_key', 'get_locale_for_key'
+    alias_method 'locale_string', 'get_locale_string'
+    alias_method 'locale_string_list', 'get_locale_string_list'
+    alias_method 'start_group', 'get_start_group'
+    alias_method 'string', 'get_string'
+    alias_method 'string_list', 'get_string_list'
+    alias_method 'uint64', 'get_uint64'
+    alias_method 'value', 'get_value'
   end
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print flags
@@ -2912,6 +2999,7 @@ module GLib
     def unref
       GLib::Lib.g_main_loop_unref(self)
     end
+    alias_method 'context', 'get_context'
     alias_method 'run', 'run_with_thread_enabler'
     alias_method 'run_without_thread_enabler', 'run'
   end
@@ -2961,6 +3049,9 @@ module GLib
     def unref
       GLib::Lib.g_mapped_file_unref(self)
     end
+    alias_method 'bytes', 'get_bytes'
+    alias_method 'contents', 'get_contents'
+    alias_method 'length', 'get_length'
   end
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print enum
@@ -3018,6 +3109,9 @@ module GLib
     def unref
       GLib::Lib.g_markup_parse_context_unref(self)
     end
+    alias_method 'element', 'get_element'
+    alias_method 'position', 'get_position'
+    alias_method 'user_data', 'get_user_data'
   end
   # XXX: Don't know how to print flags
   class GLib::MarkupParser < GirFFI::StructBase
@@ -3132,6 +3226,9 @@ module GLib
     def unref
       GLib::Lib.g_match_info_unref(self)
     end
+    alias_method 'match_count', 'get_match_count'
+    alias_method 'regex', 'get_regex'
+    alias_method 'string', 'get_string'
   end
   class GLib::MemVTable < GirFFI::StructBase
   
@@ -3409,6 +3506,20 @@ module GLib
       _v1 = GirFFI::InPointer.from_utf8(domain)
       GLib::Lib.g_option_context_set_translation_domain(self, _v1)
     end
+    alias_method 'description', 'get_description'
+    alias_method 'description=', 'set_description'
+    alias_method 'help', 'get_help'
+    alias_method 'help_enabled', 'get_help_enabled'
+    alias_method 'help_enabled=', 'set_help_enabled'
+    alias_method 'ignore_unknown_options', 'get_ignore_unknown_options'
+    alias_method 'ignore_unknown_options=', 'set_ignore_unknown_options'
+    alias_method 'main_group', 'get_main_group'
+    alias_method 'main_group=', 'set_main_group'
+    alias_method 'strict_posix', 'get_strict_posix'
+    alias_method 'strict_posix=', 'set_strict_posix'
+    alias_method 'summary', 'get_summary'
+    alias_method 'summary=', 'set_summary'
+    alias_method 'translation_domain=', 'set_translation_domain'
   end
   class GLib::OptionEntry < GirFFI::StructBase
   
@@ -3520,6 +3631,7 @@ module GLib
     def unref
       GLib::Lib.g_option_group_unref(self)
     end
+    alias_method 'translation_domain=', 'set_translation_domain'
   end
   # XXX: Don't know how to print callback
   PDP_ENDIAN = 3412
@@ -3627,14 +3739,25 @@ module GLib
     def add_array(ary)
       ary.each { |item| add(item) }
     end
-    def data_ptr
-      struct[:pdata]
-    end
     def each
       length.times { |idx| yield(index(idx)) }
     end
-    def element_size
-      POINTER_SIZE
+    # Re-implementation of the g_ptrarray_index macro
+    def index(idx)
+      unless (0...length).cover?(idx) then
+        raise(IndexError, "Index #{idx} outside of bounds 0..#{(length - 1)}")
+      end
+      item_ptr = (data_ptr + (idx * element_size))
+      convert_element_type = case element_type
+      when :utf8 then
+        :utf8
+      when GirFFI::ObjectBase then
+        element_type
+      else
+        [:pointer, element_type]
+      end
+      convertor = GirFFI::ArrayElementConvertor.new(convert_element_type, item_ptr)
+      convertor.to_ruby_value
     end
     def len
       _v1 = @struct.to_ptr
@@ -3855,6 +3978,7 @@ module GLib
       _v2 = seed_length
       GLib::Lib.g_rand_set_seed_array(self, _v1, _v2)
     end
+    alias_method 'seed=', 'set_seed'
   end
   class GLib::RecMutex < GirFFI::StructBase
   
@@ -4067,6 +4191,14 @@ module GLib
     def unref
       GLib::Lib.g_regex_unref(self)
     end
+    alias_method 'capture_count', 'get_capture_count'
+    alias_method 'compile_flags', 'get_compile_flags'
+    alias_method 'has_cr_or_lf', 'get_has_cr_or_lf'
+    alias_method 'match_flags', 'get_match_flags'
+    alias_method 'max_backref', 'get_max_backref'
+    alias_method 'max_lookbehind', 'get_max_lookbehind'
+    alias_method 'pattern', 'get_pattern'
+    alias_method 'string_number', 'get_string_number'
   end
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print enum
@@ -4363,6 +4495,7 @@ module GLib
       _v2 = value
       GLib::TokenValue.copy_value_to_pointer(_v2, _v1, 48)
     end
+    alias_method 'scope=', 'set_scope'
   end
   class GLib::ScannerConfig < GirFFI::StructBase
   
@@ -4727,6 +4860,10 @@ module GLib
       _v3 = GLib::SequenceIter.wrap_copy(_v2)
       return _v3
     end
+    alias_method 'begin_iter', 'get_begin_iter'
+    alias_method 'end_iter', 'get_end_iter'
+    alias_method 'iter_at_pos', 'get_iter_at_pos'
+    alias_method 'length', 'get_length'
   end
   class GLib::SequenceIter < GirFFI::StructBase
   
@@ -4768,6 +4905,8 @@ module GLib
       _v2 = GLib::SequenceIter.wrap_copy(_v1)
       return _v2
     end
+    alias_method 'position', 'get_position'
+    alias_method 'sequence', 'get_sequence'
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print enum
@@ -4981,6 +5120,17 @@ module GLib
     def unref
       GLib::Lib.g_source_unref(self)
     end
+    alias_method 'can_recurse', 'get_can_recurse'
+    alias_method 'can_recurse=', 'set_can_recurse'
+    alias_method 'context', 'get_context'
+    alias_method 'current_time', 'get_current_time'
+    alias_method 'funcs=', 'set_funcs'
+    alias_method 'id', 'get_id'
+    alias_method 'name=', 'set_name'
+    alias_method 'priority=', 'set_priority'
+    alias_method 'ready_time', 'get_ready_time'
+    alias_method 'ready_time=', 'set_ready_time'
+    alias_method 'time', 'get_time'
   end
   class GLib::SourceCallbackFuncs < GirFFI::StructBase
   
@@ -5126,12 +5276,12 @@ module GLib
     end
     def free(free_segment)
       _v1 = free_segment
-      _v2 = GLib::Lib.g_string_free(self.ref, _v1)
+      _v2 = GLib::Lib.g_string_free(self, _v1)
       _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
       return _v3
     end
     def free_to_bytes
-      _v1 = GLib::Lib.g_string_free_to_bytes(self.ref)
+      _v1 = GLib::Lib.g_string_free_to_bytes(self)
       _v2 = GLib::Bytes.wrap_own(_v1)
       return _v2
     end
@@ -5246,6 +5396,7 @@ module GLib
       _v2 = GLib::String.wrap_copy(_v1)
       return _v2
     end
+    alias_method 'size=', 'set_size'
   end
   class GLib::StringChunk < GirFFI::StructBase
   
@@ -5570,6 +5721,9 @@ module GLib
       _v2 = value
       _v1.put_pointer(8, _v2)
     end
+    alias_method 'max_threads', 'get_max_threads'
+    alias_method 'max_threads=', 'set_max_threads'
+    alias_method 'num_threads', 'get_num_threads'
   end
   # XXX: Don't know how to print enum
   class GLib::TimeVal < GirFFI::StructBase
@@ -5690,6 +5844,9 @@ module GLib
     def unref
       GLib::Lib.g_time_zone_unref(self)
     end
+    alias_method 'abbreviation', 'get_abbreviation'
+    alias_method 'identifier', 'get_identifier'
+    alias_method 'offset', 'get_offset'
   end
   class GLib::Timer < GirFFI::StructBase
   
@@ -6419,8 +6576,32 @@ module GLib
     def unref
       GLib::Lib.g_variant_unref(self)
     end
+    alias_method 'boolean', 'get_boolean'
+    alias_method 'byte', 'get_byte'
+    alias_method 'bytestring', 'get_bytestring'
+    alias_method 'bytestring_array', 'get_bytestring_array'
+    alias_method 'child_value', 'get_child_value'
+    alias_method 'data', 'get_data'
+    alias_method 'data_as_bytes', 'get_data_as_bytes'
+    alias_method 'double', 'get_double'
     alias_method 'get_string', 'get_string_with_override'
     alias_method 'get_string_without_override', 'get_string'
+    alias_method 'handle', 'get_handle'
+    alias_method 'int16', 'get_int16'
+    alias_method 'int32', 'get_int32'
+    alias_method 'int64', 'get_int64'
+    alias_method 'maybe', 'get_maybe'
+    alias_method 'normal_form', 'get_normal_form'
+    alias_method 'objv', 'get_objv'
+    alias_method 'size', 'get_size'
+    alias_method 'string', 'get_string'
+    alias_method 'strv', 'get_strv'
+    alias_method 'type', 'get_type'
+    alias_method 'type_string', 'get_type_string'
+    alias_method 'uint16', 'get_uint16'
+    alias_method 'uint32', 'get_uint32'
+    alias_method 'uint64', 'get_uint64'
+    alias_method 'variant', 'get_variant'
   end
   class GLib::VariantBuilder < GirFFI::BoxedBase
     def self.new(*args, &block)
@@ -6450,7 +6631,7 @@ module GLib
       return _v2
     end
     def unref
-      GLib::Lib.g_variant_builder_unref(self.ref)
+      GLib::Lib.g_variant_builder_unref(self)
     end
   end
   # XXX: Don't know how to print enum
@@ -6496,7 +6677,7 @@ module GLib
       return _v2
     end
     def unref
-      GLib::Lib.g_variant_dict_unref(self.ref)
+      GLib::Lib.g_variant_dict_unref(self)
     end
   end
   # XXX: Don't know how to print enum
@@ -6673,6 +6854,7 @@ module GLib
       _v2 = GLib::VariantType.wrap_copy(_v1)
       return _v2
     end
+    alias_method 'string_length', 'get_string_length'
   end
   # XXX: Don't know how to print callback
   WIN32_MSG_HANDLE = 19981206
