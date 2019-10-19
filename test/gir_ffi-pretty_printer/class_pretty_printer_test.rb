@@ -29,7 +29,7 @@ describe GirFFI::ClassPrettyPrinter do
     describe 'for a class with a simple method definition' do
       let(:printed_class) { SimpleClass }
       it 'pretty-prints the class' do
-        expected = <<-RUBY.reset_indentation.chomp
+        expected = <<~RUBY.chomp
           class SimpleClass < Object
 
             def bar
@@ -46,7 +46,7 @@ describe GirFFI::ClassPrettyPrinter do
     describe 'for a class with a simple aliased method' do
       let(:printed_class) { SimpleAlias }
       it 'pretty-prints the class' do
-        expected = <<-RUBY.reset_indentation.chomp
+        expected = <<~RUBY.chomp
           class SimpleAlias < SimpleClass
 
             alias_method 'foo', 'bar'
@@ -61,7 +61,7 @@ describe GirFFI::ClassPrettyPrinter do
     describe 'for a class with an alias chain' do
       let(:printed_class) { ComplexAlias }
       it 'pretty-prints the class' do
-        expected = <<-RUBY.reset_indentation.chomp
+        expected = <<~RUBY.chomp
           class ComplexAlias < SimpleClass
 
             def bar_with_qux
