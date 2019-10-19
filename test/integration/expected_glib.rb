@@ -2736,12 +2736,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 0
+  MICRO_VERSION = 6
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 58
+  MINOR_VERSION = 60
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -2826,10 +2826,11 @@ module GLib
     def pop_thread_default
       GLib::Lib.g_main_context_pop_thread_default(self)
     end
-    def prepare(priority)
-      _v1 = priority
+    def prepare
+      _v1 = FFI::MemoryPointer.new(:int32)
       _v2 = GLib::Lib.g_main_context_prepare(self, _v1)
-      return _v2
+      _v3 = _v1.get_int32(0)
+      return [_v2, _v3]
     end
     def push_thread_default
       GLib::Lib.g_main_context_push_thread_default(self)
@@ -3367,11 +3368,11 @@ module GLib
     end
     def parse_strv(arguments)
       _v1 = FFI::MemoryPointer.new(:pointer)
-      _v1.put_pointer(0, GirFFI::SizedArray.copy_from(:utf8, -1, arguments))
+      _v1.put_pointer(0, GLib::Strv.from(arguments))
       _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
       _v3 = GLib::Lib.g_option_context_parse_strv(self, _v1, _v2)
       GirFFI::ArgHelper.check_error(_v2)
-      _v4 = GirFFI::SizedArray.wrap(:utf8, -1, _v1.get_pointer(0))
+      _v4 = GLib::Strv.wrap(_v1.get_pointer(0))
       return [_v3, _v4]
     end
     def set_description(description = nil)
@@ -3667,6 +3668,10 @@ module GLib
   
     def clear
       GLib::Lib.g_queue_clear(self)
+    end
+    def clear_full(&free_func)
+      _v1 = GLib::DestroyNotify.from(free_func)
+      GLib::Lib.g_queue_clear_full(self, _v1)
     end
     def free
       GLib::Lib.g_queue_free(self)
@@ -5270,6 +5275,7 @@ module GLib
       return _v4
     end
   end
+  TEST_OPTION_ISOLATE_DIRS = "isolate_dirs"
   TIME_SPAN_DAY = 86400000000
   TIME_SPAN_HOUR = 3600000000
   TIME_SPAN_MILLISECOND = 1000
@@ -5766,12 +5772,14 @@ module GLib
       _v2 = GLib::Lib.g_tree_lookup(self, _v1)
       return _v2
     end
-    def lookup_extended(lookup_key = nil, orig_key = nil, value = nil)
+    def lookup_extended(lookup_key = nil)
       _v1 = lookup_key
-      _v2 = orig_key
-      _v3 = value
+      _v2 = FFI::MemoryPointer.new(:pointer)
+      _v3 = FFI::MemoryPointer.new(:pointer)
       _v4 = GLib::Lib.g_tree_lookup_extended(self, _v1, _v2, _v3)
-      return _v4
+      _v5 = _v2.get_pointer(0)
+      _v6 = _v3.get_pointer(0)
+      return [_v4, _v5, _v6]
     end
     def nnodes
       _v1 = GLib::Lib.g_tree_nnodes(self)
@@ -6528,6 +6536,11 @@ module GLib
       obj.__send__(:initialize_tuple, *args, &block)
       obj
     end
+    def self.string_get_depth_(type_string)
+      _v1 = GirFFI::InPointer.from_utf8(type_string)
+      _v2 = GLib::Lib.g_variant_type_string_get_depth_(_v1)
+      return _v2
+    end
     def self.string_is_valid(type_string)
       _v1 = GirFFI::InPointer.from_utf8(type_string)
       _v2 = GLib::Lib.g_variant_type_string_is_valid(_v1)
@@ -6954,6 +6967,25 @@ module GLib
     _v2 = GLib::DestroyNotify.from(clear_func)
     GLib::Lib.g_atomic_rc_box_release_full(_v1, _v2)
   end
+  def self.atomic_ref_count_compare(arc, val)
+    _v1 = arc
+    _v2 = val
+    _v3 = GLib::Lib.g_atomic_ref_count_compare(_v1, _v2)
+    return _v3
+  end
+  def self.atomic_ref_count_dec(arc)
+    _v1 = arc
+    _v2 = GLib::Lib.g_atomic_ref_count_dec(_v1)
+    return _v2
+  end
+  def self.atomic_ref_count_inc(arc)
+    _v1 = arc
+    GLib::Lib.g_atomic_ref_count_inc(_v1)
+  end
+  def self.atomic_ref_count_init(arc)
+    _v1 = arc
+    GLib::Lib.g_atomic_ref_count_init(_v1)
+  end
   def self.base64_decode(text)
     _v1 = GirFFI::InPointer.from_utf8(text)
     _v2 = FFI::MemoryPointer.new(:uint64)
@@ -6973,7 +7005,7 @@ module GLib
     _v5 = GirFFI::SizedArray.wrap(:guint8, _v4, _v2.get_pointer(0))
     return [_v3, _v5]
   end
-  def self.base64_encode(data)
+  def self.base64_encode(data = nil)
     len = data.nil? ? (0) : (data.length)
     _v1 = len
     _v2 = GirFFI::SizedArray.from(:guint8, -1, data)
@@ -8375,6 +8407,25 @@ module GLib
     _v4 = GLib::Lib.g_realloc_n(_v1, _v2, _v3)
     return _v4
   end
+  def self.ref_count_compare(rc, val)
+    _v1 = rc
+    _v2 = val
+    _v3 = GLib::Lib.g_ref_count_compare(_v1, _v2)
+    return _v3
+  end
+  def self.ref_count_dec(rc)
+    _v1 = rc
+    _v2 = GLib::Lib.g_ref_count_dec(_v1)
+    return _v2
+  end
+  def self.ref_count_inc(rc)
+    _v1 = rc
+    GLib::Lib.g_ref_count_inc(_v1)
+  end
+  def self.ref_count_init(rc)
+    _v1 = rc
+    GLib::Lib.g_ref_count_init(_v1)
+  end
   def self.ref_string_acquire(str)
     _v1 = GirFFI::InPointer.from_utf8(str)
     _v2 = GLib::Lib.g_ref_string_acquire(_v1)
@@ -8996,6 +9047,12 @@ module GLib
     _v3 = GLib::Lib.g_strv_contains(_v1, _v2)
     return _v3
   end
+  def self.strv_equal(strv1, strv2)
+    _v1 = GirFFI::InPointer.from_utf8(strv1)
+    _v2 = GirFFI::InPointer.from_utf8(strv2)
+    _v3 = GLib::Lib.g_strv_equal(_v1, _v2)
+    return _v3
+  end
   def self.strv_get_type
     _v1 = GLib::Lib.g_strv_get_type
     return _v1
@@ -9321,32 +9378,36 @@ module GLib
     _v2 = GLib::Lib.g_unichar_combining_class(_v1)
     return _v2
   end
-  def self.unichar_compose(a, b, ch)
+  def self.unichar_compose(a, b)
     _v1 = a
     _v2 = b
-    _v3 = ch
+    _v3 = FFI::MemoryPointer.new(:uint32)
     _v4 = GLib::Lib.g_unichar_compose(_v1, _v2, _v3)
-    return _v4
+    _v5 = _v3.get_uint32(0)
+    return [_v4, _v5]
   end
-  def self.unichar_decompose(ch, a, b)
+  def self.unichar_decompose(ch)
     _v1 = ch
-    _v2 = a
-    _v3 = b
+    _v2 = FFI::MemoryPointer.new(:uint32)
+    _v3 = FFI::MemoryPointer.new(:uint32)
     _v4 = GLib::Lib.g_unichar_decompose(_v1, _v2, _v3)
-    return _v4
+    _v5 = _v2.get_uint32(0)
+    _v6 = _v3.get_uint32(0)
+    return [_v4, _v5, _v6]
   end
   def self.unichar_digit_value(c)
     _v1 = c
     _v2 = GLib::Lib.g_unichar_digit_value(_v1)
     return _v2
   end
-  def self.unichar_fully_decompose(ch, compat, result, result_len)
+  def self.unichar_fully_decompose(ch, compat, result_len)
     _v1 = ch
     _v2 = compat
-    _v3 = result
+    _v3 = FFI::MemoryPointer.new(:uint32)
     _v4 = result_len
     _v5 = GLib::Lib.g_unichar_fully_decompose(_v1, _v2, _v3, _v4)
-    return _v5
+    _v6 = _v3.get_uint32(0)
+    return [_v5, _v6]
   end
   def self.unichar_get_mirror_char(ch, mirrored_ch)
     _v1 = ch
@@ -9658,14 +9719,14 @@ module GLib
     _v1 = GirFFI::InPointer.from_utf8(p)
     _v2 = GirFFI::InPointer.from_utf8(end_)
     _v3 = GLib::Lib.g_utf8_find_next_char(_v1, _v2)
-    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    _v4 = _v3.to_utf8
     return _v4
   end
   def self.utf8_find_prev_char(str, p)
     _v1 = GirFFI::InPointer.from_utf8(str)
     _v2 = GirFFI::InPointer.from_utf8(p)
     _v3 = GLib::Lib.g_utf8_find_prev_char(_v1, _v2)
-    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    _v4 = _v3.to_utf8
     return _v4
   end
   def self.utf8_get_char(p)
@@ -9698,7 +9759,7 @@ module GLib
     _v1 = GirFFI::InPointer.from_utf8(str)
     _v2 = offset
     _v3 = GLib::Lib.g_utf8_offset_to_pointer(_v1, _v2)
-    _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
+    _v4 = _v3.to_utf8
     return _v4
   end
   def self.utf8_pointer_to_offset(str, pos)
@@ -9710,7 +9771,7 @@ module GLib
   def self.utf8_prev_char(p)
     _v1 = GirFFI::InPointer.from_utf8(p)
     _v2 = GLib::Lib.g_utf8_prev_char(_v1)
-    _v3 = GirFFI::AllocationHelper.free_after(_v2, &:to_utf8)
+    _v3 = _v2.to_utf8
     return _v3
   end
   def self.utf8_strchr(p, len, c)
@@ -9718,7 +9779,7 @@ module GLib
     _v2 = len
     _v3 = c
     _v4 = GLib::Lib.g_utf8_strchr(_v1, _v2, _v3)
-    _v5 = GirFFI::AllocationHelper.free_after(_v4, &:to_utf8)
+    _v5 = _v4.to_utf8
     return _v5
   end
   def self.utf8_strdown(str, len)
@@ -9739,7 +9800,7 @@ module GLib
     _v2 = GirFFI::InPointer.from_utf8(src)
     _v3 = n
     _v4 = GLib::Lib.g_utf8_strncpy(_v1, _v2, _v3)
-    _v5 = GirFFI::AllocationHelper.free_after(_v4, &:to_utf8)
+    _v5 = _v4.to_utf8
     return _v5
   end
   def self.utf8_strrchr(p, len, c)
@@ -9747,7 +9808,7 @@ module GLib
     _v2 = len
     _v3 = c
     _v4 = GLib::Lib.g_utf8_strrchr(_v1, _v2, _v3)
-    _v5 = GirFFI::AllocationHelper.free_after(_v4, &:to_utf8)
+    _v5 = _v4.to_utf8
     return _v5
   end
   def self.utf8_strreverse(str, len)
@@ -9813,6 +9874,15 @@ module GLib
     _v5 = _v2.get_pointer(0).to_utf8
     return [_v4, _v5]
   end
+  def self.utf8_validate_len(str)
+    max_len = str.nil? ? (0) : (str.length)
+    _v1 = max_len
+    _v2 = FFI::MemoryPointer.new(:pointer)
+    _v3 = GirFFI::SizedArray.from(:guint8, -1, str)
+    _v4 = GLib::Lib.g_utf8_validate_len(_v3, _v1, _v2)
+    _v5 = _v2.get_pointer(0).to_utf8
+    return [_v4, _v5]
+  end
   def self.uuid_string_is_valid(str)
     _v1 = GirFFI::InPointer.from_utf8(str)
     _v2 = GLib::Lib.g_uuid_string_is_valid(_v1)
@@ -9868,6 +9938,11 @@ module GLib
     _v2 = GLib::Lib.g_variant_type_checked_(_v1)
     _v3 = GLib::VariantType.wrap_copy(_v2)
     return _v3
+  end
+  def self.variant_type_string_get_depth_(type_string)
+    _v1 = GirFFI::InPointer.from_utf8(type_string)
+    _v2 = GLib::Lib.g_variant_type_string_get_depth_(_v1)
+    return _v2
   end
   def self.variant_type_string_is_valid(type_string)
     _v1 = GirFFI::InPointer.from_utf8(type_string)

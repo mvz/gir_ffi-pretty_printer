@@ -1976,7 +1976,6 @@ module GObject
       _v2
     end
   end
-  VALUE_COLLECT_FORMAT_MAX_LENGTH = 8
   VALUE_NOCOPY_CONTENTS = 134217728
   class GObject::Value < GirFFI::BoxedBase
     def self.copy_value_to_pointer(value, pointer, offset = 0)
@@ -2166,7 +2165,7 @@ module GObject
     end
     def get_variant
       _v1 = GObject::Lib.g_value_get_variant(self)
-      _v2 = GLib::Variant.wrap_own(_v1)
+      _v2 = GLib::Variant.wrap_copy(_v1)
       return _v2
     end
     def init(type)
