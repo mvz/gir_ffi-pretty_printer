@@ -38,6 +38,9 @@ module GObject
     def unbind
       GObject::Lib.g_binding_unbind(self)
     end
+    alias_method 'flags', 'get_flags'
+    alias_method 'source', 'get_source'
+    alias_method 'target', 'get_target'
   end
   # XXX: Don't know how to print flags
   # XXX: Don't know how to print callback
@@ -813,15 +816,17 @@ module GObject
       _v2 = GObject::Lib.g_object_get_data(self, _v1)
       return _v2
     end
+    # @deprecated
     def get_property_extended(property_name)
-      value = get_property(property_name)
-      type_info = get_property_type(property_name)
-      property_value_post_conversion(value, type_info)
+      get_property(property_name)
     end
     def get_property_with_override(property_name)
       gvalue = gvalue_for_property(property_name)
       get_property_without_override(property_name, gvalue)
-      gvalue.get_value
+      value = gvalue.get_value
+      type_info = get_property_type(property_name)
+      value = property_value_post_conversion(value, type_info) if type_info
+      value
     end
     def get_qdata(quark)
       _v1 = quark
@@ -857,16 +862,6 @@ module GObject
       _v1 = GObject::Lib.g_object_is_floating(self)
       return _v1
     end
-    # TODO: Generate accessor methods from GIR at class definition time
-    def method_missing(method, *args)
-      getter_name = "get_#{method}"
-      return send(getter_name, *args) if respond_to?(getter_name)
-      if method.to_s =~ /(.*)=$/ then
-        setter_name = "set_#{Regexp.last_match[1]}"
-        return send(setter_name, *args) if respond_to?(setter_name)
-      end
-      super
-    end
     def notify(property_name)
       _v1 = GirFFI::InPointer.from_utf8(property_name)
       GObject::Lib.g_object_notify(self, _v1)
@@ -892,12 +887,13 @@ module GObject
       _v2 = data
       GObject::Lib.g_object_set_data(self, _v1, _v2)
     end
+    # @deprecated
     def set_property_extended(property_name, value)
-      type_info = get_property_type(property_name)
-      adjusted_value = property_value_pre_conversion(value, type_info)
-      set_property(property_name, adjusted_value)
+      set_property(property_name, value)
     end
     def set_property_with_override(property_name, value)
+      type_info = get_property_type(property_name)
+      value = property_value_pre_conversion(value, type_info) if type_info
       gvalue = gvalue_for_property(property_name)
       gvalue.set_value(value)
       set_property_without_override(property_name, gvalue)
@@ -932,9 +928,12 @@ module GObject
       _v1 = GObject::Closure.from(closure)
       GObject::Lib.g_object_watch_closure(self, _v1)
     end
+    alias_method 'data', 'get_data'
     alias_method 'floating?', 'is_floating'
     alias_method 'get_property', 'get_property_with_override'
     alias_method 'get_property_without_override', 'get_property'
+    alias_method 'property', 'get_property'
+    alias_method 'qdata', 'get_qdata'
     alias_method 'set_property', 'set_property_with_override'
     alias_method 'set_property_without_override', 'set_property'
   end
@@ -1136,6 +1135,13 @@ module GObject
     def value_type
       to_ptr.get_gtype(VALUE_TYPE_OFFSET)
     end
+    alias_method 'blurb', 'get_blurb'
+    alias_method 'default_value', 'get_default_value'
+    alias_method 'name', 'get_name'
+    alias_method 'name_quark', 'get_name_quark'
+    alias_method 'nick', 'get_nick'
+    alias_method 'qdata', 'get_qdata'
+    alias_method 'redirect_target', 'get_redirect_target'
   end
   class GObject::ParamSpecBoolean < GObject::ParamSpec
   
@@ -1563,6 +1569,7 @@ module GObject
     def unref
       GObject::Lib.g_type_class_unref(self)
     end
+    alias_method 'private', 'get_private'
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
@@ -1698,6 +1705,7 @@ module GObject
       _v2 = GObject::Lib.g_type_instance_get_private(self, _v1)
       return _v2
     end
+    alias_method 'private', 'get_private'
   end
   class GObject::TypeInterface < GirFFI::StructBase
     def self.add_prerequisite(interface_type, prerequisite_type)
@@ -1783,6 +1791,7 @@ module GObject
       _v1 = GObject::Lib.g_type_module_use(self)
       return _v1
     end
+    alias_method 'name=', 'set_name'
   end
   class GObject::TypeModuleClass < GObject::ObjectClass
   
@@ -2318,7 +2327,54 @@ module GObject
     def unset
       GObject::Lib.g_value_unset(self)
     end
+    alias_method 'boolean', 'get_boolean'
+    alias_method 'boolean=', 'set_boolean'
+    alias_method 'boxed', 'get_boxed'
+    alias_method 'boxed=', 'set_boxed'
+    alias_method 'boxed_take_ownership=', 'set_boxed_take_ownership'
+    alias_method 'char', 'get_char'
+    alias_method 'char=', 'set_char'
+    alias_method 'double', 'get_double'
+    alias_method 'double=', 'set_double'
+    alias_method 'enum', 'get_enum'
+    alias_method 'enum=', 'set_enum'
+    alias_method 'flags', 'get_flags'
+    alias_method 'flags=', 'set_flags'
+    alias_method 'float', 'get_float'
+    alias_method 'float=', 'set_float'
+    alias_method 'gtype', 'get_gtype'
+    alias_method 'gtype=', 'set_gtype'
+    alias_method 'instance=', 'set_instance'
+    alias_method 'int', 'get_int'
+    alias_method 'int64', 'get_int64'
+    alias_method 'int64=', 'set_int64'
+    alias_method 'int=', 'set_int'
+    alias_method 'long', 'get_long'
+    alias_method 'long=', 'set_long'
+    alias_method 'object', 'get_object'
+    alias_method 'object=', 'set_object'
+    alias_method 'param', 'get_param'
+    alias_method 'param=', 'set_param'
+    alias_method 'pointer', 'get_pointer'
+    alias_method 'pointer=', 'set_pointer'
+    alias_method 'schar', 'get_schar'
+    alias_method 'schar=', 'set_schar'
+    alias_method 'static_boxed=', 'set_static_boxed'
+    alias_method 'static_string=', 'set_static_string'
+    alias_method 'string', 'get_string'
+    alias_method 'string=', 'set_string'
+    alias_method 'string_take_ownership=', 'set_string_take_ownership'
+    alias_method 'uchar', 'get_uchar'
+    alias_method 'uchar=', 'set_uchar'
+    alias_method 'uint', 'get_uint'
+    alias_method 'uint64', 'get_uint64'
+    alias_method 'uint64=', 'set_uint64'
+    alias_method 'uint=', 'set_uint'
+    alias_method 'ulong', 'get_ulong'
+    alias_method 'ulong=', 'set_ulong'
     alias_method 'value=', 'set_value'
+    alias_method 'variant', 'get_variant'
+    alias_method 'variant=', 'set_variant'
   end
   class GObject::ValueArray < GirFFI::BoxedBase
     def self.new(*args, &block)
@@ -2395,6 +2451,7 @@ module GObject
       _v2 = GObject::Value.copy_from(value)
       _v1.put_pointer(8, _v2)
     end
+    alias_method 'nth', 'get_nth'
   end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
