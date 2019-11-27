@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-require 'rake/clean'
-require 'bundler/gem_tasks'
-require 'rake/testtask'
+require "rake/clean"
+require "bundler/gem_tasks"
+require "rake/testtask"
 
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
-    t.libs = ['lib']
-    t.ruby_opts += ['-w -Itest']
-    t.test_files = FileList['test/gir_ffi-pretty_printer/*_test.rb']
+    t.libs = ["lib"]
+    t.ruby_opts += ["-w -Itest"]
+    t.test_files = FileList["test/gir_ffi-pretty_printer/*_test.rb"]
     t.warning = true
   end
 
   Rake::TestTask.new(:integration) do |t|
-    t.libs = ['lib']
-    t.ruby_opts += ['-w -Itest']
-    t.test_files = FileList['test/integration/*_test.rb']
+    t.libs = ["lib"]
+    t.ruby_opts += ["-w -Itest"]
+    t.test_files = FileList["test/integration/*_test.rb"]
     t.warning = true
   end
 
@@ -23,11 +23,11 @@ namespace :test do
 end
 
 begin
-  require 'yard'
+  require "yard"
   YARD::Rake::YardocTask.new
 rescue LoadError
-  puts 'Install yard to enable the documentation tasks'
+  puts "Install yard to enable the documentation tasks"
 end
 
-task test: 'test:all'
-task default: 'test'
+task test: "test:all"
+task default: "test"

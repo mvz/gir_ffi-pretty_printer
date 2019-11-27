@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require "test_helper"
 
 class SimpleClass
   def bar
-    'hello'
+    "hello"
   end
 end
 
@@ -16,7 +16,7 @@ class ComplexAlias < SimpleClass
   alias bar_without_qux bar
 
   def bar_with_qux
-    bar_without_qux + '-more'
+    bar_without_qux + "-more"
   end
 
   alias bar bar_with_qux
@@ -25,10 +25,10 @@ end
 describe GirFFI::ClassPrettyPrinter do
   let(:instance) { GirFFI::ClassPrettyPrinter.new printed_class }
 
-  describe '#pretty_print' do
-    describe 'for a class with a simple method definition' do
+  describe "#pretty_print" do
+    describe "for a class with a simple method definition" do
       let(:printed_class) { SimpleClass }
-      it 'pretty-prints the class' do
+      it "pretty-prints the class" do
         expected = <<~RUBY.chomp
           class SimpleClass < Object
 
@@ -43,9 +43,9 @@ describe GirFFI::ClassPrettyPrinter do
       end
     end
 
-    describe 'for a class with a simple aliased method' do
+    describe "for a class with a simple aliased method" do
       let(:printed_class) { SimpleAlias }
-      it 'pretty-prints the class' do
+      it "pretty-prints the class" do
         expected = <<~RUBY.chomp
           class SimpleAlias < SimpleClass
 
@@ -58,9 +58,9 @@ describe GirFFI::ClassPrettyPrinter do
       end
     end
 
-    describe 'for a class with an alias chain' do
+    describe "for a class with an alias chain" do
       let(:printed_class) { ComplexAlias }
-      it 'pretty-prints the class' do
+      it "pretty-prints the class" do
         expected = <<~RUBY.chomp
           class ComplexAlias < SimpleClass
 

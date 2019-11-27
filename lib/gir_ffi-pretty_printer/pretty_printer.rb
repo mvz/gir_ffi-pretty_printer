@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require 'live_ast/full'
-require 'live_ast/to_ruby'
-require 'gir_ffi'
-require 'indentation'
-require 'gir_ffi-pretty_printer/class_pretty_printer'
+require "live_ast/full"
+require "live_ast/to_ruby"
+require "gir_ffi"
+require "indentation"
+require "gir_ffi-pretty_printer/class_pretty_printer"
 
 module GirFFI
   # Main pretty printer
