@@ -1,11 +1,16 @@
-sudo: required
-dist: trusty
 language: ruby
+
+dist: xenial
 
 before_install:
   - sudo apt-get update
+  # Provides libgirepository-1.0.so
   - sudo apt-get install libgirepository1.0-dev gobject-introspection
-  - gem update --system
+
+cache:
+  bundler: true
+
+script: "bundle exec rake test:unit"
 
 rvm:
   - 2.4
@@ -16,8 +21,6 @@ rvm:
 matrix:
   allow_failures:
     - rvm: ruby-head
-
-script: "bundle exec rake test:unit"
 
 branches:
   only:
