@@ -1,4 +1,7 @@
-require: rubocop-performance
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-performance
 
 AllCops:
   Exclude:
@@ -8,21 +11,59 @@ AllCops:
     - 'test/integration/expected_gobject.rb'
   TargetRubyVersion: 2.4
 
+# Don't force lonely closing parentheses
+Layout/MultilineMethodCallBraceLayout:
+  EnforcedStyle: same_line
+
+# Multi-line method calls should be simply indented. Aligning them makes it
+# even harder to keep a sane line length.
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Multi-line assignment should be simply indented. Aligning them makes it even
+# harder to keep a sane line length.
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+# Force consistent spacing independent of block contents
+Layout/SpaceBeforeBlockBraces:
+  EnforcedStyleForEmptyBraces: space
+
+# Allow if (foo = get_foo) style
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
 # Test describe blocks can be any size
 Metrics/BlockLength:
   Exclude:
     - 'test/**/*'
 
-# GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
-Naming/FileName:
-  Enabled: false
+# Require lines to fit in pull requests.
+Metrics/LineLength:
+  Max: 92
+
+# Allow and/or for control flow only
+Style/AndOr:
+  EnforcedStyle: conditionals
 
 # Require at least two dependent lines before suggesting a guard clause
 Style/GuardClause:
   MinBodyLength: 2
 
+# Allow explicit return with multiple return values
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+# Do not commit to use of interpolation
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
 # Prefer symbols to look like symbols
 Style/SymbolArray:
   EnforcedStyle: brackets
 
-inherit_from: .rubocop_todo.yml
+# Project-specific configuration goes here.
+
+# GirFFI-PrettyPrinter uses a gir_ffi-something naming scheme.
+Naming/FileName:
+  Enabled: false
