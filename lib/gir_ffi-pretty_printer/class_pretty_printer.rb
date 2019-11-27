@@ -12,7 +12,7 @@ module GirFFI
       arr << "class #{@klass.name} < #{@klass.superclass.name}"
       arr << pretty_print_singleton_methods.indent
       arr << pretty_print_instance_methods.indent
-      arr << 'end'
+      arr << "end"
       arr.join "\n"
     end
 
@@ -52,8 +52,8 @@ module GirFFI
 
         if @klass.gir_info.find_instance_method name
           @klass.setup_instance_method name
-        elsif name == '_'
-          @klass.setup_instance_method ''
+        elsif name == "_"
+          @klass.setup_instance_method ""
         end
 
         meth = @klass.instance_method name

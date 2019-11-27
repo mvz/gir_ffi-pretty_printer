@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 begin
-  require 'simplecov'
+  require "simplecov"
   SimpleCov.start do
-    add_filter '/test/'
+    add_filter "/test/"
   end
 rescue LoadError
+  nil # SimpleCov not available
 end
 
-require 'minitest/autorun'
+require "minitest/autorun"
 
-require 'gir_ffi-pretty_printer'
+require "gir_ffi-pretty_printer"
