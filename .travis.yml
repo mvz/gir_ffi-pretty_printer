@@ -4,8 +4,8 @@ dist: xenial
 
 before_install:
   - sudo apt-get update
-  # Provides libgirepository-1.0.so
-  - sudo apt-get install libgirepository1.0-dev gobject-introspection
+  # Provides libgirepository-1.0.so.1
+  - sudo apt-get install libgirepository-1.0-1
 
 cache:
   bundler: true
