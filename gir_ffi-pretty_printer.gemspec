@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("gir_ffi", ["~> 0.15.0"])
   s.add_runtime_dependency("indentation", ["~> 0.1.1"])
   s.add_runtime_dependency("mvz-live_ast", ["~> 1.3.0"])
-  s.add_development_dependency("minitest", ["~> 5.0"])
+  s.add_development_dependency("minitest", ["~> 5.12"])
   s.add_development_dependency("rake", ["~> 13.0"])
 
   s.require_paths = ["lib"]
