@@ -12,6 +12,6 @@ describe "The pretty-printed GLib module" do
       resultfile.puts result
     end
 
-    result.must_equal expected
+    _(result).must_equal expected
   end
 end
