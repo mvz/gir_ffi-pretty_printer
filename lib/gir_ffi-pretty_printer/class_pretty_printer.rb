@@ -70,13 +70,15 @@ module GirFFI
       arr = []
       @klass.methods(false).sort.each do |mname|
         meth = @klass.method mname
+        ruby = meth.to_ruby
 
-        if meth.arity == -1
+        if meth.arity == -1 && ruby =~ /setup_and_call/
           @klass.setup_method mname.to_s
           meth = @klass.method mname
+          ruby = meth.to_ruby
         end
 
-        arr << meth.to_ruby
+        arr << ruby
       end
       arr.join "\n"
     end
