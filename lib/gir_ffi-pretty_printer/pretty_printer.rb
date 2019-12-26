@@ -14,7 +14,9 @@ module GirFFI
     end
 
     def pretty_print_function(modul, mname)
-      modul.setup_method mname.to_s if modul.send :respond_to_missing?, mname
+      if !modul.methods.include?(mname.to_sym)
+        modul.setup_method mname.to_s
+      end
 
       meth = modul.method mname
       meth.to_ruby

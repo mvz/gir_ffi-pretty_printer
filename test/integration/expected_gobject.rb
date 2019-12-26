@@ -3397,14 +3397,10 @@ module GObject
     GObject::Lib.g_type_free_instance(_v1)
   end
   def self.type_from_name(name)
-    _v1 = GirFFI::InPointer.from_utf8(name)
-    _v2 = GObject::Lib.g_type_from_name(_v1)
-    return _v2
+    Lib.g_type_from_name(name)
   end
-  def self.type_fundamental(type_id)
-    _v1 = type_id
-    _v2 = GObject::Lib.g_type_fundamental(_v1)
-    return _v2
+  def self.type_fundamental(gtype)
+    Lib.g_type_fundamental(gtype)
   end
   def self.type_fundamental_next
     _v1 = GObject::Lib.g_type_fundamental_next
@@ -3492,10 +3488,7 @@ module GObject
     return _v3
   end
   def self.type_name_from_instance(instance)
-    _v1 = GObject::TypeInstance.from(instance)
-    _v2 = GObject::Lib.g_type_name_from_instance(_v1)
-    _v3 = _v2.to_utf8
-    return _v3
+    type_name(type_from_instance(instance))
   end
   def self.type_next_base(leaf_type, root_type)
     _v1 = leaf_type
