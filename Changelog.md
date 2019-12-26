@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.7 / 2019-12-26
+
+* Depend on GirFFI 0.15.0
+* Support Ruby 2.4 and up
+* More carefully check whether module functions and class methods have been set
+  up yet.
+
 ## 0.0.6 / 2018-09-08
 
 * Depend on GirFFI 0.13.0
