@@ -11,6 +11,10 @@ AllCops:
     - 'test/integration/expected_gobject.rb'
   TargetRubyVersion: 2.4
 
+# Be lenient with line length
+Layout/LineLength:
+  Max: 92
+
 # Don't force lonely closing parentheses
 Layout/MultilineMethodCallBraceLayout:
   EnforcedStyle: same_line
@@ -29,6 +33,10 @@ Layout/MultilineOperationIndentation:
 Layout/SpaceBeforeBlockBraces:
   EnforcedStyleForEmptyBraces: space
 
+# Assume the programmer knows how bracketed block syntax works
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
 # Allow if (foo = get_foo) style
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
@@ -38,10 +46,6 @@ Metrics/BlockLength:
   Exclude:
     - 'test/**/*'
 
-# Require lines to fit in pull requests.
-Metrics/LineLength:
-  Max: 92
-
 # Allow and/or for control flow only
 Style/AndOr:
   EnforcedStyle: conditionals
@@ -49,6 +53,21 @@ Style/AndOr:
 # Require at least two dependent lines before suggesting a guard clause
 Style/GuardClause:
   MinBodyLength: 2
+
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+# Use older RuboCop default
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%W': ()
+    '%w': ()
 
 # Allow explicit return with multiple return values
 Style/RedundantReturn:
