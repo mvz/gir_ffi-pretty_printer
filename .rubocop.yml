@@ -9,7 +9,7 @@ AllCops:
     - 'test/integration/actual_gobject.rb'
     - 'test/integration/expected_glib.rb'
     - 'test/integration/expected_gobject.rb'
-  TargetRubyVersion: 2.4
+  TargetRubyVersion: 2.5
 
 # Be lenient with line length
 Layout/LineLength:
