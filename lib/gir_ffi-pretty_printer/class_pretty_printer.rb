@@ -72,7 +72,7 @@ module GirFFI
         meth = @klass.method mname
         ruby = meth.to_ruby
 
-        if meth.arity == -1 && ruby =~ /setup_and_call/
+        if meth.arity == -1 && ruby.include?("setup_and_call")
           @klass.setup_method mname.to_s
           meth = @klass.method mname
           ruby = meth.to_ruby
