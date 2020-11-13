@@ -367,7 +367,7 @@ module GObject
     end
     def marshal
       _v1 = @struct.to_ptr
-      _v2 = GObject::Marshal.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::Closure::Marshal.get_value_from_pointer(_v1, 40)
       _v2
     end
     def meta_marshal_nouse
@@ -640,7 +640,7 @@ module GObject
     end
     def constructed
       _v1 = @struct.to_ptr
-      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 72)
+      _v2 = GObject::InitiallyUnownedClass::Constructed.get_value_from_pointer(_v1, 72)
       _v2
     end
     def constructor
@@ -650,17 +650,17 @@ module GObject
     end
     def dispatch_properties_changed
       _v1 = @struct.to_ptr
-      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
+      _v2 = GObject::InitiallyUnownedClass::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
       _v2
     end
     def dispose
       _v1 = @struct.to_ptr
-      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::InitiallyUnownedClass::Dispose.get_value_from_pointer(_v1, 40)
       _v2
     end
     def finalize
       _v1 = @struct.to_ptr
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 48)
+      _v2 = GObject::InitiallyUnownedClass::Finalize.get_value_from_pointer(_v1, 48)
       _v2
     end
     def flags
@@ -676,12 +676,12 @@ module GObject
     end
     def get_property
       _v1 = @struct.to_ptr
-      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 32)
+      _v2 = GObject::InitiallyUnownedClass::Get_property.get_value_from_pointer(_v1, 32)
       _v2
     end
     def notify
       _v1 = @struct.to_ptr
-      _v2 = GObject::Notify.get_value_from_pointer(_v1, 64)
+      _v2 = GObject::InitiallyUnownedClass::Notify.get_value_from_pointer(_v1, 64)
       _v2
     end
     def pdummy
@@ -692,7 +692,7 @@ module GObject
     end
     def set_property
       _v1 = @struct.to_ptr
-      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 24)
+      _v2 = GObject::InitiallyUnownedClass::Set_property.get_value_from_pointer(_v1, 24)
       _v2
     end
   end
@@ -816,13 +816,9 @@ module GObject
       _v2 = GObject::Lib.g_object_get_data(self, _v1)
       return _v2
     end
-    # @deprecated
-    def get_property_extended(property_name)
-      get_property(property_name)
-    end
-    def get_property_with_override(property_name)
+    def get_property(property_name)
       gvalue = gvalue_for_property(property_name)
-      get_property_without_override(property_name, gvalue)
+      super(property_name, gvalue)
       value = gvalue.get_value
       type_info = get_property_type(property_name)
       value = property_value_post_conversion(value, type_info) if type_info
@@ -887,16 +883,12 @@ module GObject
       _v2 = data
       GObject::Lib.g_object_set_data(self, _v1, _v2)
     end
-    # @deprecated
-    def set_property_extended(property_name, value)
-      set_property(property_name, value)
-    end
-    def set_property_with_override(property_name, value)
+    def set_property(property_name, value)
       type_info = get_property_type(property_name)
       value = property_value_pre_conversion(value, type_info) if type_info
       gvalue = gvalue_for_property(property_name)
       gvalue.set_value(value)
-      set_property_without_override(property_name, gvalue)
+      super(property_name, gvalue)
     end
     def signal_connect(event, data = nil, &block)
       GObject.signal_connect(self, event, data, &block)
@@ -914,10 +906,6 @@ module GObject
       _v2 = GObject::Lib.g_object_steal_qdata(self, _v1)
       return _v2
     end
-    def store_pointer(ptr)
-      super
-      ObjectSpace.define_finalizer(self, self.class.make_finalizer(ptr))
-    end
     def thaw_notify
       GObject::Lib.g_object_thaw_notify(self)
     end
@@ -930,12 +918,8 @@ module GObject
     end
     alias_method 'data', 'get_data'
     alias_method 'floating?', 'is_floating'
-    alias_method 'get_property', 'get_property_with_override'
-    alias_method 'get_property_without_override', 'get_property'
     alias_method 'property', 'get_property'
     alias_method 'qdata', 'get_qdata'
-    alias_method 'set_property', 'set_property_with_override'
-    alias_method 'set_property_without_override', 'set_property'
   end
   class GObject::ObjectClass < GObject::TypeClass
   
@@ -947,7 +931,7 @@ module GObject
     end
     def constructed
       _v1 = @struct.to_ptr
-      _v2 = GObject::Constructed.get_value_from_pointer(_v1, 72)
+      _v2 = GObject::ObjectClass::Constructed.get_value_from_pointer(_v1, 72)
       _v2
     end
     def constructor
@@ -957,17 +941,17 @@ module GObject
     end
     def dispatch_properties_changed
       _v1 = @struct.to_ptr
-      _v2 = GObject::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
+      _v2 = GObject::ObjectClass::Dispatch_properties_changed.get_value_from_pointer(_v1, 56)
       _v2
     end
     def dispose
       _v1 = @struct.to_ptr
-      _v2 = GObject::Dispose.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::ObjectClass::Dispose.get_value_from_pointer(_v1, 40)
       _v2
     end
     def finalize
       _v1 = @struct.to_ptr
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 48)
+      _v2 = GObject::ObjectClass::Finalize.get_value_from_pointer(_v1, 48)
       _v2
     end
     def find_property(property_name)
@@ -989,7 +973,7 @@ module GObject
     end
     def get_property
       _v1 = @struct.to_ptr
-      _v2 = GObject::Get_property.get_value_from_pointer(_v1, 32)
+      _v2 = GObject::ObjectClass::Get_property.get_value_from_pointer(_v1, 32)
       _v2
     end
     def get_property=(callback)
@@ -1018,7 +1002,7 @@ module GObject
     end
     def notify
       _v1 = @struct.to_ptr
-      _v2 = GObject::Notify.get_value_from_pointer(_v1, 64)
+      _v2 = GObject::ObjectClass::Notify.get_value_from_pointer(_v1, 64)
       _v2
     end
     def override_property(property_id, name)
@@ -1034,7 +1018,7 @@ module GObject
     end
     def set_property
       _v1 = @struct.to_ptr
-      _v2 = GObject::Set_property.get_value_from_pointer(_v1, 24)
+      _v2 = GObject::ObjectClass::Set_property.get_value_from_pointer(_v1, 24)
       _v2
     end
     def set_property=(callback)
@@ -1074,7 +1058,11 @@ module GObject
   PARAM_USER_SHIFT = 8
   # XXX: Don't know how to print flags
   class GObject::ParamSpec < GirFFI::ObjectBase
-  
+    def self.is_valid_name(name)
+      _v1 = GirFFI::InPointer.from_utf8(name)
+      _v2 = GObject::Lib.g_param_spec_is_valid_name(_v1)
+      return _v2
+    end
     def accessor_name
       get_name.tr("-", "_")
     end
@@ -1165,7 +1153,7 @@ module GObject
     end
     def finalize
       _v1 = @struct.to_ptr
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 16)
+      _v2 = GObject::ParamSpecClass::Finalize.get_value_from_pointer(_v1, 16)
       _v2
     end
     def g_type_class
@@ -1176,7 +1164,7 @@ module GObject
     end
     def value_set_default
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 24)
+      _v2 = GObject::ParamSpecClass::Value_set_default.get_value_from_pointer(_v1, 24)
       _v2
     end
     def value_type
@@ -1186,12 +1174,12 @@ module GObject
     end
     def value_validate
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 32)
+      _v2 = GObject::ParamSpecClass::Value_validate.get_value_from_pointer(_v1, 32)
       _v2
     end
     def values_cmp
       _v1 = @struct.to_ptr
-      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::ParamSpecClass::Values_cmp.get_value_from_pointer(_v1, 40)
       _v2
     end
   end
@@ -1290,12 +1278,12 @@ module GObject
   
     def finalize
       _v1 = @struct.to_ptr
-      _v2 = GObject::Finalize.get_value_from_pointer(_v1, 24)
+      _v2 = GObject::ParamSpecTypeInfo::Finalize.get_value_from_pointer(_v1, 24)
       _v2
     end
     def instance_init
       _v1 = @struct.to_ptr
-      _v2 = GObject::Instance_init.get_value_from_pointer(_v1, 8)
+      _v2 = GObject::ParamSpecTypeInfo::Instance_init.get_value_from_pointer(_v1, 8)
       _v2
     end
     def instance_size
@@ -1320,7 +1308,7 @@ module GObject
     end
     def value_set_default
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_set_default.get_value_from_pointer(_v1, 32)
+      _v2 = GObject::ParamSpecTypeInfo::Value_set_default.get_value_from_pointer(_v1, 32)
       _v2
     end
     def value_type
@@ -1335,12 +1323,12 @@ module GObject
     end
     def value_validate
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_validate.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::ParamSpecTypeInfo::Value_validate.get_value_from_pointer(_v1, 40)
       _v2
     end
     def values_cmp
       _v1 = @struct.to_ptr
-      _v2 = GObject::Values_cmp.get_value_from_pointer(_v1, 48)
+      _v2 = GObject::ParamSpecTypeInfo::Values_cmp.get_value_from_pointer(_v1, 48)
       _v2
     end
   end
@@ -1797,7 +1785,7 @@ module GObject
   
     def load
       _v1 = @struct.to_ptr
-      _v2 = GObject::Load.get_value_from_pointer(_v1, 136)
+      _v2 = GObject::TypeModuleClass::Load.get_value_from_pointer(_v1, 136)
       _v2
     end
     def parent_class
@@ -1808,27 +1796,27 @@ module GObject
     end
     def reserved1
       _v1 = @struct.to_ptr
-      _v2 = GObject::Reserved1.get_value_from_pointer(_v1, 152)
+      _v2 = GObject::TypeModuleClass::Reserved1.get_value_from_pointer(_v1, 152)
       _v2
     end
     def reserved2
       _v1 = @struct.to_ptr
-      _v2 = GObject::Reserved2.get_value_from_pointer(_v1, 160)
+      _v2 = GObject::TypeModuleClass::Reserved2.get_value_from_pointer(_v1, 160)
       _v2
     end
     def reserved3
       _v1 = @struct.to_ptr
-      _v2 = GObject::Reserved3.get_value_from_pointer(_v1, 168)
+      _v2 = GObject::TypeModuleClass::Reserved3.get_value_from_pointer(_v1, 168)
       _v2
     end
     def reserved4
       _v1 = @struct.to_ptr
-      _v2 = GObject::Reserved4.get_value_from_pointer(_v1, 176)
+      _v2 = GObject::TypeModuleClass::Reserved4.get_value_from_pointer(_v1, 176)
       _v2
     end
     def unload
       _v1 = @struct.to_ptr
-      _v2 = GObject::Unload.get_value_from_pointer(_v1, 144)
+      _v2 = GObject::TypeModuleClass::Unload.get_value_from_pointer(_v1, 144)
       _v2
     end
   end
@@ -1945,7 +1933,7 @@ module GObject
     end
     def collect_value
       _v1 = @struct.to_ptr
-      _v2 = GObject::Collect_value.get_value_from_pointer(_v1, 40)
+      _v2 = GObject::TypeValueTable::Collect_value.get_value_from_pointer(_v1, 40)
       _v2
     end
     def lcopy_format
@@ -1961,30 +1949,31 @@ module GObject
     end
     def lcopy_value
       _v1 = @struct.to_ptr
-      _v2 = GObject::Lcopy_value.get_value_from_pointer(_v1, 56)
+      _v2 = GObject::TypeValueTable::Lcopy_value.get_value_from_pointer(_v1, 56)
       _v2
     end
     def value_copy
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_copy.get_value_from_pointer(_v1, 16)
+      _v2 = GObject::TypeValueTable::Value_copy.get_value_from_pointer(_v1, 16)
       _v2
     end
     def value_free
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_free.get_value_from_pointer(_v1, 8)
+      _v2 = GObject::TypeValueTable::Value_free.get_value_from_pointer(_v1, 8)
       _v2
     end
     def value_init
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_init.get_value_from_pointer(_v1, 0)
+      _v2 = GObject::TypeValueTable::Value_init.get_value_from_pointer(_v1, 0)
       _v2
     end
     def value_peek_pointer
       _v1 = @struct.to_ptr
-      _v2 = GObject::Value_peek_pointer.get_value_from_pointer(_v1, 24)
+      _v2 = GObject::TypeValueTable::Value_peek_pointer.get_value_from_pointer(_v1, 24)
       _v2
     end
   end
+  VALUE_INTERNED_STRING = 268435456
   VALUE_NOCOPY_CONTENTS = 134217728
   class GObject::Value < GirFFI::BoxedBase
     def self.copy_value_to_pointer(value, pointer, offset = 0)
@@ -2036,15 +2025,6 @@ module GObject
     def copy(dest_value)
       _v1 = GObject::Value.from(dest_value)
       GObject::Lib.g_value_copy(self, _v1)
-    end
-    def current_fundamental_type
-      GObject.type_fundamental(current_gtype)
-    end
-    def current_gtype
-      struct[:g_type]
-    end
-    def current_gtype_name
-      GObject.type_name(current_gtype)
     end
     def data
       _v1 = @struct.to_ptr
@@ -2165,13 +2145,6 @@ module GObject
       _v1 = GObject::Lib.g_value_get_ulong(self)
       return _v1
     end
-    def get_value
-      value = get_value_plain
-      (current_fundamental_type == TYPE_BOXED) ? (wrap_boxed(value)) : (value)
-    end
-    def get_value_plain
-      send(get_method)
-    end
     def get_variant
       _v1 = GObject::Lib.g_value_get_variant(self)
       _v2 = GLib::Variant.wrap_copy(_v1)
@@ -2244,6 +2217,10 @@ module GObject
       _v1 = v_int64
       GObject::Lib.g_value_set_int64(self, _v1)
     end
+    def set_interned_string(v_string = nil)
+      _v1 = GirFFI::InPointer.from_utf8(v_string)
+      GObject::Lib.g_value_set_interned_string(self, _v1)
+    end
     def set_long(v_long)
       _v1 = v_long
       GObject::Lib.g_value_set_long(self, _v1)
@@ -2296,10 +2273,6 @@ module GObject
       _v1 = v_ulong
       GObject::Lib.g_value_set_ulong(self, _v1)
     end
-    # TYPE_NONE is skipped
-    def set_value(val)
-      send(set_method, val)
-    end
     def set_variant(variant = nil)
       _v1 = GLib::Variant.from(variant)
       GObject::Lib.g_value_set_variant(self, _v1)
@@ -2320,9 +2293,6 @@ module GObject
       _v1 = GObject::Value.from(dest_value)
       _v2 = GObject::Lib.g_value_transform(self, _v1)
       return _v2
-    end
-    def uninitialized?
-      (current_gtype == TYPE_INVALID)
     end
     def unset
       GObject::Lib.g_value_unset(self)
@@ -2349,6 +2319,7 @@ module GObject
     alias_method 'int64', 'get_int64'
     alias_method 'int64=', 'set_int64'
     alias_method 'int=', 'set_int'
+    alias_method 'interned_string=', 'set_interned_string'
     alias_method 'long', 'get_long'
     alias_method 'long=', 'set_long'
     alias_method 'object', 'get_object'
@@ -2372,7 +2343,6 @@ module GObject
     alias_method 'uint=', 'set_uint'
     alias_method 'ulong', 'get_ulong'
     alias_method 'ulong=', 'set_ulong'
-    alias_method 'value=', 'set_value'
     alias_method 'variant', 'get_variant'
     alias_method 'variant=', 'set_variant'
   end
@@ -2677,6 +2647,11 @@ module GObject
     _v5 = invocation_hint
     _v6 = marshal_data
     GObject::Lib.g_cclosure_marshal_generic(_v1, _v2, _v3, _v4, _v5, _v6)
+  end
+  def self.clear_signal_handler(handler_id_ptr, instance)
+    _v1 = handler_id_ptr
+    _v2 = GObject::Object.from(instance)
+    GObject::Lib.g_clear_signal_handler(_v1, _v2)
   end
   def self.enum_complete_type_info(g_enum_type, const_values)
     _v1 = g_enum_type
@@ -3186,6 +3161,11 @@ module GObject
     _v4 = may_be_blocked
     _v5 = GObject::Lib.g_signal_has_handler_pending(_v1, _v2, _v3, _v4)
     return _v5
+  end
+  def self.signal_is_valid_name(name)
+    _v1 = GirFFI::InPointer.from_utf8(name)
+    _v2 = GObject::Lib.g_signal_is_valid_name(_v1)
+    return _v2
   end
   def self.signal_list_ids(itype)
     _v1 = itype
