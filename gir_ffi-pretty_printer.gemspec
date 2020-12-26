@@ -18,10 +18,10 @@ Gem::Specification.new do |s|
   s.files = Dir["{lib,test}/**/*.rb", "README.md", "Rakefile"]
   s.test_files = Dir["test/**/*.rb"]
 
-  s.add_runtime_dependency("binding_of_caller", ["~> 0.8.0"])
+  s.add_runtime_dependency("bindings", ["~> 1.0.0"])
   s.add_runtime_dependency("gir_ffi", ["~> 0.15.5"])
   s.add_runtime_dependency("indentation", ["~> 0.1.1"])
-  s.add_runtime_dependency("mvz-live_ast", ["~> 1.3.0"])
+  s.add_runtime_dependency("mvz-live_ast", ["~> 2.0.0"])
   s.add_development_dependency("minitest", ["~> 5.12"])
   s.add_development_dependency("rake", ["~> 13.0"])
 
