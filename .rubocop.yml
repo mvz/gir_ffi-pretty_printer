@@ -11,7 +11,7 @@ AllCops:
     - 'test/integration/expected_glib.rb'
     - 'test/integration/expected_gobject.rb'
   NewCops: enable
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.6
 
 # Make BeginEndAlignment behavior match EndAlignment
 Layout/BeginEndAlignment:
