@@ -1,25 +1,31 @@
 ---
 - - :permit
   - MIT
-  - :who: 
-    :why: 
+  - :who:
+    :why:
     :versions: []
     :when: 2017-07-23 09:36:45.797374487 Z
 - - :permit
   - LGPL-2.1+
-  - :who: 
-    :why: 
+  - :who:
+    :why:
     :versions: []
     :when: 2017-09-19 05:10:52.727088422 Z
 - - :permit
   - New BSD
-  - :who: 
-    :why: 
+  - :who:
+    :why:
     :versions: []
     :when: 2017-09-19 05:11:01.630229719 Z
 - - :permit
   - ruby
-  - :who: 
-    :why: 
+  - :who:
+    :why:
     :versions: []
     :when: 2017-09-19 05:11:20.892950473 Z
+- - :permit
+  - Simplified BSD
+  - :who:
+    :why:
+    :versions: []
+    :when: 2021-09-12 09:47:48.199862682 Z
