@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
   s.email = ["matijs@matijs.net"]
   s.homepage = "http://www.github.com/mvz/gir_ffi-pretty_printer"
 
+  s.metadata["rubygems_mfa_required"] = "true"
+
   s.license = "LGPL-2.1+"
 
   s.files = Dir["{lib,test}/**/*.rb", "README.md", "Rakefile"]
