@@ -44,9 +44,9 @@ module GirFFI
             warn "Skipping #{module_name}::#{info.name}: build failed"
           end
         when :constant
-          arr << pretty_print_constant(modul, info.name).indent
+          arr << pretty_print_constant(modul, info.safe_name).indent
         when :function
-          arr << pretty_print_function(modul, info.name).indent
+          arr << pretty_print_function(modul, info.safe_name).indent
         else
           arr << "# XXX: Don't know how to print #{info.info_type}".indent
         end
