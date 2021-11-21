@@ -3,6 +3,16 @@ module GObject
   # XXX: Don't know how to print callback
   class GObject::Binding < GObject::Object
   
+    def dup_source
+      _v1 = GObject::Lib.g_binding_dup_source(self)
+      _v2 = GObject::Object.wrap(_v1)
+      return _v2
+    end
+    def dup_target
+      _v1 = GObject::Lib.g_binding_dup_target(self)
+      _v2 = GObject::Object.wrap(_v1)
+      return _v2
+    end
     def get_flags
       _v1 = GObject::Lib.g_binding_get_flags(self)
       return _v1
@@ -739,6 +749,14 @@ module GObject
       _v3 = GObject::Lib.g_object_compat_control(_v1, _v2)
       return _v3
     end
+    def finalize(ptr)
+      rc = GObject::Object::Struct.new(ptr)[:ref_count]
+      if (rc == 0) then
+        warn("not unreffing #{name}:#{ptr} (#{rc})")
+      else
+        GObject::Lib.g_object_unref(ptr)
+      end
+    end
     def self.interface_find_property(g_iface, property_name)
       _v1 = GObject::TypeInterface.from(g_iface)
       _v2 = GirFFI::InPointer.from_utf8(property_name)
@@ -760,14 +778,7 @@ module GObject
       return _v5
     end
     def self.make_finalizer(ptr)
-      proc do
-        rc = GObject::Object::Struct.new(ptr)[:ref_count]
-        if (rc == 0) then
-          warn("not unreffing #{name}:#{ptr} (#{rc})")
-        else
-          GObject::Lib.g_object_unref(ptr)
-        end
-      end
+      proc { finalize(ptr) }
     end
     def self.new(*args, &block)
       obj = allocate
@@ -1232,12 +1243,7 @@ module GObject
   
   end
   class GObject::ParamSpecPool < GirFFI::StructBase
-    def self.new(type_prefixing)
-      _v1 = type_prefixing
-      _v2 = GObject::Lib.g_param_spec_pool_new(_v1)
-      _v3 = GObject::ParamSpecPool.wrap_copy(_v2)
-      return _v3
-    end
+  
     def insert(pspec, owner_type)
       _v1 = GObject::ParamSpec.from(pspec)
       _v2 = owner_type
@@ -1708,6 +1714,11 @@ module GObject
       _v4 = GObject::TypePlugin.wrap(_v3)
       return _v4
     end
+    def self.instantiatable_prerequisite(interface_type)
+      _v1 = interface_type
+      _v2 = GObject::Lib.g_type_interface_instantiatable_prerequisite(_v1)
+      return _v2
+    end
     def self.peek(instance_class, iface_type)
       _v1 = GObject::TypeClass.from(instance_class)
       _v2 = iface_type
@@ -1990,15 +2001,6 @@ module GObject
         val
       else
         wrap_ruby_value(val)
-      end
-    end
-    def self.make_finalizer(struct)
-      proc do
-        if struct.owned? then
-          ptr = struct.to_ptr
-          Lib.g_value_unset(ptr) unless (struct[:g_type] == TYPE_INVALID)
-          GObject.boxed_free(gtype, ptr)
-        end
       end
     end
     def self.type_compatible(src_type, dest_type)
@@ -2894,12 +2896,6 @@ module GObject
     _v6 = GObject::ParamSpec.wrap(_v5)
     return _v6
   end
-  def self.param_spec_pool_new(type_prefixing)
-    _v1 = type_prefixing
-    _v2 = GObject::Lib.g_param_spec_pool_new(_v1)
-    _v3 = GObject::ParamSpecPool.wrap_copy(_v2)
-    return _v3
-  end
   def self.param_spec_string(name, nick, blurb, default_value, flags)
     _v1 = GirFFI::InPointer.from_utf8(name)
     _v2 = GirFFI::InPointer.from_utf8(nick)
@@ -3095,14 +3091,14 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_disconnect(_v1, _v2)
   end
-  def self.signal_handler_find(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
+  def self.signal_handler_find(instance, mask, signal_id, detail, closure = nil, func = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = data
+    _v7 = GirFFI::ArgHelper.store(_v5)
     _v8 = GObject::Lib.g_signal_handler_find(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3117,14 +3113,14 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_unblock(_v1, _v2)
   end
-  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
+  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = data
+    _v7 = GirFFI::ArgHelper.store(_v5)
     _v8 = GObject::Lib.g_signal_handlers_block_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3132,25 +3128,25 @@ module GObject
     _v1 = GObject::Object.from(instance)
     GObject::Lib.g_signal_handlers_destroy(_v1)
   end
-  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
+  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = data
+    _v7 = GirFFI::ArgHelper.store(_v5)
     _v8 = GObject::Lib.g_signal_handlers_disconnect_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
-  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
+  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = data
+    _v7 = GirFFI::ArgHelper.store(_v5)
     _v8 = GObject::Lib.g_signal_handlers_unblock_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3425,6 +3421,11 @@ module GObject
     _v3 = GObject::Lib.g_type_interface_get_plugin(_v1, _v2)
     _v4 = GObject::TypePlugin.wrap(_v3)
     return _v4
+  end
+  def self.type_interface_instantiatable_prerequisite(interface_type)
+    _v1 = interface_type
+    _v2 = GObject::Lib.g_type_interface_instantiatable_prerequisite(_v1)
+    return _v2
   end
   def self.type_interface_peek(instance_class, iface_type)
     _v1 = GObject::TypeClass.from(instance_class)
