@@ -1,0 +1,7 @@
+lib/gir_ffi-pretty_printer.rb
+lib/gir_ffi-pretty_printer/class_pretty_printer.rb
+lib/gir_ffi-pretty_printer/pretty_printer.rb
+lib/gir_ffi-pretty_printer/version.rb
+Changelog.md
+README.md
+COPYING.LIB
