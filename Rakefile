@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require "rake/clean"
 require "bundler/gem_tasks"
+require "rake/clean"
+require "rake/manifest/task"
 require "rake/testtask"
 
 namespace :test do
@@ -29,5 +30,11 @@ rescue LoadError
   puts "Install yard to enable the documentation tasks"
 end
 
+Rake::Manifest::Task.new do |t|
+  t.patterns = ["lib/**/*", "*.md", "COPYING.LIB"]
+end
+
 task test: "test:all"
-task default: "test"
+
+task build: ["manifest:check"]
+task default: ["test", "manifest:check"]

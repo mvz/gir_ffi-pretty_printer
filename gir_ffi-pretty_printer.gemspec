@@ -16,11 +16,17 @@ Gem::Specification.new do |spec|
   spec.license = "LGPL-2.1+"
   spec.required_ruby_version = ">= 2.6.0"
 
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = "https://github.com/mvz/gir_ffi-pretty_printer"
+  spec.metadata["changelog_uri"] =
+    "https://github.com/mvz/gir_ffi-pretty_printer/blob/master/Changelog.md"
   spec.metadata["rubygems_mfa_required"] = "true"
 
-  spec.files = Dir["{lib,test}/**/*.rb", "README.md", "Rakefile"]
-  spec.test_files = Dir["test/**/*.rb"]
+  spec.files = File.read("Manifest.txt").split
   spec.require_paths = ["lib"]
+
+  spec.rdoc_options = ["--main", "README.md"]
+  spec.extra_rdoc_files = ["Changelog.md", "README.md"]
 
   spec.add_runtime_dependency "bindings", "~> 1.0.0"
   spec.add_runtime_dependency "gir_ffi", "~> 0.15.5"
@@ -29,6 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "minitest", "~> 5.12"
   spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rake-manifest", "~> 0.2.0"
   spec.add_development_dependency "rubocop", "~> 1.23.0"
   spec.add_development_dependency "rubocop-minitest", "~> 0.17.0"
   spec.add_development_dependency "rubocop-performance", "~> 1.12.0"
