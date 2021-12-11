@@ -25,6 +25,9 @@ Gem::Specification.new do |spec|
   spec.files = File.read("Manifest.txt").split
   spec.require_paths = ["lib"]
 
+  spec.rdoc_options = ["--main", "README.md"]
+  spec.extra_rdoc_files = ["Changelog.md", "README.md"]
+
   spec.add_runtime_dependency "bindings", "~> 1.0.0"
   spec.add_runtime_dependency "gir_ffi", "~> 0.15.5"
   spec.add_runtime_dependency "indentation", "~> 0.1.1"
