@@ -1,5 +1,9 @@
 inherit_from: .rubocop_todo.yml
 
+inherit_mode:
+  merge:
+    - Exclude
+
 require:
   - rubocop-performance
   - rubocop-minitest
@@ -10,7 +14,6 @@ AllCops:
     - 'test/integration/actual_gobject.rb'
     - 'test/integration/expected_glib.rb'
     - 'test/integration/expected_gobject.rb'
-    - 'vendor/bundle/**/*'
   NewCops: enable
   TargetRubyVersion: 2.6
 
