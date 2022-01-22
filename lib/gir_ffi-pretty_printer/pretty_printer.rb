@@ -39,6 +39,7 @@ module GirFFI
         when :struct, :object
           begin
             klass = GirFFI::Builder.build_class info
+            # TODO: Pass in info as well and print more stuff
             arr << pretty_print_class(klass).indent
           rescue SyntaxError
             warn "Skipping #{module_name}::#{info.name}: build failed"
