@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.8 / 2021-01-23
+
+* Depend on GirFFI 0.15.9
+* Use safe names when printing functions and constants
+
 ## 0.0.7 / 2019-12-26
 
 * Depend on GirFFI 0.15.0
