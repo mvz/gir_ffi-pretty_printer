@@ -31,7 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "bindings", "~> 1.0.0"
   spec.add_runtime_dependency "gir_ffi", "~> 0.15.9"
   spec.add_runtime_dependency "indentation", "~> 0.1.1"
-  spec.add_runtime_dependency "mvz-live_ast", "~> 2.0.0"
+  spec.add_runtime_dependency "mvz-live_ast", ">= 2.0", "< 2.2"
 
   spec.add_development_dependency "minitest", "~> 5.12"
   spec.add_development_dependency "rake", "~> 13.0"
