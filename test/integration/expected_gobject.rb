@@ -53,6 +53,46 @@ module GObject
     alias_method 'target', 'get_target'
   end
   # XXX: Don't know how to print flags
+  class GObject::BindingGroup < GObject::Object
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def bind(source_property, target, target_property, flags)
+      _v1 = GirFFI::InPointer.from_utf8(source_property)
+      _v2 = GObject::Object.from(target)
+      _v3 = GirFFI::InPointer.from_utf8(target_property)
+      _v4 = flags
+      GObject::Lib.g_binding_group_bind(self, _v1, _v2, _v3, _v4)
+    end
+    def bind_full(source_property, target, target_property, flags, transform_to = nil, transform_from = nil)
+      _v1 = GirFFI::InPointer.from_utf8(source_property)
+      _v2 = GObject::Object.from(target)
+      _v3 = GirFFI::InPointer.from_utf8(target_property)
+      _v4 = flags
+      _v5 = GObject::Closure.from(transform_to)
+      _v6 = GObject::Closure.from(transform_from)
+      GObject::Lib.g_binding_group_bind_with_closures(self, _v1, _v2, _v3, _v4, _v5, _v6)
+    end
+    def dup_source
+      _v1 = GObject::Lib.g_binding_group_dup_source(self)
+      _v2 = GObject::Object.wrap(_v1).tap { |it| it and it.ref }
+      return _v2
+    end
+    def set_source(source = nil)
+      _v1 = GObject::Object.from(source)
+      GObject::Lib.g_binding_group_set_source(self, _v1)
+    end
+    def source
+      _v1 = get_property("source")
+      _v1
+    end
+    def source=(value)
+      _v1 = value
+      set_property("source", _v1)
+    end
+  end
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
@@ -1396,6 +1436,54 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print flags
+  class GObject::SignalGroup < GObject::Object
+    def self.new(*args, &block)
+      obj = allocate
+      obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def block
+      GObject::Lib.g_signal_group_block(self)
+    end
+    def connect_data(detailed_signal, flags, &c_handler)
+      _v1 = GirFFI::InPointer.from_utf8(detailed_signal)
+      _v2 = GObject::Callback.from(c_handler)
+      _v3 = GirFFI::ArgHelper.store(_v2)
+      _v4 = GLib::DestroyNotify.default
+      _v5 = flags
+      GObject::Lib.g_signal_group_connect_data(self, _v1, _v2, _v3, _v4, _v5)
+    end
+    def connect_swapped(detailed_signal, &c_handler)
+      _v1 = GirFFI::InPointer.from_utf8(detailed_signal)
+      _v2 = GObject::Callback.from(c_handler)
+      _v3 = GirFFI::ArgHelper.store(_v2)
+      GObject::Lib.g_signal_group_connect_swapped(self, _v1, _v2, _v3)
+    end
+    def dup_target
+      _v1 = GObject::Lib.g_signal_group_dup_target(self)
+      _v2 = GObject::Object.wrap(_v1)
+      return _v2
+    end
+    def set_target(target = nil)
+      _v1 = GObject::Object.from(target)
+      GObject::Lib.g_signal_group_set_target(self, _v1)
+    end
+    def target
+      _v1 = get_property("target")
+      _v1
+    end
+    def target=(value)
+      _v1 = value
+      set_property("target", _v1)
+    end
+    def target_type
+      _v1 = get_property("target-type")
+      _v1
+    end
+    def unblock
+      GObject::Lib.g_signal_group_unblock(self)
+    end
+  end
   class GObject::SignalInvocationHint < GirFFI::StructBase
   
     def detail
