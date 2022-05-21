@@ -631,14 +631,12 @@ module GLib
       _v2 = GLib::Lib.g_bytes_equal(self, _v1)
       return _v2
     end
-    # @override
-    # NOTE: Needed due to mis-identification of the element-type of the
-    # resulting sized array for the default binding.
     def get_data
-      length_ptr = FFI::MemoryPointer.new(:size_t)
-      data_ptr = Lib.g_bytes_get_data(self, length_ptr)
-      length = length_ptr.get_size_t(0)
-      GirFFI::SizedArray.wrap(:guint8, length, data_ptr)
+      _v1 = FFI::MemoryPointer.new(:uint64)
+      _v2 = GLib::Lib.g_bytes_get_data(self, _v1)
+      _v3 = _v1.get_uint64(0)
+      _v4 = GirFFI::SizedArray.wrap(:guint8, _v3, _v2)
+      return _v4
     end
     def get_region(element_size, offset, n_elements)
       _v1 = element_size
@@ -3100,7 +3098,7 @@ module GLib
       return _v2
     end
     def run_with_thread_enabler
-      ThreadEnabler.instance.setup_idle_handler if (RUBY_ENGINE == "ruby")
+      ThreadEnabler.instance.setup_idle_handler
       (RUNNING_LOOPS << self)
       result = run_without_thread_enabler
       exception = EXCEPTIONS.shift
@@ -3880,18 +3878,7 @@ module GLib
     end
     # Re-implementation of the g_ptrarray_index macro
     def index(idx)
-      unless (0...length).cover?(idx) then
-        raise(IndexError, "Index #{idx} outside of bounds 0..#{(length - 1)}")
-      end
-      item_ptr = (data_ptr + (idx * element_size))
-      convert_element_type = case element_type
-      when :utf8 then
-        :utf8
-      when GirFFI::ObjectBase then
-        element_type
-      else
-        [:pointer, element_type]
-      end
+      item_ptr = item_pointer(idx)
       convertor = GirFFI::ArrayElementConvertor.new(convert_element_type, item_ptr)
       convertor.to_ruby_value
     end
@@ -7240,13 +7227,11 @@ module GLib
       _v1 = data
       GLib::Lib.g_variant_store(self, _v1)
     end
-    # Initializing method used in constructors. For Variant, this needs to sink
-    # the variant's floating reference.
+    # Initializing method used in constructors. For Variant the constructing
+    # functions all return floating references, so this is need to take full
+    # ownership.
     #
-    # NOTE: This is very hard to test since it is not possible to get the
-    # variant's ref count directely. However, there is an error when running
-    # the tests on 32-bit systems.
-    #
+    # Also see the documentation for g_variant_ref_sink.
     def store_pointer(ptr)
       Lib.g_variant_ref_sink(ptr)
       super
