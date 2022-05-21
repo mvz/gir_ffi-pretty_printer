@@ -1645,6 +1645,12 @@ module GLib
       _v7 = _v4.get_pointer(0)
       return [_v5, _v6, _v7]
     end
+    def self.new_similar(other_hash_table)
+      _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], other_hash_table)
+      _v2 = GLib::Lib.g_hash_table_new_similar(_v1)
+      _v3 = GLib::HashTable.wrap([[:pointer, :void], [:pointer, :void]], _v2)
+      return _v3
+    end
     def self.remove(hash_table, key = nil)
       _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
       _v2 = key
@@ -2916,12 +2922,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 2
+  MICRO_VERSION = 0
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 70
+  MINOR_VERSION = 72
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -2937,6 +2943,12 @@ module GLib
     def self.new(*args, &block)
       obj = allocate
       obj.__send__(:initialize, *args, &block)
+      obj
+    end
+    def self.new_with_flags(*args, &block)
+      raise(NoMethodError) unless (self == GLib::MainContext)
+      obj = allocate
+      obj.__send__(:initialize_with_flags, *args, &block)
       obj
     end
     def self.ref_thread_default
@@ -2982,6 +2994,12 @@ module GLib
       _v2 = GLib::Lib.g_main_context_find_source_by_user_data(self, _v1)
       _v3 = GLib::Source.wrap_copy(_v2)
       return _v3
+    end
+    def initialize_with_flags(flags)
+      _v1 = flags
+      _v2 = GLib::Lib.g_main_context_new_with_flags(_v1)
+      store_pointer(_v2)
+      @struct.owned = true
     end
     def invoke_full(priority, &function)
       _v1 = priority
@@ -3051,6 +3069,7 @@ module GLib
       GLib::Lib.g_main_context_wakeup(self)
     end
   end
+  # XXX: Don't know how to print flags
   class GLib::MainLoop < GirFFI::BoxedBase
     def self.handle_exception(exception)
       current_loop = RUNNING_LOOPS.last
@@ -7528,6 +7547,24 @@ module GLib
     _v3 = GLib::Lib.g_access(_v1, _v2)
     return _v3
   end
+  def self.aligned_alloc(n_blocks, n_block_bytes, alignment)
+    _v1 = n_blocks
+    _v2 = n_block_bytes
+    _v3 = alignment
+    _v4 = GLib::Lib.g_aligned_alloc(_v1, _v2, _v3)
+    return _v4
+  end
+  def self.aligned_alloc0(n_blocks, n_block_bytes, alignment)
+    _v1 = n_blocks
+    _v2 = n_block_bytes
+    _v3 = alignment
+    _v4 = GLib::Lib.g_aligned_alloc0(_v1, _v2, _v3)
+    return _v4
+  end
+  def self.aligned_free(mem = nil)
+    _v1 = mem
+    GLib::Lib.g_aligned_free(_v1)
+  end
   def self.ascii_digit_value(c)
     _v1 = c
     _v2 = GLib::Lib.g_ascii_digit_value(_v1)
@@ -8632,6 +8669,11 @@ module GLib
     _v3 = _v2.to_utf8
     return _v3
   end
+  def self.get_user_state_dir
+    _v1 = GLib::Lib.g_get_user_state_dir
+    _v2 = _v1.to_utf8
+    return _v2
+  end
   def self.getenv(variable)
     _v1 = variable
     _v2 = GLib::Lib.g_getenv(_v1)
@@ -8676,6 +8718,12 @@ module GLib
     _v6 = _v3.get_pointer(0)
     _v7 = _v4.get_pointer(0)
     return [_v5, _v6, _v7]
+  end
+  def self.hash_table_new_similar(other_hash_table)
+    _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], other_hash_table)
+    _v2 = GLib::Lib.g_hash_table_new_similar(_v1)
+    _v3 = GLib::HashTable.wrap([[:pointer, :void], [:pointer, :void]], _v2)
+    return _v3
   end
   def self.hash_table_remove(hash_table, key = nil)
     _v1 = GLib::HashTable.from([[:pointer, :void], [:pointer, :void]], hash_table)
@@ -8903,6 +8951,10 @@ module GLib
     _v4 = unused_data
     GLib::Lib.g_log_default_handler(_v1, _v2, _v3, _v4)
   end
+  def self.log_get_debug_enabled
+    _v1 = GLib::Lib.g_log_get_debug_enabled
+    return _v1
+  end
   def self.log_remove_handler(log_domain, handler_id)
     _v1 = GirFFI::InPointer.from_utf8(log_domain)
     _v2 = handler_id
@@ -8912,6 +8964,10 @@ module GLib
     _v1 = fatal_mask
     _v2 = GLib::Lib.g_log_set_always_fatal(_v1)
     return _v2
+  end
+  def self.log_set_debug_enabled(enabled)
+    _v1 = enabled
+    GLib::Lib.g_log_set_debug_enabled(_v1)
   end
   def self.log_set_fatal_mask(log_domain, fatal_mask)
     _v1 = GirFFI::InPointer.from_utf8(log_domain)
