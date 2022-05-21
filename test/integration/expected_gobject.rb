@@ -1027,9 +1027,6 @@ module GObject
       _v2 = GObject::ObjectClass::Get_property.get_value_from_pointer(_v1, 32)
       _v2
     end
-    def get_property=(callback)
-      struct[:get_property] = GObject::ObjectGetPropertyFunc.from(callback)
-    end
     def gtype
       to_ptr.get_gtype(0)
     end
@@ -1071,9 +1068,6 @@ module GObject
       _v1 = @struct.to_ptr
       _v2 = GObject::ObjectClass::Set_property.get_value_from_pointer(_v1, 24)
       _v2
-    end
-    def set_property=(callback)
-      struct[:set_property] = GObject::ObjectSetPropertyFunc.from(callback)
     end
   end
   class GObject::ObjectConstructParam < GirFFI::StructBase
