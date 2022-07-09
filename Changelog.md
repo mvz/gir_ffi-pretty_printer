@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.9 / 2022-01-23
+
+* Depend on GirFFI 0.16.0
+* Drop support for Ruby 2.6
+
 ## 0.0.8 / 2022-01-23
 
 * Depend on GirFFI 0.15.9
