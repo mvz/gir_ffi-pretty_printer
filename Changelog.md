@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.0.8 / 2021-01-23
+## 0.0.8 / 2022-01-23
 
 * Depend on GirFFI 0.15.9
 * Use safe names when printing functions and constants
+* Target Ruby 2.6 through 3.1
 
 ## 0.0.7 / 2019-12-26
 
