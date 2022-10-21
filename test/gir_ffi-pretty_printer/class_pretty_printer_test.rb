@@ -65,7 +65,7 @@ describe GirFFI::ClassPrettyPrinter do
           class ComplexAlias < SimpleClass
 
             def bar_with_qux
-              "#\{bar_without_qux\}-more"
+              "\#{bar_without_qux}-more"
             end
             alias_method 'bar', 'bar_with_qux'
             alias_method 'bar_without_qux', 'bar'
