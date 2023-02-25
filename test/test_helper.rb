@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
-begin
-  require "simplecov"
-  SimpleCov.start do
-    add_filter "/test/"
-  end
-rescue LoadError
-  nil # SimpleCov not available
+require "simplecov"
+SimpleCov.start do
+  add_filter "/test/"
 end
 
 require "minitest/autorun"
