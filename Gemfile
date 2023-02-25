@@ -6,5 +6,4 @@ gemspec
 
 unless ENV["CI"]
   gem "simplecov"
-  gem "yard", "~> 0.9.5"
 end

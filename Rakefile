@@ -23,13 +23,6 @@ namespace :test do
   task all: [:unit, :integration]
 end
 
-begin
-  require "yard"
-  YARD::Rake::YardocTask.new
-rescue LoadError
-  puts "Install yard to enable the documentation tasks"
-end
-
 Rake::Manifest::Task.new do |t|
   t.patterns = ["lib/**/*", "*.md", "COPYING.LIB"]
 end
