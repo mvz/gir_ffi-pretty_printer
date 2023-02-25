@@ -3,7 +3,3 @@
 source "https://rubygems.org"
 
 gemspec
-
-unless ENV["CI"]
-  gem "simplecov"
-end
