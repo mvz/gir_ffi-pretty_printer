@@ -15,7 +15,7 @@ AllCops:
     - 'test/integration/expected_glib.rb'
     - 'test/integration/expected_gobject.rb'
   NewCops: enable
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.0
 
 # Put development dependencies in the gemspec so rubygems.org knows about them
 Gemspec/DevelopmentDependencies:
