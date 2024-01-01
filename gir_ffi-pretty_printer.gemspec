@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = ["Changelog.md", "README.md"]
 
   spec.add_runtime_dependency "bindings", "~> 1.0"
-  spec.add_runtime_dependency "gir_ffi", "~> 0.16.0"
+  spec.add_runtime_dependency "gir_ffi", ">= 0.16", "< 0.18"
   spec.add_runtime_dependency "indentation", "~> 0.1.1"
   spec.add_runtime_dependency "mvz-live_ast", "~> 2.0"
 
