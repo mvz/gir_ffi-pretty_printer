@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.0.10 / 2024-01-05
+
+* Support Ruby 3.0 through 3.3, dropping support for 2.7 ([#55] and [#69] by [mvz])
+* Update GirFFI dependency to version 0.17.0 ([#71] by [mvz])
+
+[mvz]: https://github.com/mvz
+
+[#55]: https://github.com/mvz/gir_ffi-pretty_printer/pull/55
+[#69]: https://github.com/mvz/gir_ffi-pretty_printer/pull/69
+[#71]: https://github.com/mvz/gir_ffi-pretty_printer/pull/71
+
+
 ## 0.0.9 / 2022-01-23
 
 * Depend on GirFFI 0.16.0
