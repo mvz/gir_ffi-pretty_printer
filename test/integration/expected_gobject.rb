@@ -835,14 +835,14 @@ module GObject
     def self.make_finalizer(ptr)
       proc { finalize(ptr) }
     end
-    def self.new(*args, &block)
+    def self.new(...)
       obj = allocate
-      obj.__send__(:initialize, *args, &block)
+      obj.__send__(:initialize, ...)
       obj
     end
-    def self.new_with_properties(*args, &block)
+    def self.new_with_properties(...)
       obj = allocate
-      obj.__send__(:initialize_with_properties, *args, &block)
+      obj.__send__(:initialize_with_properties, ...)
       obj
     end
     def self.newv(*args, &block)
