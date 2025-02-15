@@ -1,4 +1,5 @@
 module GObject
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::Binding < GObject::Object
@@ -94,8 +95,11 @@ module GObject
     end
   end
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   class GObject::CClosure < GirFFI::StructBase
     def self.marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
       _v1 = GObject::Closure.from(closure)
@@ -327,6 +331,7 @@ module GObject
     end
   end
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   class GObject::Closure < GirFFI::BoxedBase
@@ -501,6 +506,9 @@ module GObject
     end
   end
   # XXX: Don't know how to print flags
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   class GObject::EnumClass < GirFFI::StructBase
   
     def g_type_class
@@ -591,6 +599,7 @@ module GObject
       _v1.put_pointer(16, _v2)
     end
   end
+  # XXX: Don't know how to print boxed
   class GObject::FlagsClass < GirFFI::StructBase
   
     def g_type_class
@@ -671,6 +680,10 @@ module GObject
       _v1.put_pointer(16, _v2)
     end
   end
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print flags
   class GObject::InitiallyUnowned < GObject::Object
   
     # Initializing method used in constructors. For InitiallyUnowned and
@@ -797,6 +810,12 @@ module GObject
     end
   end
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   class GObject::Object < GirFFI::ObjectBase
     def self.compat_control(what, data = nil)
       _v1 = what
@@ -956,11 +975,11 @@ module GObject
       gvalue.set_value(value)
       super(property_name, gvalue)
     end
-    def signal_connect(event, data = nil, &block)
-      GObject.signal_connect(self, event, data, &block)
+    def signal_connect(event, data = nil, &)
+      GObject.signal_connect(self, event, data, &)
     end
-    def signal_connect_after(event, data = nil, &block)
-      GObject.signal_connect_after(self, event, data, &block)
+    def signal_connect_after(event, data = nil, &)
+      GObject.signal_connect_after(self, event, data, &)
     end
     def steal_data(key)
       _v1 = GirFFI::InPointer.from_utf8(key)
@@ -1128,6 +1147,7 @@ module GObject
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
   PARAM_MASK = 255
   PARAM_STATIC_STRINGS = 224
   PARAM_USER_SHIFT = 8
@@ -1313,6 +1333,9 @@ module GObject
   end
   class GObject::ParamSpecPool < GirFFI::StructBase
   
+    def free
+      GObject::Lib.g_param_spec_pool_free(self)
+    end
     def insert(pspec, owner_type)
       _v1 = GObject::ParamSpec.from(pspec)
       _v2 = owner_type
@@ -1460,6 +1483,11 @@ module GObject
       GObject::Value.copy_value_to_pointer(_v2, _v1, 8)
     end
   end
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   SIGNAL_FLAGS_MASK = 511
   SIGNAL_MATCH_MASK = 63
   # XXX: Don't know how to print callback
@@ -1630,6 +1658,10 @@ module GObject
       _v1.put_pointer(8, _v2)
     end
   end
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   TYPE_FLAG_RESERVED_ID_BIT = 1
   TYPE_FUNDAMENTAL_MAX = 1020
   TYPE_FUNDAMENTAL_SHIFT = 2
@@ -1638,7 +1670,10 @@ module GObject
   TYPE_RESERVED_GLIB_FIRST = 22
   TYPE_RESERVED_GLIB_LAST = 31
   TYPE_RESERVED_USER_FIRST = 49
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print union
   class GObject::TypeClass < GirFFI::StructBase
     def self.adjust_private_offset(g_class, private_size_or_offset)
@@ -2143,6 +2178,8 @@ module GObject
       GObject::TypeValuePeekPointerFunc.copy_value_to_pointer(_v2, _v1, 24)
     end
   end
+  # XXX: Don't know how to print boxed
+  VALUE_COLLECT_FORMAT_MAX_LENGTH = 8
   VALUE_INTERNED_STRING = 268435456
   VALUE_NOCOPY_CONTENTS = 134217728
   class GObject::Value < GirFFI::BoxedBase
@@ -2438,6 +2475,11 @@ module GObject
       _v1 = GLib::Variant.from(variant)
       GObject::Lib.g_value_set_variant(self, _v1)
     end
+    def steal_string
+      _v1 = GObject::Lib.g_value_steal_string(self)
+      _v2 = GirFFI::AllocationHelper.free_after(_v1, &:to_utf8)
+      return _v2
+    end
     def take_boxed(v_boxed = nil)
       _v1 = v_boxed
       GObject::Lib.g_value_take_boxed(self, _v1)
@@ -2585,6 +2627,9 @@ module GObject
     alias_method 'nth', 'get_nth'
   end
   # XXX: Don't know how to print callback
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
+  # XXX: Don't know how to print boxed
   # XXX: Don't know how to print callback
   class GObject::WeakRef < GirFFI::StructBase
   
@@ -2601,6 +2646,13 @@ module GObject
     _v1 = boxed_type
     _v2 = boxed
     GObject::Lib.g_boxed_free(_v1, _v2)
+  end
+  def self.boxed_type_register_static(name, boxed_copy, boxed_free)
+    _v1 = GirFFI::InPointer.from_utf8(name)
+    _v2 = GObject::BoxedCopyFunc.from(boxed_copy)
+    _v3 = GObject::BoxedFreeFunc.from(boxed_free)
+    _v4 = GObject::Lib.g_boxed_type_register_static(_v1, _v2, _v3)
+    return _v4
   end
   def self.cclosure_marshal_BOOLEAN__BOXED_BOXED(closure, return_value, n_param_values, param_values, invocation_hint = nil, marshal_data = nil)
     _v1 = GObject::Closure.from(closure)
@@ -2845,7 +2897,7 @@ module GObject
   end
   def self.enum_register_static(name, const_static_values)
     _v1 = GirFFI::InPointer.from_utf8(name)
-    _v2 = GObject::EnumValue.from(const_static_values)
+    _v2 = GirFFI::ZeroTerminated.from(GObject::EnumValue, const_static_values)
     _v3 = GObject::Lib.g_enum_register_static(_v1, _v2)
     return _v3
   end
@@ -2887,7 +2939,7 @@ module GObject
   end
   def self.flags_register_static(name, const_static_values)
     _v1 = GirFFI::InPointer.from_utf8(name)
-    _v2 = GObject::FlagsValue.from(const_static_values)
+    _v2 = GirFFI::ZeroTerminated.from(GObject::FlagsValue, const_static_values)
     _v3 = GObject::Lib.g_flags_register_static(_v1, _v2)
     return _v3
   end
@@ -3256,14 +3308,14 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_disconnect(_v1, _v2)
   end
-  def self.signal_handler_find(instance, mask, signal_id, detail, closure = nil, func = nil)
+  def self.signal_handler_find(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = GirFFI::ArgHelper.store(_v5)
+    _v7 = data
     _v8 = GObject::Lib.g_signal_handler_find(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3278,14 +3330,14 @@ module GObject
     _v2 = handler_id
     GObject::Lib.g_signal_handler_unblock(_v1, _v2)
   end
-  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
+  def self.signal_handlers_block_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = GirFFI::ArgHelper.store(_v5)
+    _v7 = data
     _v8 = GObject::Lib.g_signal_handlers_block_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3293,25 +3345,25 @@ module GObject
     _v1 = GObject::Object.from(instance)
     GObject::Lib.g_signal_handlers_destroy(_v1)
   end
-  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
+  def self.signal_handlers_disconnect_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = GirFFI::ArgHelper.store(_v5)
+    _v7 = data
     _v8 = GObject::Lib.g_signal_handlers_disconnect_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
-  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure = nil, func = nil)
+  def self.signal_handlers_unblock_matched(instance, mask, signal_id, detail, closure = nil, func = nil, data = nil)
     _v1 = GObject::Object.from(instance)
     _v2 = mask
     _v3 = signal_id
     _v4 = detail
     _v5 = GObject::Closure.from(closure)
     _v6 = func
-    _v7 = GirFFI::ArgHelper.store(_v5)
+    _v7 = data
     _v8 = GObject::Lib.g_signal_handlers_unblock_matched(_v1, _v2, _v3, _v4, _v5, _v6, _v7)
     return _v8
   end
@@ -3354,6 +3406,12 @@ module GObject
     _v3 = GObject::Closure.from(class_closure)
     GObject::Lib.g_signal_override_class_closure(_v1, _v2, _v3)
   end
+  def self.signal_override_class_handler(signal_name, instance_type, &class_handler)
+    _v1 = GirFFI::InPointer.from_utf8(signal_name)
+    _v2 = instance_type
+    _v3 = GObject::Callback.from(class_handler)
+    GObject::Lib.g_signal_override_class_handler(_v1, _v2, _v3)
+  end
   def self.signal_parse_name(detailed_signal, itype, force_detail_quark)
     _v1 = GirFFI::InPointer.from_utf8(detailed_signal)
     _v2 = itype
@@ -3376,12 +3434,6 @@ module GObject
     _v2 = hook_id
     GObject::Lib.g_signal_remove_emission_hook(_v1, _v2)
   end
-  def self.signal_set_va_marshaller(signal_id, instance_type, va_marshaller)
-    _v1 = signal_id
-    _v2 = instance_type
-    _v3 = va_marshaller
-    GObject::Lib.g_signal_set_va_marshaller(_v1, _v2, _v3)
-  end
   def self.signal_stop_emission(instance, signal_id, detail)
     _v1 = GObject::Object.from(instance)
     _v2 = signal_id
@@ -3397,7 +3449,7 @@ module GObject
     _v1 = itype
     _v2 = struct_offset
     _v3 = GObject::Lib.g_signal_type_cclosure_new(_v1, _v2)
-    _v4 = GObject::Closure.wrap_own(_v3)
+    _v4 = GObject::Closure.wrap_copy(_v3)
     return _v4
   end
   def self.source_set_closure(source, closure)
@@ -3706,5 +3758,9 @@ module GObject
     _v2 = dest_type
     _v3 = GObject::Lib.g_value_type_transformable(_v1, _v2)
     return _v3
+  end
+  def self.variant_get_gtype
+    _v1 = GObject::Lib.g_variant_get_gtype
+    return _v1
   end
 end

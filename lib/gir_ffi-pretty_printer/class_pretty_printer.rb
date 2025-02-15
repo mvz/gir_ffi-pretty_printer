@@ -48,15 +48,20 @@ module GirFFI
 
     def method_source(meth)
       if meth.arity == -1
-        name = meth.name.to_s
+        begin
+          name = meth.name.to_s
 
-        if @klass.gir_info.find_instance_method name
-          @klass.setup_instance_method name
-        elsif name == "_"
-          @klass.setup_instance_method ""
+          if @klass.gir_info.find_instance_method name
+            @klass.setup_instance_method name
+          elsif name == "_"
+            @klass.setup_instance_method ""
+          end
+
+          meth = @klass.instance_method name
+        rescue FFI::NotFoundError => e
+          warn "Setup of #{@klass.name}##{meth.name} failed: #{e.message}"
+          return
         end
-
-        meth = @klass.instance_method name
       end
 
       begin
