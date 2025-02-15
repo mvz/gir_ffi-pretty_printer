@@ -750,8 +750,8 @@ module GLib
       _v2 = GLib::Lib.g_bytes_compare(self, _v1)
       return _v2
     end
-    def each(&block)
-      data.each(&block)
+    def each(&)
+      data.each(&)
     end
     def equal(bytes2)
       _v1 = GLib::Bytes.from(bytes2)

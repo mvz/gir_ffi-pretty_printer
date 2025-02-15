@@ -975,11 +975,11 @@ module GObject
       gvalue.set_value(value)
       super(property_name, gvalue)
     end
-    def signal_connect(event, data = nil, &block)
-      GObject.signal_connect(self, event, data, &block)
+    def signal_connect(event, data = nil, &)
+      GObject.signal_connect(self, event, data, &)
     end
-    def signal_connect_after(event, data = nil, &block)
-      GObject.signal_connect_after(self, event, data, &block)
+    def signal_connect_after(event, data = nil, &)
+      GObject.signal_connect_after(self, event, data, &)
     end
     def steal_data(key)
       _v1 = GirFFI::InPointer.from_utf8(key)
