@@ -39,6 +39,7 @@ describe GirFFI::ClassPrettyPrinter do
         RUBY
 
         result = instance.pretty_print
+
         _(result).must_equal expected
       end
     end
@@ -54,6 +55,7 @@ describe GirFFI::ClassPrettyPrinter do
         RUBY
 
         result = instance.pretty_print
+
         _(result).must_equal expected
       end
     end
@@ -73,6 +75,7 @@ describe GirFFI::ClassPrettyPrinter do
         RUBY
 
         result = instance.pretty_print
+
         _(result).must_equal expected
       end
     end
