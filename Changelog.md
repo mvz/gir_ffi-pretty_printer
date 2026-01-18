@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.0.11 / 2026-01-18
+
+* Support Ruby 3.2 through 4.0, dropping support for 3.0 and 3.1
+  ([#76], [#84] and [#90] by [mvz])
+* Bump `gir_ffi` dependency to `~> 0.18.0` ([#79] by [mvz])
+
+[#76]: https://github.com/mvz/gir_ffi-pretty_printer/pull/76
+[#79]: https://github.com/mvz/gir_ffi-pretty_printer/pull/79
+[#84]: https://github.com/mvz/gir_ffi-pretty_printer/pull/84
+[#90]: https://github.com/mvz/gir_ffi-pretty_printer/pull/90
+
 ## 0.0.10 / 2024-01-05
 
 * Support Ruby 3.0 through 3.3, dropping support for 2.7 ([#55] and [#69] by [mvz])
@@ -10,7 +21,6 @@
 [#55]: https://github.com/mvz/gir_ffi-pretty_printer/pull/55
 [#69]: https://github.com/mvz/gir_ffi-pretty_printer/pull/69
 [#71]: https://github.com/mvz/gir_ffi-pretty_printer/pull/71
-
 
 ## 0.0.9 / 2022-01-23
 
