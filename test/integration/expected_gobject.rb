@@ -453,7 +453,7 @@ module GObject
     end
     def ref
       _v1 = GObject::Lib.g_closure_ref(self)
-      _v2 = GObject::Closure.wrap_copy(_v1)
+      _v2 = GObject::Closure.wrap_own(_v1)
       return _v2
     end
     def ref_count
@@ -995,7 +995,7 @@ module GObject
       GObject::Lib.g_object_thaw_notify(self)
     end
     def unref
-      GObject::Lib.g_object_unref(self)
+      GObject::Lib.g_object_unref(self.ref)
     end
     def watch_closure(closure)
       _v1 = GObject::Closure.from(closure)
@@ -1681,6 +1681,12 @@ module GObject
       _v2 = private_size_or_offset
       GObject::Lib.g_type_class_adjust_private_offset(_v1, _v2)
     end
+    def self.get(type)
+      _v1 = type
+      _v2 = GObject::Lib.g_type_class_get(_v1)
+      _v3 = GObject::TypeClass.wrap_copy(_v2)
+      return _v3
+    end
     def self.peek(type)
       _v1 = type
       _v2 = GObject::Lib.g_type_class_peek(_v1)
@@ -1919,13 +1925,13 @@ module GObject
     end
     def register_enum(name, const_static_values)
       _v1 = GirFFI::InPointer.from_utf8(name)
-      _v2 = GObject::EnumValue.from(const_static_values)
+      _v2 = GirFFI::ZeroTerminated.from(GObject::EnumValue, const_static_values)
       _v3 = GObject::Lib.g_type_module_register_enum(self, _v1, _v2)
       return _v3
     end
     def register_flags(name, const_static_values)
       _v1 = GirFFI::InPointer.from_utf8(name)
-      _v2 = GObject::FlagsValue.from(const_static_values)
+      _v2 = GirFFI::ZeroTerminated.from(GObject::FlagsValue, const_static_values)
       _v3 = GObject::Lib.g_type_module_register_flags(self, _v1, _v2)
       return _v3
     end
@@ -2869,7 +2875,7 @@ module GObject
   def self.enum_complete_type_info(g_enum_type, const_values)
     _v1 = g_enum_type
     _v2 = FFI::MemoryPointer.new(GObject::TypeInfo)
-    _v3 = GObject::EnumValue.from(const_values)
+    _v3 = GirFFI::ZeroTerminated.from(GObject::EnumValue, const_values)
     GObject::Lib.g_enum_complete_type_info(_v1, _v2, _v3)
     _v4 = GObject::TypeInfo.wrap_own(GObject::TypeInfo.get_value_from_pointer(_v2, 0))
     return _v4
@@ -2911,7 +2917,7 @@ module GObject
   def self.flags_complete_type_info(g_flags_type, const_values)
     _v1 = g_flags_type
     _v2 = FFI::MemoryPointer.new(GObject::TypeInfo)
-    _v3 = GObject::FlagsValue.from(const_values)
+    _v3 = GirFFI::ZeroTerminated.from(GObject::FlagsValue, const_values)
     GObject::Lib.g_flags_complete_type_info(_v1, _v2, _v3)
     _v4 = GObject::TypeInfo.wrap_own(GObject::TypeInfo.get_value_from_pointer(_v2, 0))
     return _v4
@@ -3542,6 +3548,12 @@ module GObject
     _v2 = private_size_or_offset
     GObject::Lib.g_type_class_adjust_private_offset(_v1, _v2)
   end
+  def self.type_class_get(type)
+    _v1 = type
+    _v2 = GObject::Lib.g_type_class_get(_v1)
+    _v3 = GObject::TypeClass.wrap_copy(_v2)
+    return _v3
+  end
   def self.type_class_peek(type)
     _v1 = type
     _v2 = GObject::Lib.g_type_class_peek(_v1)
@@ -3558,6 +3570,12 @@ module GObject
     _v1 = type
     _v2 = GObject::Lib.g_type_class_ref(_v1)
     _v3 = GObject::TypeClass.wrap_copy(_v2)
+    return _v3
+  end
+  def self.type_default_interface_get(g_type)
+    _v1 = g_type
+    _v2 = GObject::Lib.g_type_default_interface_get(_v1)
+    _v3 = GObject::TypeInterface.wrap_copy(_v2)
     return _v3
   end
   def self.type_default_interface_peek(g_type)
