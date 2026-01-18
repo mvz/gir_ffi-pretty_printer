@@ -131,7 +131,7 @@ module GLib
       _v3 = GirFFI::ArgHelper.store(_v2)
       GLib::Lib.g_async_queue_push_sorted(self, _v1, _v2, _v3)
     end
-    def push_sorted_unlocked(data = nil, &func)
+    def push_sorted_unlocked(data, &func)
       _v1 = data
       _v2 = GLib::CompareDataFunc.from(func)
       _v3 = GirFFI::ArgHelper.store(_v2)
@@ -154,7 +154,7 @@ module GLib
       _v2 = GLib::Lib.g_async_queue_remove(self, _v1)
       return _v2
     end
-    def remove_unlocked(item = nil)
+    def remove_unlocked(item)
       _v1 = item
       _v2 = GLib::Lib.g_async_queue_remove_unlocked(self, _v1)
       return _v2
@@ -581,11 +581,12 @@ module GLib
   end
   # XXX: Don't know how to print enum
   class GLib::ByteArray < GirFFI::BoxedBase
-    def self.append(array, data, len)
+    def self.append(array, data)
       _v1 = array
-      _v2 = data
-      _v3 = len
-      _v4 = GLib::Lib.g_byte_array_append(_v1, _v2, _v3)
+      len = data.nil? ? (0) : (data.length)
+      _v2 = len
+      _v3 = GirFFI::SizedArray.from(:guint8, -1, data)
+      _v4 = GLib::Lib.g_byte_array_append(_v1, _v3, _v2)
       _v5 = GLib::ByteArray.wrap(_v4)
       return _v5
     end
@@ -593,7 +594,8 @@ module GLib
       _v1 = array
       _v2 = free_segment
       _v3 = GLib::Lib.g_byte_array_free(_v1, _v2)
-      return _v3
+      _v4 = GirFFI::SizedArray.wrap(:guint8, -1, _v3)
+      return _v4
     end
     def self.free_to_bytes(array)
       _v1 = array
@@ -622,11 +624,12 @@ module GLib
       _v4 = GLib::ByteArray.wrap(_v3)
       return _v4
     end
-    def self.prepend(array, data, len)
+    def self.prepend(array, data)
       _v1 = array
-      _v2 = data
-      _v3 = len
-      _v4 = GLib::Lib.g_byte_array_prepend(_v1, _v2, _v3)
+      len = data.nil? ? (0) : (data.length)
+      _v2 = len
+      _v3 = GirFFI::SizedArray.from(:guint8, -1, data)
+      _v4 = GLib::Lib.g_byte_array_prepend(_v1, _v3, _v2)
       _v5 = GLib::ByteArray.wrap(_v4)
       return _v5
     end
@@ -687,7 +690,8 @@ module GLib
       _v2 = FFI::MemoryPointer.new(:uint64)
       _v3 = GLib::Lib.g_byte_array_steal(_v1, _v2)
       _v4 = _v2.get_uint64(0)
-      return [_v3, _v4]
+      _v5 = GirFFI::SizedArray.wrap(:guint8, _v4, _v3)
+      return _v5
     end
     def self.unref(array)
       _v1 = array
@@ -1027,6 +1031,12 @@ module GLib
       _v2 = GLib::Lib.g_date_get_sunday_weeks_in_year(_v1)
       return _v2
     end
+    def self.get_weeks_in_year(year, first_day_of_week)
+      _v1 = year
+      _v2 = first_day_of_week
+      _v3 = GLib::Lib.g_date_get_weeks_in_year(_v1, _v2)
+      return _v3
+    end
     def self.is_leap_year(year)
       _v1 = year
       _v2 = GLib::Lib.g_date_is_leap_year(_v1)
@@ -1176,6 +1186,11 @@ module GLib
       _v1 = GLib::Lib.g_date_get_sunday_week_of_year(self)
       return _v1
     end
+    def get_week_of_year(first_day_of_week)
+      _v1 = first_day_of_week
+      _v2 = GLib::Lib.g_date_get_week_of_year(self, _v1)
+      return _v2
+    end
     def get_weekday
       _v1 = GLib::Lib.g_date_get_weekday(self)
       return _v1
@@ -1316,6 +1331,7 @@ module GLib
     alias_method 'time=', 'set_time'
     alias_method 'time_t=', 'set_time_t'
     alias_method 'time_val=', 'set_time_val'
+    alias_method 'week_of_year', 'get_week_of_year'
     alias_method 'weekday', 'get_weekday'
   end
   # XXX: Don't know how to print enum
@@ -3300,7 +3316,7 @@ module GLib
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 83
+  MINOR_VERSION = 86
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -5798,6 +5814,11 @@ module GLib
     def destroy
       GLib::Lib.g_source_destroy(self)
     end
+    def dup_context
+      _v1 = GLib::Lib.g_source_dup_context(self)
+      _v2 = GLib::MainContext.wrap_own(_v1)
+      return _v2
+    end
     def flags
       _v1 = @struct.to_ptr
       _v2 = _v1.get_uint32(44)
@@ -6135,6 +6156,11 @@ module GLib
       _v2 = GLib::Lib.g_string_assign(self, _v1)
       _v3 = GLib::String.wrap_copy(_v2)
       return _v3
+    end
+    def copy
+      _v1 = GLib::Lib.g_string_copy(self)
+      _v2 = GLib::String.wrap_own(_v1)
+      return _v2
     end
     def down
       _v1 = GLib::Lib.g_string_down(self)
@@ -8624,7 +8650,7 @@ module GLib
     _v6 = _v4.get_int32(0)
     return [_v5, _v6]
   end
-  def self.atomic_int_dec_and_test(atomic)
+  def self.atomic_int_dec_and_test(atomic = nil)
     _v1 = atomic
     _v2 = GLib::Lib.g_atomic_int_dec_and_test(_v1)
     return _v2
@@ -8641,12 +8667,12 @@ module GLib
     _v3 = GLib::Lib.g_atomic_int_exchange_and_add(_v1, _v2)
     return _v3
   end
-  def self.atomic_int_get(atomic)
+  def self.atomic_int_get(atomic = nil)
     _v1 = atomic
     _v2 = GLib::Lib.g_atomic_int_get(_v1)
     return _v2
   end
-  def self.atomic_int_inc(atomic)
+  def self.atomic_int_inc(atomic = nil)
     _v1 = atomic
     GLib::Lib.g_atomic_int_inc(_v1)
   end
@@ -8773,9 +8799,11 @@ module GLib
     _v1 = arc
     GLib::Lib.g_atomic_ref_count_inc(_v1)
   end
-  def self.atomic_ref_count_init(arc)
-    _v1 = arc
+  def self.atomic_ref_count_init
+    _v1 = FFI::MemoryPointer.new(:int32)
     GLib::Lib.g_atomic_ref_count_init(_v1)
+    _v2 = _v1.get_int32(0)
+    return _v2
   end
   def self.base64_decode(text)
     _v1 = GirFFI::InPointer.from_utf8(text)
@@ -8844,6 +8872,14 @@ module GLib
     _v2 = lock_bit
     GLib::Lib.g_bit_lock(_v1, _v2)
   end
+  def self.bit_lock_and_get(address, lock_bit)
+    _v1 = address
+    _v2 = lock_bit
+    _v3 = FFI::MemoryPointer.new(:int32)
+    GLib::Lib.g_bit_lock_and_get(_v1, _v2, _v3)
+    _v4 = _v3.get_int32(0)
+    return _v4
+  end
   def self.bit_nth_lsf(mask, nth_bit)
     _v1 = mask
     _v2 = nth_bit
@@ -8872,6 +8908,13 @@ module GLib
     _v2 = lock_bit
     GLib::Lib.g_bit_unlock(_v1, _v2)
   end
+  def self.bit_unlock_and_set(address, lock_bit, new_val, preserve_mask)
+    _v1 = address
+    _v2 = lock_bit
+    _v3 = new_val
+    _v4 = preserve_mask
+    GLib::Lib.g_bit_unlock_and_set(_v1, _v2, _v3, _v4)
+  end
   def self.blow_chunks
     GLib::Lib.g_blow_chunks
   end
@@ -8892,11 +8935,12 @@ module GLib
     _v4 = GirFFI::AllocationHelper.free_after(_v3, &:to_utf8)
     return _v4
   end
-  def self.byte_array_append(array, data, len)
+  def self.byte_array_append(array, data)
     _v1 = array
-    _v2 = data
-    _v3 = len
-    _v4 = GLib::Lib.g_byte_array_append(_v1, _v2, _v3)
+    len = data.nil? ? (0) : (data.length)
+    _v2 = len
+    _v3 = GirFFI::SizedArray.from(:guint8, -1, data)
+    _v4 = GLib::Lib.g_byte_array_append(_v1, _v3, _v2)
     _v5 = GLib::ByteArray.wrap(_v4)
     return _v5
   end
@@ -8904,7 +8948,8 @@ module GLib
     _v1 = array
     _v2 = free_segment
     _v3 = GLib::Lib.g_byte_array_free(_v1, _v2)
-    return _v3
+    _v4 = GirFFI::SizedArray.wrap(:guint8, -1, _v3)
+    return _v4
   end
   def self.byte_array_free_to_bytes(array)
     _v1 = array
@@ -8925,11 +8970,12 @@ module GLib
     _v4 = GLib::ByteArray.wrap(_v3)
     return _v4
   end
-  def self.byte_array_prepend(array, data, len)
+  def self.byte_array_prepend(array, data)
     _v1 = array
-    _v2 = data
-    _v3 = len
-    _v4 = GLib::Lib.g_byte_array_prepend(_v1, _v2, _v3)
+    len = data.nil? ? (0) : (data.length)
+    _v2 = len
+    _v3 = GirFFI::SizedArray.from(:guint8, -1, data)
+    _v4 = GLib::Lib.g_byte_array_prepend(_v1, _v3, _v2)
     _v5 = GLib::ByteArray.wrap(_v4)
     return _v5
   end
@@ -8990,7 +9036,8 @@ module GLib
     _v2 = FFI::MemoryPointer.new(:uint64)
     _v3 = GLib::Lib.g_byte_array_steal(_v1, _v2)
     _v4 = _v2.get_uint64(0)
-    return [_v3, _v4]
+    _v5 = GirFFI::SizedArray.wrap(:guint8, _v4, _v3)
+    return _v5
   end
   def self.byte_array_unref(array)
     _v1 = array
@@ -9228,6 +9275,12 @@ module GLib
     _v1 = year
     _v2 = GLib::Lib.g_date_get_sunday_weeks_in_year(_v1)
     return _v2
+  end
+  def self.date_get_weeks_in_year(year, first_day_of_week)
+    _v1 = year
+    _v2 = first_day_of_week
+    _v3 = GLib::Lib.g_date_get_weeks_in_year(_v1, _v2)
+    return _v3
   end
   def self.date_is_leap_year(year)
     _v1 = year
@@ -10035,6 +10088,10 @@ module GLib
     _v4 = unused_data
     GLib::Lib.g_log_default_handler(_v1, _v2, _v3, _v4)
   end
+  def self.log_get_always_fatal
+    _v1 = GLib::Lib.g_log_get_always_fatal
+    return _v1
+  end
   def self.log_get_debug_enabled
     _v1 = GLib::Lib.g_log_get_debug_enabled
     return _v1
@@ -10538,17 +10595,24 @@ module GLib
     return _v3
   end
   def self.ref_count_dec(rc)
-    _v1 = rc
+    _v1 = FFI::MemoryPointer.new(:int32)
+    _v1.put_int32(0, rc)
     _v2 = GLib::Lib.g_ref_count_dec(_v1)
-    return _v2
+    _v3 = _v1.get_int32(0)
+    return [_v2, _v3]
   end
   def self.ref_count_inc(rc)
-    _v1 = rc
+    _v1 = FFI::MemoryPointer.new(:int32)
+    _v1.put_int32(0, rc)
     GLib::Lib.g_ref_count_inc(_v1)
+    _v2 = _v1.get_int32(0)
+    return _v2
   end
-  def self.ref_count_init(rc)
-    _v1 = rc
+  def self.ref_count_init
+    _v1 = FFI::MemoryPointer.new(:int32)
     GLib::Lib.g_ref_count_init(_v1)
+    _v2 = _v1.get_int32(0)
+    return _v2
   end
   def self.ref_string_acquire(str)
     _v1 = GirFFI::InPointer.from_utf8(str)
@@ -12305,7 +12369,7 @@ module GLib
     _v2 = FFI::MemoryPointer.new(:pointer)
     _v3 = GirFFI::SizedArray.from(:guint8, -1, str)
     _v4 = GLib::Lib.g_utf8_validate(_v3, _v1, _v2)
-    _v5 = _v2.get_pointer(0).to_utf8
+    _v5 = GirFFI::ZeroTerminated.wrap(:guint8, _v2.get_pointer(0))
     return [_v4, _v5]
   end
   def self.utf8_validate_len(str)
@@ -12314,7 +12378,7 @@ module GLib
     _v2 = FFI::MemoryPointer.new(:pointer)
     _v3 = GirFFI::SizedArray.from(:guint8, -1, str)
     _v4 = GLib::Lib.g_utf8_validate_len(_v3, _v1, _v2)
-    _v5 = _v2.get_pointer(0).to_utf8
+    _v5 = GirFFI::ZeroTerminated.wrap(:guint8, _v2.get_pointer(0))
     return [_v4, _v5]
   end
   def self.utime(filename, utb = nil)
