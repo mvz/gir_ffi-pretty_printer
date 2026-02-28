@@ -2,24 +2,26 @@
 
 require "test_helper"
 
-class SimpleClass
-  def bar
-    "hello"
-  end
-end
-
-class SimpleAlias < SimpleClass
-  alias foo bar
-end
-
-class ComplexAlias < SimpleClass
-  alias bar_without_qux bar
-
-  def bar_with_qux
-    "#{bar_without_qux}-more"
+module TestClasses
+  class SimpleClass
+    def bar
+      "hello"
+    end
   end
 
-  alias bar bar_with_qux
+  class SimpleAlias < SimpleClass
+    alias foo bar
+  end
+
+  class ComplexAlias < SimpleClass
+    alias bar_without_qux bar
+
+    def bar_with_qux
+      "#{bar_without_qux}-more"
+    end
+
+    alias bar bar_with_qux
+  end
 end
 
 describe GirFFI::ClassPrettyPrinter do
@@ -27,10 +29,10 @@ describe GirFFI::ClassPrettyPrinter do
 
   describe "#pretty_print" do
     describe "for a class with a simple method definition" do
-      let(:printed_class) { SimpleClass }
+      let(:printed_class) { TestClasses::SimpleClass }
       it "pretty-prints the class" do
         expected = <<~RUBY.chomp
-          class SimpleClass < Object
+          class TestClasses::SimpleClass < Object
 
             def bar
               "hello"
@@ -45,10 +47,10 @@ describe GirFFI::ClassPrettyPrinter do
     end
 
     describe "for a class with a simple aliased method" do
-      let(:printed_class) { SimpleAlias }
+      let(:printed_class) { TestClasses::SimpleAlias }
       it "pretty-prints the class" do
         expected = <<~RUBY.chomp
-          class SimpleAlias < SimpleClass
+          class TestClasses::SimpleAlias < TestClasses::SimpleClass
 
             alias_method 'foo', 'bar'
           end
@@ -61,10 +63,10 @@ describe GirFFI::ClassPrettyPrinter do
     end
 
     describe "for a class with an alias chain" do
-      let(:printed_class) { ComplexAlias }
+      let(:printed_class) { TestClasses::ComplexAlias }
       it "pretty-prints the class" do
         expected = <<~RUBY.chomp
-          class ComplexAlias < SimpleClass
+          class TestClasses::ComplexAlias < TestClasses::SimpleClass
 
             def bar_with_qux
               "\#{bar_without_qux}-more"
