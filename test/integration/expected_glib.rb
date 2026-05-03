@@ -19,7 +19,7 @@ module GLib
       FFI.type_size(ffi_type)
     end
     def self.from_enumerable(elmtype, arr)
-      new(elmtype).tap { |it| it.append_vals(arr) }
+      new(elmtype).tap { _1.append_vals(arr) }
     end
     def ==(other)
       (to_a == other.to_a)
@@ -4419,7 +4419,7 @@ module GLib
       array.add(data)
     end
     def self.from_enumerable(type, arr)
-      new(type).tap { |it| it.add_array(arr) }
+      new(type).tap { _1.add_array(arr) }
     end
     def ==(other)
       (to_a == other.to_a)
