@@ -743,6 +743,12 @@ module GLib
       obj.__send__(:initialize, *args, &block)
       obj
     end
+    def self.new_from_bytes(*args, &block)
+      raise(NoMethodError) unless (self == GLib::Bytes)
+      obj = allocate
+      obj.__send__(:initialize_from_bytes, *args, &block)
+      obj
+    end
     def self.new_take(*args, &block)
       raise(NoMethodError) unless (self == GLib::Bytes)
       obj = allocate
@@ -784,6 +790,14 @@ module GLib
       _v1 = GLib::Lib.g_bytes_hash(self)
       return _v1
     end
+    def initialize_from_bytes(bytes, offset, length)
+      _v1 = GLib::Bytes.from(bytes)
+      _v2 = offset
+      _v3 = length
+      _v4 = GLib::Lib.g_bytes_new_from_bytes(_v1, _v2, _v3)
+      store_pointer(_v4)
+      @struct.owned = true
+    end
     def initialize_take(data = nil)
       size = data.nil? ? (0) : (data.length)
       _v1 = size
@@ -791,13 +805,6 @@ module GLib
       _v3 = GLib::Lib.g_bytes_new_take(_v2, _v1)
       store_pointer(_v3)
       @struct.owned = true
-    end
-    def new_from_bytes(offset, length)
-      _v1 = offset
-      _v2 = length
-      _v3 = GLib::Lib.g_bytes_new_from_bytes(self, _v1, _v2)
-      _v4 = GLib::Bytes.wrap_own(_v3)
-      return _v4
     end
     def ref
       _v1 = GLib::Lib.g_bytes_ref(self)
@@ -3311,12 +3318,12 @@ module GLib
   MAXUINT32 = 4294967295
   MAXUINT64 = 18446744073709551615
   MAXUINT8 = 255
-  MICRO_VERSION = 3
+  MICRO_VERSION = 0
   MININT16 = -32768
   MININT32 = -2147483648
   MININT64 = -9223372036854775808
   MININT8 = -128
-  MINOR_VERSION = 86
+  MINOR_VERSION = 88
   MODULE_SUFFIX = "so"
   class GLib::MainContext < GirFFI::BoxedBase
     def self.default
@@ -3581,6 +3588,10 @@ module GLib
       _v2 = GLib::SList.wrap(:utf8, _v1)
       return _v2
     end
+    def get_offset
+      _v1 = GLib::Lib.g_markup_parse_context_get_offset(self)
+      return _v1
+    end
     def get_position
       _v1 = FFI::MemoryPointer.new(:int32)
       _v2 = FFI::MemoryPointer.new(:int32)
@@ -3588,6 +3599,16 @@ module GLib
       _v3 = _v1.get_int32(0)
       _v4 = _v2.get_int32(0)
       return [_v3, _v4]
+    end
+    def get_tag_start
+      _v1 = FFI::MemoryPointer.new(:uint64)
+      _v2 = FFI::MemoryPointer.new(:uint64)
+      _v3 = FFI::MemoryPointer.new(:uint64)
+      GLib::Lib.g_markup_parse_context_get_tag_start(self, _v1, _v2, _v3)
+      _v4 = _v1.get_uint64(0)
+      _v5 = _v2.get_uint64(0)
+      _v6 = _v3.get_uint64(0)
+      return [_v4, _v5, _v6]
     end
     def get_user_data
       _v1 = GLib::Lib.g_markup_parse_context_get_user_data(self)
@@ -3620,7 +3641,9 @@ module GLib
     end
     alias_method 'element', 'get_element'
     alias_method 'element_stack', 'get_element_stack'
+    alias_method 'offset', 'get_offset'
     alias_method 'position', 'get_position'
+    alias_method 'tag_start', 'get_tag_start'
     alias_method 'user_data', 'get_user_data'
   end
   # XXX: Don't know how to print flags
@@ -3803,6 +3826,7 @@ module GLib
     end
   end
   # XXX: Don't know how to print union
+  NSEC_PER_SEC = 1000000000
   class GLib::Node < GirFFI::StructBase
     def self.pop_allocator
       GLib::Lib.g_node_pop_allocator
@@ -7150,23 +7174,6 @@ module GLib
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
   # XXX: Don't know how to print enum
-  # XXX: Don't know how to print callback
-  class GLib::UnixPipe < GirFFI::StructBase
-  
-    def fds
-      _v1 = @struct.to_ptr
-      _v2 = GirFFI::SizedArray.get_value_from_pointer(_v1, 0)
-      _v3 = GirFFI::SizedArray.wrap(:gint32, 2, _v2)
-      _v3
-    end
-    def fds=(value)
-      _v1 = @struct.to_ptr
-      GirFFI::ArgHelper.check_fixed_array_size(2, value, "value")
-      _v2 = GirFFI::SizedArray.copy_from(:gint32, 2, value)
-      GirFFI::SizedArray.copy_value_to_pointer(_v2, _v1)
-    end
-  end
-  # XXX: Don't know how to print enum
   class GLib::Uri < GirFFI::BoxedBase
     def self.build(flags, scheme, userinfo, host, port, path, query = nil, fragment = nil)
       _v1 = flags
@@ -9101,11 +9108,6 @@ module GLib
     GirFFI::ArgHelper.check_error(_v2)
     return _v3
   end
-  def self.closefrom(lowfd)
-    _v1 = lowfd
-    _v2 = GLib::Lib.g_closefrom(_v1)
-    return _v2
-  end
   def self.compute_checksum_for_bytes(checksum_type, data)
     _v1 = checksum_type
     _v2 = GLib::Bytes.from(data)
@@ -9438,11 +9440,6 @@ module GLib
     _v6 = GLib::Lib.g_error_domain_register_static(_v1, _v2, _v3, _v4, _v5)
     return _v6
   end
-  def self.fdwalk_set_cloexec(lowfd)
-    _v1 = lowfd
-    _v2 = GLib::Lib.g_fdwalk_set_cloexec(_v1)
-    return _v2
-  end
   def self.file_error_from_errno(err_no)
     _v1 = err_no
     _v2 = GLib::Lib.g_file_error_from_errno(_v1)
@@ -9688,6 +9685,10 @@ module GLib
   end
   def self.get_monotonic_time
     _v1 = GLib::Lib.g_get_monotonic_time
+    return _v1
+  end
+  def self.get_monotonic_time_ns
+    _v1 = GLib::Lib.g_get_monotonic_time_ns
     return _v1
   end
   def self.get_num_processors
@@ -11287,7 +11288,7 @@ module GLib
   end
   def self.strsplit_set(string, delimiters, max_tokens)
     _v1 = GirFFI::InPointer.from_utf8(string)
-    _v2 = GirFFI::InPointer.from_utf8(delimiters)
+    _v2 = GirFFI::ZeroTerminated.from(:guint8, delimiters)
     _v3 = max_tokens
     _v4 = GLib::Lib.g_strsplit_set(_v1, _v2, _v3)
     _v5 = GLib::Strv.wrap(_v4)
@@ -11486,6 +11487,10 @@ module GLib
   end
   def self.test_trap_has_passed
     _v1 = GLib::Lib.g_test_trap_has_passed
+    return _v1
+  end
+  def self.test_trap_has_skipped
+    _v1 = GLib::Lib.g_test_trap_has_skipped
     return _v1
   end
   def self.test_trap_reached_timeout
@@ -11858,66 +11863,6 @@ module GLib
     _v1 = script
     _v2 = GLib::Lib.g_unicode_script_to_iso15924(_v1)
     return _v2
-  end
-  def self.unix_error_quark
-    _v1 = GLib::Lib.g_unix_error_quark
-    return _v1
-  end
-  def self.unix_fd_add_full(priority, fd, condition, &function)
-    _v1 = priority
-    _v2 = fd
-    _v3 = condition
-    _v4 = GLib::UnixFDSourceFunc.from(function)
-    _v5 = GirFFI::ArgHelper.store(_v4)
-    _v6 = GLib::DestroyNotify.default
-    _v7 = GLib::Lib.g_unix_fd_add_full(_v1, _v2, _v3, _v4, _v5, _v6)
-    return _v7
-  end
-  def self.unix_fd_source_new(fd, condition)
-    _v1 = fd
-    _v2 = condition
-    _v3 = GLib::Lib.g_unix_fd_source_new(_v1, _v2)
-    _v4 = GLib::Source.wrap_own(_v3)
-    return _v4
-  end
-  def self.unix_get_passwd_entry(user_name)
-    _v1 = GirFFI::InPointer.from_utf8(user_name)
-    _v2 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v3 = GLib::Lib.g_unix_get_passwd_entry(_v1, _v2)
-    GirFFI::ArgHelper.check_error(_v2)
-    return _v3
-  end
-  def self.unix_open_pipe(fds, flags)
-    GirFFI::ArgHelper.check_fixed_array_size(2, fds, "fds")
-    _v1 = GirFFI::SizedArray.from(:gint32, 2, fds)
-    _v2 = flags
-    _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v4 = GLib::Lib.g_unix_open_pipe(_v1, _v2, _v3)
-    GirFFI::ArgHelper.check_error(_v3)
-    return _v4
-  end
-  def self.unix_set_fd_nonblocking(fd, nonblock)
-    _v1 = fd
-    _v2 = nonblock
-    _v3 = FFI::MemoryPointer.new(:pointer).write_pointer(nil)
-    _v4 = GLib::Lib.g_unix_set_fd_nonblocking(_v1, _v2, _v3)
-    GirFFI::ArgHelper.check_error(_v3)
-    return _v4
-  end
-  def self.unix_signal_add(priority, signum, &handler)
-    _v1 = priority
-    _v2 = signum
-    _v3 = GLib::SourceFunc.from(handler)
-    _v4 = GirFFI::ArgHelper.store(_v3)
-    _v5 = GLib::DestroyNotify.default
-    _v6 = GLib::Lib.g_unix_signal_add_full(_v1, _v2, _v3, _v4, _v5)
-    return _v6
-  end
-  def self.unix_signal_source_new(signum)
-    _v1 = signum
-    _v2 = GLib::Lib.g_unix_signal_source_new(_v1)
-    _v3 = GLib::Source.wrap_own(_v2)
-    return _v3
   end
   def self.unlink(filename)
     _v1 = filename

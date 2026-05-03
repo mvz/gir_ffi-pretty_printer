@@ -554,13 +554,15 @@ module GObject
     end
     def values
       _v1 = @struct.to_ptr
-      _v2 = _v1.get_pointer(24)
-      _v3 = GObject::EnumValue.wrap(_v2)
-      _v3
+      _v2 = _v1.get_uint32(16)
+      _v3 = @struct.to_ptr
+      _v4 = _v3.get_pointer(24)
+      _v5 = GirFFI::SizedArray.wrap(GObject::EnumValue, _v2, _v4)
+      _v5
     end
     def values=(value)
       _v1 = @struct.to_ptr
-      _v2 = GObject::EnumValue.copy_from(value)
+      _v2 = GirFFI::SizedArray.copy_from(GObject::EnumValue, -1, value)
       _v1.put_pointer(24, _v2)
     end
   end
@@ -635,13 +637,15 @@ module GObject
     end
     def values
       _v1 = @struct.to_ptr
-      _v2 = _v1.get_pointer(16)
-      _v3 = GObject::FlagsValue.wrap(_v2)
-      _v3
+      _v2 = _v1.get_uint32(12)
+      _v3 = @struct.to_ptr
+      _v4 = _v3.get_pointer(16)
+      _v5 = GirFFI::SizedArray.wrap(GObject::FlagsValue, _v2, _v4)
+      _v5
     end
     def values=(value)
       _v1 = @struct.to_ptr
-      _v2 = GObject::FlagsValue.copy_from(value)
+      _v2 = GirFFI::SizedArray.copy_from(GObject::FlagsValue, -1, value)
       _v1.put_pointer(16, _v2)
     end
   end
