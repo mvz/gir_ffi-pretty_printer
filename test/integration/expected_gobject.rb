@@ -906,7 +906,11 @@ module GObject
       return _v2
     end
     def get_property(property_name)
-      gvalue = gvalue_for_property(property_name)
+      spec = property_param_spec(property_name)
+      unless spec.flags[:readable] then
+        raise(ArgumentError, "Property #{property_name} is not readable")
+      end
+      gvalue = GObject::Value.for_gtype(spec.value_type)
       super(property_name, gvalue)
       value = gvalue.get_value
       type_info = get_property_type(property_name)
@@ -1175,7 +1179,7 @@ module GObject
     end
     def get_default_value
       _v1 = GObject::Lib.g_param_spec_get_default_value(self)
-      _v2 = GObject::Value.wrap(_v1).get_value
+      _v2 = GObject::Value.wrap(_v1)&.get_value
       return _v2
     end
     def get_name
@@ -2199,7 +2203,7 @@ module GObject
       Lib.g_value_copy(value, target) unless value.uninitialized?
     end
     def self.for_gtype(gtype)
-      new.tap { |it| it.init(gtype) }
+      new.tap { |val| val.init(gtype) }
     end
     def self.from(val)
       case val
@@ -2222,9 +2226,9 @@ module GObject
       return _v3
     end
     def self.wrap_instance(instance)
-      new.tap do |it|
-        it.init(GObject.type_from_instance(instance))
-        it.set_instance(instance)
+      new.tap do |val|
+        val.init(GObject.type_from_instance(instance))
+        val.set_instance(instance)
       end
     end
     def self.wrap_ruby_value(val)
@@ -2374,7 +2378,7 @@ module GObject
     end
     def reset
       _v1 = GObject::Lib.g_value_reset(self)
-      _v2 = GObject::Value.wrap(_v1).get_value
+      _v2 = GObject::Value.wrap(_v1)&.get_value
       return _v2
     end
     def set_boolean(v_boolean)
@@ -2579,7 +2583,7 @@ module GObject
     def get_nth(index_)
       _v1 = index_
       _v2 = GObject::Lib.g_value_array_get_nth(self, _v1)
-      _v3 = GObject::Value.wrap(_v2).get_value
+      _v3 = GObject::Value.wrap(_v2)&.get_value
       return _v3
     end
     def insert(index_, value = nil)
@@ -3299,7 +3303,7 @@ module GObject
     _v4 = FFI::MemoryPointer.new(GObject::Value)
     GObject::Value.copy_value_to_pointer(GObject::Value.copy_from(return_value), _v4)
     GObject::Lib.g_signal_emitv(_v1, _v2, _v3, _v4)
-    _v5 = GObject::Value.wrap(GObject::Value.get_value_from_pointer(_v4, 0)).get_value
+    _v5 = GObject::Value.wrap(GObject::Value.get_value_from_pointer(_v4, 0))&.get_value
     return _v5
   end
   def self.signal_get_invocation_hint(instance)
